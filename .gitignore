@@ -1,3 +1,9 @@
+/src/main/java
+/src/main/resources/com
+*.par
+*.docx
+*.xlsx
+
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -5,6 +11,7 @@ build/
 !**/src/test/**/build/
 
 ### IntelliJ IDEA ###
+.idea/
 .idea/modules.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml

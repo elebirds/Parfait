@@ -7,10 +7,13 @@ plugins {
 }
 
 group 'cc.eleb.parfait'
-version '1.0-SNAPSHOT'
+version '1.0.0'
 
 repositories {
+    mavenLocal()
+    maven { url "https://maven.aliyun.com/nexus/content/groups/public/"}
     mavenCentral()
+    jcenter()
 }
 
 ext {
@@ -20,13 +23,13 @@ ext {
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
 application {
-    mainModule = 'cc.eleb.parfait.parfait'
-    mainClass = 'cc.eleb.parfait.parfait.HelloApplication'
+    mainModule = 'cc.eleb.parfait'
+    mainClass = 'cc.eleb.parfait.HelloApplication'
 }
 
 [compileKotlin, compileTestKotlin].forEach {
@@ -41,9 +44,27 @@ javafx {
 }
 
 dependencies {
-
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+    implementation('io.vproxy:vfx:1.2.0')
+
+    implementation('com.formdev:flatlaf:3.0')
+    implementation('com.formdev:flatlaf-extras:3.0')
+    implementation("com.formdev:flatlaf-fonts-jetbrains-mono:2.242")
+    implementation("com.formdev:flatlaf-fonts-roboto:2.137")
+    implementation("com.formdev:flatlaf-fonts-roboto-mono:3.000")
+    implementation("com.formdev:flatlaf-fonts-inter:3.19")
+    implementation( "com.miglayout:miglayout-swing:5.3" )
+    implementation( "com.jgoodies:jgoodies-forms:1.9.0" )
+
+    implementation('com.google.code.gson:gson:2.8.9')
+    implementation('commons-io:commons-io:2.7')
+    implementation( "com.moandjiezana.toml:toml4j:0.7.2" )
+    implementation('org.yaml:snakeyaml:2.0')
+
+    implementation("com.belerweb:pinyin4j:2.5.1")//拼音英文转换
+    implementation("com.alibaba:easyexcel:3.2.1")//excel操作
 }
 
 test {
