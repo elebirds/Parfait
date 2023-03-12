@@ -1,5 +1,6 @@
 package cc.eleb.parfait
 
+import cc.eleb.parfait.config.ParConfig
 import cc.eleb.parfait.ui.DemoPrefs.init
 import cc.eleb.parfait.ui.DemoPrefs.setupLaf
 import cc.eleb.parfait.ui.ParfaitFrame
@@ -92,14 +93,12 @@ fun main() {
         // create frame
         val frame = ParfaitFrame()
         if (screenshotsMode) {
-            frame.setPreferredSize(
-                if (SystemInfo.isJava_9_orLater) Dimension(830, 440) else Dimension(1660, 880)
-            )
+            frame.preferredSize = if (SystemInfo.isJava_9_orLater) Dimension(830, 440) else Dimension(1660, 880)
         }
 
         // show frame
         frame.pack()
         frame.setLocationRelativeTo(null)
-        frame.setVisible(true)
+        frame.isVisible = true
     }
 }

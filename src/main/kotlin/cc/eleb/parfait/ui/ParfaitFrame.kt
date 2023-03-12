@@ -2,24 +2,22 @@ package cc.eleb.parfait.ui
 
 
 import cc.eleb.parfait.KEY_TAB
+import cc.eleb.parfait.config.ParConfig
+import cc.eleb.parfait.theme.ColorUtils
+import cc.eleb.parfait.theme.FontUtils
 import cc.eleb.parfait.ui.panel.GPAPanel
 import cc.eleb.parfait.ui.panel.I18nPanel
 import cc.eleb.parfait.ui.panel.StudentDataPanel
 import cc.eleb.parfait.ui.panel.WelcomePanel
-import cc.eleb.parfait.ui.theme.IJThemeInfo
+import cc.eleb.parfait.theme.ThemeUtils
 import com.formdev.flatlaf.*
-import com.formdev.flatlaf.extras.FlatAnimatedLafChange
 import com.formdev.flatlaf.extras.FlatDesktop
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
 import com.formdev.flatlaf.extras.components.FlatButton
 import com.formdev.flatlaf.icons.FlatAbstractIcon
-import com.formdev.flatlaf.themes.FlatMacDarkLaf
-import com.formdev.flatlaf.themes.FlatMacLightLaf
 import com.formdev.flatlaf.ui.JBRCustomDecorations
 import com.formdev.flatlaf.util.ColorFunctions
-import com.formdev.flatlaf.util.FontUtils
-import com.formdev.flatlaf.util.LoggingFacade
 import com.formdev.flatlaf.util.SystemInfo
 import net.miginfocom.layout.ConstraintParser
 import net.miginfocom.layout.LC
@@ -30,120 +28,17 @@ import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.beans.PropertyChangeEvent
+import java.io.File
 import java.io.IOException
 import java.net.URI
 import java.net.URISyntaxException
-import java.nio.file.Files
 import java.time.Year
 import java.util.*
 import javax.swing.*
-import javax.swing.plaf.metal.MetalLookAndFeel
-import javax.swing.plaf.nimbus.NimbusLookAndFeel
+import javax.swing.filechooser.FileFilter
 
 class ParfaitFrame : JFrame() {
-    private val availableFontFamilyNames: Array<String> = FontUtils.getAvailableFontFamilyNames().clone()
-    private var initialFontMenuItemCount: Int = -1
-    private lateinit var themes: LinkedHashMap<String, IJThemeInfo>
-    private lateinit var rtl: JCheckBoxMenuItem
-    private fun rightToLeftChanged(c: Container, rightToLeft: Boolean) {
-        c.applyComponentOrientation(
-            if (rightToLeft) ComponentOrientation.RIGHT_TO_LEFT else ComponentOrientation.LEFT_TO_RIGHT
-        )
-        c.revalidate()
-        c.repaint()
-    }
-
-    private var rtlNow: Boolean = false
-    private fun rightToLeftChanged() {
-        rtlNow = !rtlNow
-        rightToLeftChanged(this, rtlNow)
-    }
-
-    private fun initThemeMenu() {
-        themes = LinkedHashMap<String, IJThemeInfo>()
-        themes["Light"] = IJThemeInfo("Light", null, false, null, null, null, null, null, FlatLightLaf::class.java.name)
-        themes["Dark"] = IJThemeInfo("Dark", null, true, null, null, null, null, null, FlatDarkLaf::class.java.name)
-        themes["IntelliJ"] = IJThemeInfo("IntelliJ", null, false, null, null, null, null, null, FlatIntelliJLaf::class.java.name)
-        themes["Darcula"] = IJThemeInfo("Darcula", null, true, null, null, null, null, null, FlatDarculaLaf::class.java.name)
-        themes["macOS Light"] = IJThemeInfo("macOS Light", null, false, null, null, null, null, null, FlatMacLightLaf::class.java.name)
-        themes["macOS Dark"] = IJThemeInfo("macOS Dark", null, true, null, null, null, null, null, FlatMacDarkLaf::class.java.name)
-        if (SystemInfo.isWindows) themes["Windows"] = IJThemeInfo("Windows", null, true, null, null, null, null, null, "com.sun.java.swing.plaf.windows.WindowsLookAndFeel")
-        else if (SystemInfo.isMacOS) themes["Aqua"] = IJThemeInfo("Aqua", null, true, null, null, null, null, null, "com.apple.laf.AquaLookAndFeel")
-        else if (SystemInfo.isLinux) themes["GTK"] = IJThemeInfo("GTK", null, true, null, null, null, null, null, "com.sun.java.swing.plaf.gtk.GTKLookAndFeel")
-        themes["Metal"] = IJThemeInfo("Metal", null, true, null, null, null, null, null, MetalLookAndFeel::class.java.name)
-        themes["Nimbus"] = IJThemeInfo("Nimbus", null, true, null, null, null, null, null, NimbusLookAndFeel::class.java.name)
-
-        //Theme menu
-        val bg = ButtonGroup()
-        for (i in 0 until themes.size) {
-            val tf = JRadioButtonMenuItem()
-            tf.text = themes.values.toTypedArray()[i].name
-            tf.addActionListener { e: ActionEvent? -> this.setTheme(e!!) }
-            bg.add(tf)
-            themeMenu.add(tf)
-        }
-        themeMenu.add(JPopupMenu.Separator())
-        rtl = JCheckBoxMenuItem()
-        rtl.text = "文字从右向左"
-        rtl.isSelected = false
-        rtl.addActionListener { this.rightToLeftChanged() }
-        themeMenu.add(rtl)
-    }
-
-    private fun showInformationDialog(message: String, ex: Exception) {
-        JOptionPane.showMessageDialog(
-            SwingUtilities.windowForComponent(this), message + "\n\n" + ex.message,
-            "Parfait", JOptionPane.INFORMATION_MESSAGE
-        )
-    }
-
-    private fun setTheme(e: ActionEvent) {
-        val themeInfo: IJThemeInfo? = themes[e.actionCommand]
-        EventQueue.invokeLater { setTheme(themeInfo) }
-    }
-
-    private fun setTheme(themeInfo: IJThemeInfo?) {
-        if (themeInfo == null) return
-
-        // change look and feel
-
-        // change look and feel
-        if (themeInfo.lafClassName != null) {
-            if (themeInfo.lafClassName == UIManager.getLookAndFeel().javaClass.name) return
-            FlatAnimatedLafChange.showSnapshot()
-            try {
-                UIManager.setLookAndFeel(themeInfo.lafClassName)
-            } catch (ex: java.lang.Exception) {
-                LoggingFacade.INSTANCE.logSevere(null, ex)
-                showInformationDialog("Failed to create '" + themeInfo.lafClassName + "'.", ex)
-            }
-        } else if (themeInfo.themeFile != null) {
-            FlatAnimatedLafChange.showSnapshot()
-            try {
-                if (themeInfo.themeFile.name.endsWith(".properties")) {
-                    FlatLaf.setup(FlatPropertiesLaf(themeInfo.name, themeInfo.themeFile))
-                } else FlatLaf.setup(IntelliJTheme.createLaf(Files.newInputStream(themeInfo.themeFile.toPath())))
-                DemoPrefs.state.put(DemoPrefs.KEY_LAF_THEME, DemoPrefs.FILE_PREFIX + themeInfo.themeFile)
-            } catch (ex: Exception) {
-                LoggingFacade.INSTANCE.logSevere(null, ex)
-                showInformationDialog("Failed to load '" + themeInfo.themeFile + "'.", ex)
-            }
-        } else {
-            FlatAnimatedLafChange.showSnapshot()
-            IntelliJTheme.setup(javaClass.getResourceAsStream(THEMES_PACKAGE + themeInfo.resourceName))
-            DemoPrefs.state.put(DemoPrefs.KEY_LAF_THEME, DemoPrefs.RESOURCE_PREFIX + themeInfo.resourceName)
-        }
-
-        // update all components
-
-        // update all components
-        FlatLaf.updateUI()
-        FlatAnimatedLafChange.hideSnapshotWithAnimation()
-        this.updateFontMenuItems()
-    }
-
-    public override fun dispose() {
+    override fun dispose() {
         super.dispose()
         FlatUIDefaultsInspector.hide()
     }
@@ -151,7 +46,7 @@ class ParfaitFrame : JFrame() {
     private fun showHints() {
         val fontMenuHint: HintManager.Hint = HintManager.Hint(
             "Use 'Font' menu to increase/decrease font size or try different fonts.",
-            fontMenu, SwingConstants.BOTTOM, "hint.fontMenu", null
+            FontUtils.fontMenu, SwingConstants.BOTTOM, "hint.fontMenu", null
         )
         val optionsMenuHint: HintManager.Hint = HintManager.Hint(
             "Use 'Options' menu to try out various FlatLaf options.", optionsMenu,
@@ -168,9 +63,86 @@ class ParfaitFrame : JFrame() {
         FlatUIDefaultsInspector.show()
     }
 
+    private fun reloadAllFrame(){
+        title = if(ParConfig.inited){
+            if(ParConfig.newed){
+                "新建文件 - Parfait Demo"
+            }else{
+                ParConfig.instance!!.file!!.name + " - Parfait Demo"
+            }
+        }else "Parfait Demo"
+        StudentDataPanel.instance.reload()
+    }
+
     private fun newActionPerformed() {
-        val newDialog = NewDialog(this)
-        newDialog.isVisible = true
+        checkToSave()
+        ParConfig(null)
+        reloadAllFrame()
+    }
+
+    private fun checkToSave(){
+        if(ParConfig.inited){
+            if(JOptionPane.showConfirmDialog(
+                this,
+                "您已经打开了一个par文件，是否要保存？",
+                "警告",
+                JOptionPane.YES_NO_OPTION
+            )==JOptionPane.YES_OPTION){
+                save()
+            }else close()
+        }
+    }
+
+    private fun saveTo(){
+        val fd = JFileChooser()
+        fd.fileFilter = object : FileFilter() {
+            override fun accept(f: File): Boolean {
+                return f.isDirectory || f.toString().endsWith(".par")
+            }
+
+            override fun getDescription(): String {
+                return "Parfait文件(.par)"
+            }
+        }
+        fd.isMultiSelectionEnabled = false
+        fd.fileSelectionMode = JFileChooser.FILES_ONLY
+        if (fd.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                ParConfig.instance?.saveTo(
+                    if(fd.selectedFile.endsWith(".par"))fd.selectedFile
+                    else File(fd.selectedFile.absolutePath+".par")
+                )
+            } catch (e: Exception) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "未知错误。\n${e.stackTraceToString()}",
+                    "保存失败",
+                    JOptionPane.ERROR_MESSAGE
+                )
+            }
+        }
+    }
+
+    private fun save(){
+        if(ParConfig.newed){
+            saveTo()
+            return
+        }
+        try {
+            ParConfig.instance?.save()
+        } catch (e: Exception) {
+            JOptionPane.showMessageDialog(
+                this,
+                "未知错误。\n${e.stackTraceToString()}",
+                "保存失败",
+                JOptionPane.ERROR_MESSAGE
+            )
+        }
+    }
+
+    private fun close(){
+        ParConfig.instance?.close()
+        reloadAllFrame()
     }
 
     private fun openActionPerformed() {
@@ -179,8 +151,12 @@ class ParfaitFrame : JFrame() {
     }
 
     private fun saveAsActionPerformed() {
-        val chooser = JFileChooser()
-        chooser.showSaveDialog(this)
+        if(ParConfig.checkInited())save()
+    }
+
+    private fun closeActionPerformed(){
+        checkToSave()
+        close()
     }
 
     private fun exitActionPerformed() {
@@ -188,13 +164,13 @@ class ParfaitFrame : JFrame() {
     }
 
     private fun aboutActionPerformed() {
-        val titleLabel: JLabel = JLabel("Parfait Demo")
+        val titleLabel = JLabel("Parfait Demo")
         titleLabel.putClientProperty(FlatClientProperties.STYLE_CLASS, "h1")
-        val link: String = "https://eleb.cc/"
-        val linkLabel: JLabel = JLabel("<html><a href=\"#\">$link</a></html>")
+        val link = "https://eleb.cc/"
+        val linkLabel = JLabel("<html><a href=\"#\">$link</a></html>")
         linkLabel.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
         linkLabel.addMouseListener(object : MouseAdapter() {
-            public override fun mouseClicked(e: MouseEvent) {
+            override fun mouseClicked(e: MouseEvent) {
                 try {
                     Desktop.getDesktop().browse(URI(link))
                 } catch (ex: IOException) {
@@ -285,182 +261,17 @@ class ParfaitFrame : JFrame() {
         clearHints()
         showHints()
     }
-
-    private fun fontFamilyChanged(e: ActionEvent) {
-        val fontFamily: String = e.actionCommand
-        FlatAnimatedLafChange.showSnapshot()
-        val font: Font = UIManager.getFont("defaultFont")
-        val newFont: Font = FontUtils.getCompositeFont(fontFamily, font.style, font.size)
-        UIManager.put("defaultFont", newFont)
-        FlatLaf.updateUI()
-        FlatAnimatedLafChange.hideSnapshotWithAnimation()
-    }
-
-    private fun fontSizeChanged(e: ActionEvent) {
-        val fontSizeStr: String = e.actionCommand
-        val font: Font = UIManager.getFont("defaultFont")
-        val newFont: Font = font.deriveFont(fontSizeStr.toInt().toFloat())
-        UIManager.put("defaultFont", newFont)
-        FlatLaf.updateUI()
-    }
-
-    private fun restoreFont() {
-        UIManager.put("defaultFont", null)
-        updateFontMenuItems()
-        FlatLaf.updateUI()
-    }
-
-    private fun incrFont() {
-        val font: Font = UIManager.getFont("defaultFont")
-        val newFont: Font = font.deriveFont((font.size + 1).toFloat())
-        UIManager.put("defaultFont", newFont)
-        updateFontMenuItems()
-        FlatLaf.updateUI()
-    }
-
-    private fun decrFont() {
-        val font: Font = UIManager.getFont("defaultFont")
-        val newFont: Font = font.deriveFont((font.size - 1).coerceAtLeast(10).toFloat())
-        UIManager.put("defaultFont", newFont)
-        updateFontMenuItems()
-        FlatLaf.updateUI()
-    }
-
-    fun updateFontMenuItems() {
-        if (initialFontMenuItemCount < 0) initialFontMenuItemCount = fontMenu.itemCount else {
-            // remove old font items
-            for (i in fontMenu.itemCount - 1 downTo initialFontMenuItemCount) fontMenu.remove(i)
-        }
-
-        // get current font
-        val currentFont: Font = UIManager.getFont("Label.font")
-        val currentFamily: String = currentFont.family
-        val currentSize: String = currentFont.size.toString()
-
-        // add font families
-        fontMenu.addSeparator()
-        val families: ArrayList<String> = ArrayList(
-            mutableListOf(
-                "Arial", "Cantarell", "Comic Sans MS", "DejaVu Sans", "Dialog", "Inter", "Liberation Sans",
-                "Noto Sans", "Open Sans", "Roboto", "SansSerif", "Segoe UI", "Serif", "Tahoma", "Ubuntu", "Verdana"
-            )
-        )
-        if (!families.contains(currentFamily)) families.add(currentFamily)
-        families.sortWith(java.lang.String.CASE_INSENSITIVE_ORDER)
-        val familiesGroup = ButtonGroup()
-        for (family: String in families) {
-            if (Arrays.binarySearch(availableFontFamilyNames, family) < 0) continue  // not available
-            val item = JCheckBoxMenuItem(family)
-            item.isSelected = (family == currentFamily)
-            item.addActionListener { e: ActionEvent -> fontFamilyChanged(e) }
-            fontMenu.add(item)
-            familiesGroup.add(item)
-        }
-
-        // add font sizes
-        fontMenu.addSeparator()
-        val sizes: ArrayList<String> = ArrayList(mutableListOf("10", "11", "12", "14", "16", "18", "20", "24", "28"))
-        if (!sizes.contains(currentSize)) sizes.add(currentSize)
-        sizes.sortWith(java.lang.String.CASE_INSENSITIVE_ORDER)
-        val sizesGroup = ButtonGroup()
-        for (size: String in sizes) {
-            val item = JCheckBoxMenuItem(size)
-            item.isSelected = (size == currentSize)
-            item.addActionListener { e: ActionEvent -> fontSizeChanged(e) }
-            fontMenu.add(item)
-            sizesGroup.add(item)
-        }
-
-        // enabled/disable items
-        val enabled: Boolean = UIManager.getLookAndFeel() is FlatLaf
-        for (item: Component in fontMenu.menuComponents) item.isEnabled = enabled
-    }
-
-    private val accentColorButtons: ArrayList<JToggleButton> = arrayListOf()
-    private lateinit var accentColorLabel: JLabel
-    private var accentColor: Color? = null
-
-    private fun initAccentColors() {
-        accentColorLabel = JLabel("Accent color: ")
-        toolBar.add(Box.createHorizontalGlue())
-        toolBar.add(accentColorLabel)
-        val group = ButtonGroup()
-        for (i in accentColorKeys.indices) {
-            val jtb = JToggleButton(AccentColorIcon(accentColorKeys[i]))
-            jtb.toolTipText = accentColorNames[i]
-            jtb.addActionListener { e: ActionEvent? ->
-                accentColorChanged(
-                    e!!
-                )
-            }
-            accentColorButtons.add(jtb);
-            toolBar.add(jtb)
-            group.add(jtb);
-        }
-        accentColorButtons[0].isSelected = true
-        FlatLaf.setSystemColorGetter { name: String -> if (name == "accent") accentColor else null }
-        UIManager.addPropertyChangeListener { e: PropertyChangeEvent -> if ("lookAndFeel" == e.propertyName) updateAccentColorButtons() }
-        updateAccentColorButtons()
-    }
-
-    private fun accentColorChanged(e: ActionEvent) {
-        var accentColorKey: String? = null
-        for (i in accentColorButtons.indices) {
-            if (accentColorButtons[i].isSelected) {
-                accentColorKey = accentColorKeys[i]
-                break
-            }
-        }
-        accentColor = if (accentColorKey != null && accentColorKey !== accentColorKeys[0]) UIManager.getColor(
-            accentColorKey
-        ) else null
-        val lafClass: Class<out LookAndFeel?> = UIManager.getLookAndFeel().javaClass
-        try {
-            FlatLaf.setup(lafClass.newInstance())
-            FlatLaf.updateUI()
-        } catch (ex: InstantiationException) {
-            LoggingFacade.INSTANCE.logSevere(null, ex)
-        } catch (ex: IllegalAccessException) {
-            LoggingFacade.INSTANCE.logSevere(null, ex)
-        }
-    }
-
-    private fun updateAccentColorButtons() {
-        val lafClass: Class<out LookAndFeel?> = UIManager.getLookAndFeel().javaClass
-        val isAccentColorSupported: Boolean =
-            (lafClass == FlatLightLaf::class.java) || (lafClass == FlatDarkLaf::class.java) || (lafClass == FlatIntelliJLaf::class.java) || (lafClass == FlatDarculaLaf::class.java) || (lafClass == FlatMacLightLaf::class.java) || (lafClass == FlatMacDarkLaf::class.java)
-        accentColorLabel.isVisible = isAccentColorSupported
-        for (i in accentColorButtons.indices) accentColorButtons[i].isVisible = isAccentColorSupported
-    }
-
+    
     private fun initComponents() {
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Evaluation license - csgo fps
         val menuBar1 = JMenuBar()
         val fileMenu = JMenu()
         val newMenuItem = JMenuItem()
         val openMenuItem = JMenuItem()
         val saveAsMenuItem = JMenuItem()
         val closeMenuItem = JMenuItem()
-        exitMenuItem = JMenuItem()
-        themeMenu = JMenu()
-        fontMenu = JMenu()
-        val restoreFontMenuItem = JMenuItem()
-        val incrFontMenuItem = JMenuItem()
-        val decrFontMenuItem = JMenuItem()
-        optionsMenu = JMenu()
-        windowDecorationsCheckBoxMenuItem = JCheckBoxMenuItem()
-        menuBarEmbeddedCheckBoxMenuItem = JCheckBoxMenuItem()
-        unifiedTitleBarMenuItem = JCheckBoxMenuItem()
-        showTitleBarIconMenuItem = JCheckBoxMenuItem()
-        underlineMenuSelectionMenuItem = JCheckBoxMenuItem()
-        alwaysShowMnemonicsMenuItem = JCheckBoxMenuItem()
-        animatedLafChangeMenuItem = JCheckBoxMenuItem()
         val showHintsMenuItem = JMenuItem()
         val showUIDefaultsInspectorMenuItem = JMenuItem()
         val helpMenu = JMenu()
-        aboutMenuItem = JMenuItem()
-        toolBar = JToolBar()
         val backButton = JButton()
         val forwardButton = JButton()
         val cutButton = JButton()
@@ -469,7 +280,6 @@ class ParfaitFrame : JFrame() {
         val refreshButton = JButton()
         val showToggleButton = JToggleButton()
         val contentPanel = JPanel()
-        tabbedPane = JTabbedPane()
         val panel1 = WelcomePanel()
         val studentDataPanel = StudentDataPanel()
         val panel2 = I18nPanel()
@@ -485,11 +295,11 @@ class ParfaitFrame : JFrame() {
 
 
         //======== fileMenu ========
-        fileMenu.text = "\u6587\u4ef6"
+        fileMenu.text = "文件"
         fileMenu.setMnemonic('F')
 
         //---- newMenuItem ----
-        newMenuItem.text = "\u65b0\u5efa"
+        newMenuItem.text = "新建"
         newMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_N,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
@@ -499,7 +309,7 @@ class ParfaitFrame : JFrame() {
         fileMenu.add(newMenuItem)
 
         //---- openMenuItem ----
-        openMenuItem.text = "\u6253\u5f00"
+        openMenuItem.text = "打开"
         openMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_O,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
@@ -509,7 +319,7 @@ class ParfaitFrame : JFrame() {
         fileMenu.add(openMenuItem)
 
         //---- saveAsMenuItem ----
-        saveAsMenuItem.text = "\u4fdd\u5b58"
+        saveAsMenuItem.text = "保存"
         saveAsMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_S,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
@@ -520,18 +330,18 @@ class ParfaitFrame : JFrame() {
         fileMenu.addSeparator()
 
         //---- closeMenuItem ----
-        closeMenuItem.text = "\u5173\u95ed"
+        closeMenuItem.text = "关闭"
         closeMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_W,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
         )
         closeMenuItem.setMnemonic('C')
-        closeMenuItem.addActionListener { e: ActionEvent -> menuItemActionPerformed(e) }
+        closeMenuItem.addActionListener { closeActionPerformed() }
         fileMenu.add(closeMenuItem)
         fileMenu.addSeparator()
 
         //---- exitMenuItem ----
-        exitMenuItem.text = "\u9000\u51fa"
+        exitMenuItem.text = "退出"
         exitMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_Q,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
@@ -542,44 +352,11 @@ class ParfaitFrame : JFrame() {
 
         menuBar1.add(fileMenu)
 
-        //======== themeMenu ========
-        themeMenu.text = "\u4e3b\u9898"
-        menuBar1.add(themeMenu)
-
-        //======== fontMenu ========
-        fontMenu.text = "\u5b57\u4f53"
-
-        //---- restoreFontMenuItem ----
-        restoreFontMenuItem.text = "\u8fd8\u539f\u5b57\u4f53"
-        restoreFontMenuItem.accelerator = KeyStroke.getKeyStroke(
-            KeyEvent.VK_0,
-            Toolkit.getDefaultToolkit().menuShortcutKeyMask
-        )
-        restoreFontMenuItem.addActionListener { restoreFont() }
-        fontMenu.add(restoreFontMenuItem)
-
-        //---- incrFontMenuItem ----
-        incrFontMenuItem.text = "\u52a0\u5927\u5b57\u4f53"
-        incrFontMenuItem.accelerator = KeyStroke.getKeyStroke(
-            KeyEvent.VK_PLUS,
-            Toolkit.getDefaultToolkit().menuShortcutKeyMask
-        )
-        incrFontMenuItem.addActionListener { incrFont() }
-        fontMenu.add(incrFontMenuItem)
-
-        //---- decrFontMenuItem ----
-        decrFontMenuItem.text = "\u51cf\u5c0f\u5b57\u4f53"
-        decrFontMenuItem.accelerator = KeyStroke.getKeyStroke(
-            KeyEvent.VK_MINUS,
-            Toolkit.getDefaultToolkit().menuShortcutKeyMask
-        )
-        decrFontMenuItem.addActionListener { decrFont() }
-        fontMenu.add(decrFontMenuItem)
-
-        menuBar1.add(fontMenu)
+        menuBar1.add(ThemeUtils.themeMenu)
+        menuBar1.add(FontUtils.fontMenu)
 
         //======== optionsMenu ========
-        optionsMenu.text = "\u9009\u9879"
+        optionsMenu.text = "选项"
 
         //---- windowDecorationsCheckBoxMenuItem ----
         windowDecorationsCheckBoxMenuItem.text = "Window decorations"
@@ -630,11 +407,11 @@ class ParfaitFrame : JFrame() {
         menuBar1.add(optionsMenu)
 
         //======== helpMenu ========
-        helpMenu.text = "\u5e2e\u52a9"
+        helpMenu.text = "帮助"
         helpMenu.setMnemonic('H')
 
         //---- aboutMenuItem ----
-        aboutMenuItem.text = "\u5173\u4e8e"
+        aboutMenuItem.text = "关于"
         aboutMenuItem.setMnemonic('A')
         aboutMenuItem.addActionListener { aboutActionPerformed() }
         helpMenu.add(aboutMenuItem)
@@ -668,7 +445,7 @@ class ParfaitFrame : JFrame() {
         toolBar.addSeparator()
 
         //---- refreshButton ----
-        refreshButton.toolTipText = "Refresh"
+        refreshButton.toolTipText = "从文件重新读取"
         toolBar.add(refreshButton)
         toolBar.addSeparator()
 
@@ -687,10 +464,10 @@ class ParfaitFrame : JFrame() {
         )
 
         //======== tabbedPane ========
-        tabbedPane.addTab("\u6b22\u8fce", panel1)
-        tabbedPane.addTab("\u5b66\u751f\u7ba1\u7406", studentDataPanel)
-        tabbedPane.addTab("\u7ffb\u8bd1\u7ba1\u7406", panel2)
-        tabbedPane.addTab("GPA\u6807\u51c6\u7ba1\u7406", panel3)
+        tabbedPane.addTab("欢迎", panel1)
+        tabbedPane.addTab("学生管理", studentDataPanel)
+        tabbedPane.addTab("翻译管理", panel2)
+        tabbedPane.addTab("GPA标准管理", panel3)
 
         contentPanel.add(tabbedPane, "cell 0 0")
 
@@ -698,11 +475,11 @@ class ParfaitFrame : JFrame() {
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
 
         // add "Users" button to menubar
-        val usersButton: FlatButton = FlatButton()
+        val usersButton = FlatButton()
         usersButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/users.svg")
         usersButton.buttonType = FlatButton.ButtonType.toolBarButton
         usersButton.isFocusable = false
-        usersButton.addActionListener { e: ActionEvent? ->
+        usersButton.addActionListener {
             JOptionPane.showMessageDialog(
                 null, "Hello User! How are you?", "User",
                 JOptionPane.INFORMATION_MESSAGE
@@ -717,14 +494,14 @@ class ParfaitFrame : JFrame() {
         pasteButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/menu-paste.svg")
         refreshButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/refresh.svg")
         showToggleButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/show.svg")
-        if (FlatLaf.supportsNativeWindowDecorations() || (SystemInfo.isLinux && JFrame.isDefaultLookAndFeelDecorated())) {
+        if (FlatLaf.supportsNativeWindowDecorations() || (SystemInfo.isLinux && isDefaultLookAndFeelDecorated())) {
             if (SystemInfo.isLinux) unsupported(windowDecorationsCheckBoxMenuItem) else windowDecorationsCheckBoxMenuItem.isSelected =
                 FlatLaf.isUseNativeWindowDecorations()
             menuBarEmbeddedCheckBoxMenuItem.isSelected = UIManager.getBoolean("TitlePane.menuBarEmbedded")
             unifiedTitleBarMenuItem.isSelected = UIManager.getBoolean("TitlePane.unifiedBackground")
             showTitleBarIconMenuItem.isSelected = UIManager.getBoolean("TitlePane.showIcon")
             if (JBRCustomDecorations.isSupported()) {
-                // If the JetBrains Runtime is used, it forces the use of it's own custom
+                // If the JetBrains Runtime is used, it forces the use of its own custom
                 // window decoration, which can not disabled.
                 windowDecorationsCheckBoxMenuItem.isEnabled = false
             }
@@ -757,30 +534,28 @@ class ParfaitFrame : JFrame() {
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - csgo fps
-    private lateinit var exitMenuItem: JMenuItem
-    private lateinit var themeMenu: JMenu
-    private lateinit var fontMenu: JMenu
-    private lateinit var optionsMenu: JMenu
-    private lateinit var windowDecorationsCheckBoxMenuItem: JCheckBoxMenuItem
-    private lateinit var menuBarEmbeddedCheckBoxMenuItem: JCheckBoxMenuItem
-    private lateinit var unifiedTitleBarMenuItem: JCheckBoxMenuItem
-    private lateinit var showTitleBarIconMenuItem: JCheckBoxMenuItem
-    private lateinit var underlineMenuSelectionMenuItem: JCheckBoxMenuItem
-    private lateinit var alwaysShowMnemonicsMenuItem: JCheckBoxMenuItem
-    private lateinit var animatedLafChangeMenuItem: JCheckBoxMenuItem
-    private lateinit var aboutMenuItem: JMenuItem
-    private lateinit var toolBar: JToolBar
-    private lateinit var tabbedPane: JTabbedPane
+    val exitMenuItem = JMenuItem()
+    val optionsMenu = JMenu()
+    val windowDecorationsCheckBoxMenuItem = JCheckBoxMenuItem()
+    val menuBarEmbeddedCheckBoxMenuItem = JCheckBoxMenuItem()
+    val unifiedTitleBarMenuItem = JCheckBoxMenuItem()
+    val showTitleBarIconMenuItem = JCheckBoxMenuItem()
+    val underlineMenuSelectionMenuItem = JCheckBoxMenuItem()
+    val alwaysShowMnemonicsMenuItem = JCheckBoxMenuItem()
+    val animatedLafChangeMenuItem = JCheckBoxMenuItem()
+    val aboutMenuItem = JMenuItem()
+    val toolBar = JToolBar()
+    val tabbedPane = JTabbedPane()
 
     init {
-        Arrays.sort(availableFontFamilyNames)
+        instance = this
+        ThemeUtils.init()
+        FontUtils.init()
         initComponents()
+        ColorUtils.init()
         val tabIndex: Int = DemoPrefs.state.getInt(KEY_TAB, 0)
         if (tabIndex >= 0 && tabIndex < tabbedPane.tabCount && tabIndex != tabbedPane.selectedIndex) tabbedPane.selectedIndex =
             tabIndex
-        initThemeMenu()
-        updateFontMenuItems()
-        initAccentColors()
         //TODO:
         //setIconImages(FlatSVGUtils.createWindowIconImages("/com/formdev/flatlaf/demo/FlatLaf.svg"))
 
@@ -813,34 +588,10 @@ class ParfaitFrame : JFrame() {
         FlatDesktop.setPreferencesHandler { showPreferences() }
         //FlatDesktop.setQuitHandler { FlatDesktop.QuitResponse.performQuit() }
         //SwingUtilities.invokeLater(Runnable({ showHints() }))
-
-        //Elebird
     }
-
-    // JFormDesigner - End of variables declaration  //GEN-END:variables
-    //---- class AccentColorIcon ----------------------------------------------
-    private class AccentColorIcon internal constructor(private val colorKey: String) : FlatAbstractIcon(16, 16, null) {
-        protected override fun paintIcon(c: Component, g: Graphics2D) {
-            var color: Color? = UIManager.getColor(colorKey)
-            if (color == null) color = Color.lightGray else if (!c.isEnabled()) {
-                color = if (FlatLaf.isLafDark()) ColorFunctions.shade(color, 0.5f) else ColorFunctions.tint(color, 0.6f)
-            }
-            g.color = color
-            g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5)
-        }
-    }
-
     companion object {
         val THEMES_PACKAGE: String = "/com/formdev/flatlaf/intellijthemes/themes/"
 
-        // the real colors are defined in
-        // flatlaf-demo/src/main/resources/com/formdev/flatlaf/demo/FlatLightLaf.properties and
-        // flatlaf-demo/src/main/resources/com/formdev/flatlaf/demo/FlatDarkLaf.properties
-        private val accentColorKeys: Array<String> = arrayOf(
-            "Demo.accent.default", "Demo.accent.blue", "Demo.accent.purple",
-            "Demo.accent.red", "Demo.accent.orange", "Demo.accent.yellow", "Demo.accent.green"
-        )
-        private val accentColorNames: Array<String> =
-            arrayOf("Default", "Blue", "Purple", "Red", "Orange", "Yellow", "Green")
+        lateinit var instance:ParfaitFrame
     }
 }

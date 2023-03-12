@@ -3,22 +3,19 @@
  */
 package cc.eleb.parfait.ui.panel
 
+import cc.eleb.parfait.config.ParConfig
+import cc.eleb.parfait.entity.Student
 import cc.eleb.parfait.ui.frame.ScoreFrame
+import kotlinx.coroutines.*
 import net.miginfocom.swing.MigLayout
-import java.awt.Color
 import java.awt.Dimension
-import java.awt.Font
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.beans.PropertyChangeEvent
-import java.beans.PropertyChangeListener
 import java.io.File
+import java.util.*
 import javax.swing.*
-import javax.swing.border.CompoundBorder
-import javax.swing.border.EmptyBorder
-import javax.swing.border.TitledBorder
 import javax.swing.filechooser.FileFilter
 import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableColumnModel
@@ -26,61 +23,109 @@ import javax.swing.table.TableColumnModel
 /**
  * @author hhmcn
  */
-class StudentDataPanel constructor() : JPanel() {
+class StudentDataPanel : JPanel() {
+    fun reload(){
+        (table1.model as DefaultTableModel).let {dtm->
+            dtm.dataVector.let { vt ->
+                vt.clear()
+                Student.students.forEach { (t, u) ->
+                    vt.add(Vector<Any?>().also {
+                        it.add(t)
+                        it.add(u.name)
+                        it.add(u.genderT)
+                        it.add(u.statusT)
+                        it.add(u.grade)
+                        it.add(u.school)
+                        it.add(u.profession)
+                        it.add(u.clazz)
+                        it.add(u.weightedMean)
+                    })
+                }
+            }
+            dtm.fireTableDataChanged()
+        }
+    }
+
     private fun addStudentMouseClicked(e: MouseEvent) {
-        if (e.getButton() != MouseEvent.BUTTON1) return
-        (table1!!.getModel() as DefaultTableModel).addRow(arrayOf<Any?>(null, null, "未知"))
+        if (e.button != MouseEvent.BUTTON1) return
+        if(!ParConfig.checkInited())return
+        (table1.model as DefaultTableModel).addRow(arrayOf<Any?>(null, null, "未知"))
         JOptionPane.showInputDialog(this, "测试", "", JOptionPane.INFORMATION_MESSAGE)
         JOptionPane.showMessageDialog(null, "呃呃", "就", JOptionPane.INFORMATION_MESSAGE)
     }
 
     private fun deleteStudentMouseClicked(e: MouseEvent) {
-        if (e.getButton() != MouseEvent.BUTTON1) return
-        for (selectedRow: Int in table1!!.getSelectedRows()) {
-            (table1!!.getModel() as DefaultTableModel).removeRow(table1!!.getSelectedRow())
+        if (e.button != MouseEvent.BUTTON1) return
+        if(!ParConfig.checkInited())return
+        for (selectedRow: Int in table1.selectedRows) {
+            (table1.model as DefaultTableModel).removeRow(table1.selectedRow)
         }
     }
 
     private fun impoStudentMouseClicked(e: MouseEvent) {
-        if (e.getButton() != MouseEvent.BUTTON1) return
-        val fd: JFileChooser = JFileChooser()
-        fd.setFileFilter(object : FileFilter() {
-            public override fun accept(f: File): Boolean {
-                return f.isDirectory() || f.toString().endsWith(".xlsx")
+        if (e.button != MouseEvent.BUTTON1) return
+        if(!ParConfig.checkInited())return
+        val fd = JFileChooser()
+        fd.fileFilter = object : FileFilter() {
+            override fun accept(f: File): Boolean {
+                return f.isDirectory || f.name.endsWith(".xlsx")
             }
 
-            public override fun getDescription(): String {
+            override fun getDescription(): String {
                 return "Excel文件(.xlsx)"
             }
-        })
-        fd.setMultiSelectionEnabled(false)
-        fd.setFileSelectionMode(JFileChooser.FILES_ONLY)
+        }
+        fd.isMultiSelectionEnabled = false
+        fd.fileSelectionMode = JFileChooser.FILES_ONLY
         val res: Int = fd.showOpenDialog(this)
         if (res == JFileChooser.APPROVE_OPTION) {
-            if (!fd.getSelectedFile().toString().endsWith(".xlsx")) return
-            JOptionPane.showMessageDialog(null, "??", "???", JOptionPane.ERROR_MESSAGE)
+            if (!fd.selectedFile.toString().endsWith(".xlsx")){
+                JOptionPane.showMessageDialog(
+                    this,
+                    "请选择Excel表格文件！",
+                    "导入失败",
+                    JOptionPane.ERROR_MESSAGE
+                )
+                return
+            }
+            try {
+                //CoroutineScope(Dispatchers.IO).launch {
+                    Student.addStudentsFromFile(fd.selectedFile)
+                //}
+            } catch (e: Exception) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "请选择正确的学生名单。\n${e.stackTraceToString()}",
+                    "导入失败",
+                    JOptionPane.ERROR_MESSAGE
+                )
+            }
         }
     }
 
     private fun editScoreMouseClicked(e: MouseEvent) {
-        if (e.getButton() != MouseEvent.BUTTON1) return
+        if (e.button != MouseEvent.BUTTON1) return
+        if(!ParConfig.checkInited())return
         val sf: ScoreFrame = ScoreFrame()
-        sf.setVisible(true)
+        sf.isVisible = true
     }
 
     private fun generateWordMouseClicked(e: MouseEvent) {
-        if (e.getButton() != MouseEvent.BUTTON1) return
+        if (e.button != MouseEvent.BUTTON1) return
+        if(!ParConfig.checkInited())return
         //TODO:generateWord
     }
 
     private fun impoStudentFromStringMouseClicked(e: MouseEvent) {
-        if (e.getButton() != MouseEvent.BUTTON1) return
+        if (e.button != MouseEvent.BUTTON1) return
+        if(!ParConfig.checkInited())return
         // TODO add your code here
     }
 
     private fun expoToStringMouseClicked(e: MouseEvent) {
-        if (e.getButton() != MouseEvent.BUTTON1) return
-        if (table1!!.getSelectedRows().size == 0) {
+        if (e.button != MouseEvent.BUTTON1) return
+        if(!ParConfig.checkInited())return
+        if (table1.selectedRows.isEmpty()) {
             JOptionPane.showMessageDialog(
                 this, "您未选中任何学生，无法导出数据为文本。", "错误",
                 JOptionPane.ERROR_MESSAGE
@@ -88,11 +133,9 @@ class StudentDataPanel constructor() : JPanel() {
             return
         }
         val a: StringBuilder = StringBuilder()
-        for (selectedRow: Int in table1!!.getSelectedRows()) {
-            val si: Any? =
-                (table1!!.getModel() as DefaultTableModel).getDataVector().elementAt(table1!!.getSelectedRow())
-                    .elementAt(0)
-            if (si == null) continue
+        for (selectedRow: Int in table1.selectedRows) {
+            val si: Any =
+                (table1.model as DefaultTableModel).dataVector.elementAt(table1.selectedRow).elementAt(0) ?: continue
             val sid: Int = si as Int
             a.append(si).append("sisis").append("\n")
         }
@@ -101,14 +144,12 @@ class StudentDataPanel constructor() : JPanel() {
                 JOptionPane.INFORMATION_MESSAGE
             ) == JOptionPane.OK_OPTION
         ) {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(StringSelection(a.toString()), null)
+            Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(a.toString()), null)
         }
         // TODO add your code here
     }
 
     private fun initComponents() {
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
-        // Generated using JFormDesigner Evaluation license - csgo fps
         label1 = JLabel()
         scrollPane1 = JScrollPane()
         table1 = JTable()
@@ -121,158 +162,123 @@ class StudentDataPanel constructor() : JPanel() {
         button7 = JButton()
         button1 = JButton()
 
-        setLayout(
-            MigLayout(
-                "hidemode 3",  // columns
-                "[fill]" + "[fill]",  // rows
-                "[]" + "[]" + "[]"
-            )
+        layout = MigLayout(
+            "hidemode 3",  // columns
+            "[fill]" + "[fill]",  // rows
+            "[]" + "[]" + "[]"
         )
         add(label1, "cell 0 0")
 
-        //======== scrollPane1 ========
-        run({
+        table1.model = object : DefaultTableModel(
+            arrayOf(),
+            arrayOf("学号", "姓名", "性别", "学籍", "年级", "学院", "专业", "班级", "加权平均分")
+        ) {
+            var columnTypes: Array<Class<*>> = arrayOf(
+                Int::class.java, String::class.java, String::class.java, String::class.java,
+                Int::class.java, String::class.java, String::class.java, String::class.java, Double::class.java
+            )
+            var columnEditable: BooleanArray =
+                booleanArrayOf(false, true, true, true, true, true, true, true, false)
 
+            override fun getColumnClass(columnIndex: Int): Class<*> {
+                return columnTypes[columnIndex]
+            }
 
-            //---- table1 ----
-            table1!!.setModel(
-                object : DefaultTableModel(
-                    arrayOf(arrayOf<Any?>(111111, null, null, null, null, null, null, null, null)), arrayOf(
-                        "\u5b66\u53f7", "\u59d3\u540d", "\u6027\u522b", "\u5b66\u7c4d\u72b6\u6001",
-                        "\u5e74\u7ea7", "\u5b66\u9662", "\u4e13\u4e1a", "\u73ed\u7ea7",
-                        "\u52a0\u6743\u5e73\u5747\u5206"
-                    )
-                ) {
-                    var columnTypes: Array<Class<*>> = arrayOf(
-                        Int::class.java, String::class.java, String::class.java, String::class.java,
-                        Int::class.java, String::class.java, String::class.java, String::class.java, Double::class.java
-                    )
-                    var columnEditable: BooleanArray =
-                        booleanArrayOf(false, true, true, true, true, true, true, true, false)
-
-                    public override fun getColumnClass(columnIndex: Int): Class<*> {
-                        return columnTypes.get(columnIndex)
-                    }
-
-                    public override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
-                        return columnEditable.get(columnIndex)
-                    }
-                })
-            run({
-                val cm: TableColumnModel = table1!!.getColumnModel()
-                cm.getColumn(2).setCellEditor(
-                    DefaultCellEditor(
-                        JComboBox(
-                            DefaultComboBoxModel<Any?>(arrayOf<String?>("\u672a\u77e5", "\u7537", "\u5973"))
-                        )
-                    )
-                )
-                cm.getColumn(3).setCellEditor(
-                    DefaultCellEditor(
-                        JComboBox(DefaultComboBoxModel<Any?>(arrayOf<String?>("\u5728\u7c4d", "\u6bd5\u4e1a")))
-                    )
-                )
-            })
-            table1!!.setPreferredScrollableViewportSize(Dimension(600, 400))
-            table1!!.setShowHorizontalLines(false)
-            table1!!.setShowVerticalLines(false)
-            scrollPane1!!.setViewportView(table1)
-        })
+            override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
+                return columnEditable[columnIndex]
+            }
+        }
+        val cm: TableColumnModel = table1.columnModel
+        cm.getColumn(2).cellEditor = DefaultCellEditor(JComboBox(DefaultComboBoxModel(arrayOf("未知", "男", "女"))))
+        cm.getColumn(3).cellEditor = DefaultCellEditor(JComboBox(DefaultComboBoxModel(arrayOf("在籍", "毕业"))))
+        table1.preferredScrollableViewportSize = Dimension(600, 400)
+        table1.showHorizontalLines = false
+        table1.showVerticalLines = false
+        scrollPane1.setViewportView(table1)
         add(scrollPane1, "cell 0 0,dock center")
 
-        //======== panel1 ========
-        run({
-            panel1!!.setLayout(
-                MigLayout(
-                    "hidemode 3",  // columns
-                    "[fill]",  // rows
-                    "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]"
-                )
-            )
+        panel1.layout = MigLayout(
+            "hidemode 3",  // columns
+            "[fill]",  // rows
+            "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]"
+        )
 
-            //---- button2 ----
-            button2!!.setText("\u6dfb\u52a0\u5b66\u751f")
-            button2!!.addMouseListener(object : MouseAdapter() {
-                public override fun mouseClicked(e: MouseEvent) {
-                    addStudentMouseClicked(e)
-                }
-            })
-            panel1!!.add(button2, "cell 0 0")
-
-            //---- button3 ----
-            button3!!.setText("\u7f16\u8f91\u6210\u7ee9")
-            button3!!.addMouseListener(object : MouseAdapter() {
-                public override fun mouseClicked(e: MouseEvent) {
-                    editScoreMouseClicked(e)
-                }
-            })
-            panel1!!.add(button3, "cell 0 1")
-
-            //---- button4 ----
-            button4!!.setText("\u5220\u9664\u5b66\u751f")
-            button4!!.addMouseListener(object : MouseAdapter() {
-                public override fun mouseClicked(e: MouseEvent) {
-                    deleteStudentMouseClicked(e)
-                }
-            })
-            panel1!!.add(button4, "cell 0 2")
-
-            //---- button8 ----
-            button8!!.setText("\u4ece\u6587\u672c\u5bfc\u5165")
-            button8!!.addMouseListener(object : MouseAdapter() {
-                public override fun mouseClicked(e: MouseEvent) {
-                    impoStudentFromStringMouseClicked(e)
-                }
-            })
-            panel1!!.add(button8, "cell 0 3")
-
-            //---- button6 ----
-            button6!!.setText("\u4ece\u8868\u683c\u5bfc\u5165")
-            button6!!.addMouseListener(object : MouseAdapter() {
-                public override fun mouseClicked(e: MouseEvent) {
-                    impoStudentMouseClicked(e)
-                }
-            })
-            panel1!!.add(button6, "cell 0 4")
-
-            //---- button7 ----
-            button7!!.setText("\u5bfc\u51fa\u4e3a\u6587\u672c")
-            button7!!.addMouseListener(object : MouseAdapter() {
-                public override fun mouseClicked(e: MouseEvent) {
-                    expoToStringMouseClicked(e)
-                }
-            })
-            panel1!!.add(button7, "cell 0 5")
-
-            //---- button1 ----
-            button1!!.setText("\u751f\u6210\u8bc1\u660e")
-            button1!!.addMouseListener(object : MouseAdapter() {
-                public override fun mouseClicked(e: MouseEvent) {
-                    generateWordMouseClicked(e)
-                }
-            })
-            panel1!!.add(button1, "cell 0 6")
+        button2.text = "添加学生"
+        button2.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                addStudentMouseClicked(e)
+            }
         })
+        panel1.add(button2, "cell 0 0")
+
+        button3.text = "编辑成绩"
+        button3.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                editScoreMouseClicked(e)
+            }
+        })
+        panel1.add(button3, "cell 0 1")
+
+        button4.text = "删除学生"
+        button4.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                deleteStudentMouseClicked(e)
+            }
+        })
+        panel1.add(button4, "cell 0 2")
+
+        button8.text = "从文本导入"
+        button8.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                impoStudentFromStringMouseClicked(e)
+            }
+        })
+        panel1.add(button8, "cell 0 3")
+
+        button6.text = "从表格导入"
+        button6.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                impoStudentMouseClicked(e)
+            }
+        })
+        panel1.add(button6, "cell 0 4")
+
+        button7.text = "导出为文本"
+        button7.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                expoToStringMouseClicked(e)
+            }
+        })
+        panel1.add(button7, "cell 0 5")
+
+        button1.text = "生成证明"
+        button1.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                generateWordMouseClicked(e)
+            }
+        })
+        panel1.add(button1, "cell 0 6")
         add(panel1, "cell 1 0")
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
-    // Generated using JFormDesigner Evaluation license - csgo fps
-    private var label1: JLabel? = null
-    private var scrollPane1: JScrollPane? = null
-    private var table1: JTable? = null
-    private var panel1: JPanel? = null
-    private var button2: JButton? = null
-    private var button3: JButton? = null
-    private var button4: JButton? = null
-    private var button8: JButton? = null
-    private var button6: JButton? = null
-    private var button7: JButton? = null
-    private var button1: JButton? =
-        null // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
+    private lateinit var label1: JLabel
+    private lateinit var scrollPane1: JScrollPane
+    private lateinit var table1: JTable
+    private lateinit var panel1: JPanel
+    private lateinit var button2: JButton
+    private lateinit var button3: JButton
+    private lateinit var button4: JButton
+    private lateinit var button8: JButton
+    private lateinit var button6: JButton
+    private lateinit var button7: JButton
+    private lateinit var button1: JButton
 
     init {
+        instance = this
         initComponents()
+    }
+
+    companion object{
+        lateinit var instance: StudentDataPanel
     }
 }

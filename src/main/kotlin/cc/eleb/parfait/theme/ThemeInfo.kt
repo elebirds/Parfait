@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cc.eleb.parfait.ui.theme
+package cc.eleb.parfait.theme
 
 import java.io.File
 
 /**
  * @author Karl Tauber
  */
-class IJThemeInfo(
+class ThemeInfo(
     val name: String, val resourceName: String?, val dark: Boolean?, val license: String?, val licenseFile: String?,
     val sourceCodeUrl: String?, val sourceCodePath: String?, val themeFile: File?, val lafClassName: String?
 )

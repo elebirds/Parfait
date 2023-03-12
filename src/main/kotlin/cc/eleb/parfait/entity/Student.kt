@@ -2,9 +2,13 @@ package cc.eleb.parfait.entity
 
 import cc.eleb.parfait.config.GPAConfig
 import cc.eleb.parfait.i18n.translateTo
+import cc.eleb.parfait.ui.panel.StudentDataPanel
 
 import com.alibaba.excel.EasyExcel
 import com.alibaba.excel.read.listener.PageReadListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 import java.io.File
 
@@ -36,6 +40,14 @@ data class Student(
                 0 -> "未知"
                 1 -> "男"
                 else -> "女"
+            }
+        }
+
+    val statusT: String
+        get() {
+            return when (status) {
+                0 -> "在籍"
+                else -> "毕业"
             }
         }
 
@@ -121,6 +133,10 @@ data class Student(
                             .replace(Regex("^\\d{4}"), "")
                     )
                     println(students[t.id]!!.profession.translateTo())
+                }
+                CoroutineScope(Dispatchers.IO).launch {
+
+                    StudentDataPanel.instance.reload()
                 }
             }).sheet().doRead()
         }
