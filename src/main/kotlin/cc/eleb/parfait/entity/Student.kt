@@ -14,20 +14,20 @@ import java.io.File
 
 data class Student(
     val id: Int,//学号
-    val name: String,//姓名
+    var name: String,//姓名
     var gender: Int,//性别,0未知,1男,2女
     var status: Int,//学籍状态,0在籍,1已毕业
     var grade: Int,//年级,于班级中拆分
     var school: String,//学院,于班级中拆分
     var profession: String,//专业,于班级中拆分
     var clazz: String,//班级
-    var scores: LinkedHashMap<String, Score>//成绩
+    var scores: ArrayList<Score>//成绩
 ) {
     val weightedMean: Double
         get() {
             var a = 0.0
             var b = 0.0
-            scores.forEach { (_, u) ->
+            scores.forEach { u ->
                 a += u.score * u.credit
                 b += u.credit
             }
@@ -55,7 +55,7 @@ data class Student(
         get() {
             var a = 0.0
             var b = 0
-            scores.forEach { (_, u) ->
+            scores.forEach { u ->
                 a += u.score
                 b += 1
             }
@@ -66,7 +66,7 @@ data class Student(
         get() {
             var a = 0.0
             var b = 0.0
-            scores.forEach { (_, u) ->
+            scores.forEach { u ->
                 if (u.gpa) {
                     a += GPAConfig.getGPA(u.score) * u.credit
                     b += u.credit
@@ -79,9 +79,7 @@ data class Student(
 
     fun addScoresFromFile(f: File) {
         EasyExcel.read(f, Score::class.java, PageReadListener<Score> {
-            it.forEach { t ->
-                scores[t.name] = t
-            }
+            it.forEach(scores::add)
         }).sheet().doRead()
     }
 
@@ -95,8 +93,8 @@ data class Student(
             "prof" to profession,
             "class" to clazz,
             "scores" to linkedMapOf<String, Any>().apply {
-                scores.forEach { (t, u) ->
-                    this[t] = u.toMap()
+                scores.forEach {
+                    this[it.name] = it.toMap()
                 }
             }
         )
@@ -126,17 +124,13 @@ data class Student(
                         },
                         status = if (t.status == "在籍") 0 else 1,
                         clazz = t.clazz,
-                        scores = linkedMapOf(),
+                        scores = arrayListOf(),
                         grade = t.clazz.substring(0, 4).toInt(),
                         school = t.school,
                         profession = t.clazz.replace(Regex("本科\\d班\$"), "").replace(Regex("^\\d{4}级"), "")
                             .replace(Regex("^\\d{4}"), "")
                     )
                     println(students[t.id]!!.profession.translateTo())
-                }
-                CoroutineScope(Dispatchers.IO).launch {
-
-                    StudentDataPanel.instance.reload()
                 }
             }).sheet().doRead()
         }

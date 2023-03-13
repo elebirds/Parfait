@@ -23,16 +23,16 @@ class StudentConfig {
                 school = d["school"].cast(),
                 profession = d["prof"].cast(),
                 clazz = d["class"].cast(),
-                scores = linkedMapOf<String, Score>().apply {
+                scores = arrayListOf<Score>().apply {
                     (d["scores"] as Map<*, *>).forEach { (sid, sd) ->
                         val sf = sd as Map<*, *>
-                        this[sid.cast()] = Score().apply {
+                        this.add(Score().apply {
                             name = sid.cast()
                             cType = sf["ct"].cast()
                             aType = sf["at"].cast()
                             credit = sf["credit"].cast()
                             score = sf["score"].cast()
-                        }
+                        })
                     }
                 }
             )

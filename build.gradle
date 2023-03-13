@@ -16,6 +16,12 @@ repositories {
     jcenter()
 }
 
+sourceSets {
+    main.java.srcDirs = ['src/main/kotlin']
+    main.kotlin.srcDirs = ['src/main/kotlin']
+    main.resources.srcDirs = ['src/main/resources']
+}
+
 ext {
     junitVersion = '5.8.2'
 }
@@ -29,7 +35,7 @@ tasks.withType(JavaCompile).configureEach {
 
 application {
     mainModule = 'cc.eleb.parfait'
-    mainClass = 'cc.eleb.parfait.HelloApplication'
+    mainClass = 'cc.eleb.parfait.ParfaitMain'
 }
 
 [compileKotlin, compileTestKotlin].forEach {

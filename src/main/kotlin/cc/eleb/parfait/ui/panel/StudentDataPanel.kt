@@ -6,8 +6,8 @@ package cc.eleb.parfait.ui.panel
 import cc.eleb.parfait.config.ParConfig
 import cc.eleb.parfait.entity.Student
 import cc.eleb.parfait.ui.dialog.ScoreDialog
+import cc.eleb.parfait.ui.table.StudentDataTable
 import net.miginfocom.swing.MigLayout
-import java.awt.Dimension
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.MouseAdapter
@@ -17,38 +17,15 @@ import java.util.*
 import javax.swing.*
 import javax.swing.filechooser.FileFilter
 import javax.swing.table.DefaultTableModel
-import javax.swing.table.TableColumnModel
 
 /**
  * @author hhmcn
  */
 class StudentDataPanel : JPanel() {
-    fun reload(){
-        (table1.model as DefaultTableModel).let {dtm->
-            dtm.dataVector.let { vt ->
-                vt.clear()
-                Student.students.forEach { (t, u) ->
-                    vt.add(Vector<Any?>().also {
-                        it.add(t)
-                        it.add(u.name)
-                        it.add(u.genderT)
-                        it.add(u.statusT)
-                        it.add(u.grade)
-                        it.add(u.school)
-                        it.add(u.profession)
-                        it.add(u.clazz)
-                        it.add(u.weightedMean)
-                    })
-                }
-            }
-            dtm.fireTableDataChanged()
-        }
-    }
-
     private fun addStudentMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         if(!ParConfig.checkInited())return
-        (table1.model as DefaultTableModel).addRow(arrayOf<Any?>(null, null, "未知"))
+        Student
         JOptionPane.showInputDialog(this, "测试", "", JOptionPane.INFORMATION_MESSAGE)
         JOptionPane.showMessageDialog(null, "呃呃", "就", JOptionPane.INFORMATION_MESSAGE)
     }
@@ -65,26 +42,27 @@ class StudentDataPanel : JPanel() {
         }
         for (selectedRow: Int in table1.selectedRows) {
             val slt = table1.selectedRow
-            Student.students.remove((table1.model as DefaultTableModel).getValueAt(slt,0))
-            (table1.model as DefaultTableModel).removeRow(slt)
+            Student.students.remove(table1.model.getValueAt(slt,0))
         }
+        table1.model.fireTableDataChanged()
     }
 
     private fun impoStudentMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         if(!ParConfig.checkInited())return
-        val fd = JFileChooser()
-        fd.fileFilter = object : FileFilter() {
-            override fun accept(f: File): Boolean {
-                return f.isDirectory || f.name.endsWith(".xlsx")
-            }
+        val fd = JFileChooser().apply {
+            this.fileFilter = object : FileFilter() {
+                override fun accept(f: File): Boolean {
+                    return f.isDirectory || f.name.endsWith(".xlsx")
+                }
 
-            override fun getDescription(): String {
-                return "Excel文件(.xlsx)"
+                override fun getDescription(): String {
+                    return "Excel文件(.xlsx)"
+                }
             }
+            this.isMultiSelectionEnabled = false
+            this.fileSelectionMode = JFileChooser.FILES_ONLY
         }
-        fd.isMultiSelectionEnabled = false
-        fd.fileSelectionMode = JFileChooser.FILES_ONLY
         val res: Int = fd.showOpenDialog(this)
         if (res == JFileChooser.APPROVE_OPTION) {
             if (!fd.selectedFile.toString().endsWith(".xlsx")){
@@ -97,9 +75,8 @@ class StudentDataPanel : JPanel() {
                 return
             }
             try {
-                //CoroutineScope(Dispatchers.IO).launch {
-                    Student.addStudentsFromFile(fd.selectedFile)
-                //}
+                Student.addStudentsFromFile(fd.selectedFile)
+                table1.model.fireTableDataChanged()
             } catch (e: Exception) {
                 JOptionPane.showMessageDialog(
                     this,
@@ -129,7 +106,8 @@ class StudentDataPanel : JPanel() {
             return
         }
         try {
-            val sf = ScoreDialog(table1.model.getValueAt(table1.selectedRow,0).toString().toInt())
+            this.isEnabled = false
+            val sf = ScoreDialog(this,table1.getValueAt(table1.selectedRow,0).toString().toInt())
             sf.isVisible = true
         }catch (e:Exception){
             JOptionPane.showMessageDialog(
@@ -144,7 +122,16 @@ class StudentDataPanel : JPanel() {
     private fun generateWordMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         if(!ParConfig.checkInited())return
-        //TODO:generateWord
+        if (table1.selectedRows.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                this, "您未选中任何学生，无法生成证明。", "错误",
+                JOptionPane.ERROR_MESSAGE
+            )
+            return
+        }
+        if (table1.selectedRows.size==1) {
+            return
+        }
     }
 
     private fun impoStudentFromStringMouseClicked(e: MouseEvent) {
@@ -163,146 +150,107 @@ class StudentDataPanel : JPanel() {
             )
             return
         }
-        val a: StringBuilder = StringBuilder()
+        var res = ""
         for (selectedRow: Int in table1.selectedRows) {
-            val si: Any =
-                (table1.model as DefaultTableModel).dataVector.elementAt(table1.selectedRow).elementAt(0) ?: continue
+            val si: Any = table1.model.getValueAt(selectedRow,0) ?: continue
             val sid: Int = si as Int
-            a.append(si).append("sisis").append("\n")
+            val st = Student.students[sid]!!
+            res += "姓名：${st.name}，性别:${st.genderT}，学号:${sid}，系${st.school}${st.grade}级${st.profession}专业的学生。" +
+                    "截至目前，该生所修读的所有课程的加权平均分为${st.weightedMean}\n"
         }
         if (JOptionPane.showConfirmDialog(
-                this, a.toString(), "是否复制到剪贴板", JOptionPane.OK_CANCEL_OPTION,
+                this, res, "是否复制到剪贴板", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.INFORMATION_MESSAGE
-            ) == JOptionPane.OK_OPTION
-        ) {
-            Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(a.toString()), null)
+            ) == JOptionPane.OK_OPTION) {
+            Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(res), null)
         }
-        // TODO add your code here
     }
 
     private fun initComponents() {
-        label1 = JLabel()
-        scrollPane1 = JScrollPane()
-        table1 = JTable()
-        panel1 = JPanel()
-        button2 = JButton()
-        button3 = JButton()
-        button4 = JButton()
-        button8 = JButton()
-        button6 = JButton()
-        button7 = JButton()
-        button1 = JButton()
-
-        layout = MigLayout(
+        this.layout = MigLayout(
             "hidemode 3",  // columns
             "[fill]" + "[fill]",  // rows
             "[]" + "[]" + "[]"
         )
-        add(label1, "cell 0 0")
-
-        table1.model = object : DefaultTableModel(
-            arrayOf(),
-            arrayOf("学号", "姓名", "性别", "学籍", "年级", "学院", "专业", "班级", "加权平均分")
-        ) {
-            var columnTypes: Array<Class<*>> = arrayOf(
-                Int::class.java, String::class.java, String::class.java, String::class.java,
-                Int::class.java, String::class.java, String::class.java, String::class.java, Double::class.java
-            )
-            var columnEditable: BooleanArray =
-                booleanArrayOf(false, true, true, true, true, true, true, true, false)
-
-            override fun getColumnClass(columnIndex: Int): Class<*> {
-                return columnTypes[columnIndex]
-            }
-
-            override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
-                return columnEditable[columnIndex]
-            }
-        }
-        val cm: TableColumnModel = table1.columnModel
-        cm.getColumn(2).cellEditor = DefaultCellEditor(JComboBox(DefaultComboBoxModel(arrayOf("未知", "男", "女"))))
-        cm.getColumn(3).cellEditor = DefaultCellEditor(JComboBox(DefaultComboBoxModel(arrayOf("在籍", "毕业"))))
-        table1.preferredScrollableViewportSize = Dimension(600, 400)
-        table1.showHorizontalLines = false
-        table1.showVerticalLines = false
+        this.add(label1, "cell 0 0")
         scrollPane1.setViewportView(table1)
-        add(scrollPane1, "cell 0 0,dock center")
+        this.add(scrollPane1, "cell 0 0,dock center")
+        panel1.add(button2, "cell 0 0")
+        panel1.add(button3, "cell 0 1")
+        panel1.add(button4, "cell 0 2")
+        panel1.add(button8, "cell 0 3")
+        panel1.add(button6, "cell 0 4")
+        panel1.add(button7, "cell 0 5")
+        panel1.add(button1, "cell 0 6")
+        this.add(panel1, "cell 1 0")
+    }
 
-        panel1.layout = MigLayout(
+    private val label1 =  JLabel()
+    private val scrollPane1 = JScrollPane()
+    val table1 =  StudentDataTable()
+    private val panel1 =  JPanel().apply {
+        this.layout = MigLayout(
             "hidemode 3",  // columns
             "[fill]",  // rows
             "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]" + "[]"
         )
-
-        button2.text = "添加学生"
-        button2.addMouseListener(object : MouseAdapter() {
+    }
+    private val button2 = JButton().apply {
+        this.text = "添加学生"
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 addStudentMouseClicked(e)
             }
         })
-        panel1.add(button2, "cell 0 0")
-
-        button3.text = "编辑成绩"
-        button3.addMouseListener(object : MouseAdapter() {
+    }
+    private val button3 = JButton().apply {
+        this.text = "编辑成绩"
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 editScoreMouseClicked(e)
             }
         })
-        panel1.add(button3, "cell 0 1")
-
-        button4.text = "删除学生"
-        button4.addMouseListener(object : MouseAdapter() {
+    }
+    private val button4 = JButton().apply {
+        this.text = "删除学生"
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 deleteStudentMouseClicked(e)
             }
         })
-        panel1.add(button4, "cell 0 2")
-
-        button8.text = "从文本导入"
-        button8.addMouseListener(object : MouseAdapter() {
+    }
+    private val button8 = JButton().apply {
+        this.text = "从文本导入"
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 impoStudentFromStringMouseClicked(e)
             }
         })
-        panel1.add(button8, "cell 0 3")
-
-        button6.text = "从表格导入"
-        button6.addMouseListener(object : MouseAdapter() {
+    }
+    private val button6 = JButton().apply {
+        this.text = "从表格导入"
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 impoStudentMouseClicked(e)
             }
         })
-        panel1.add(button6, "cell 0 4")
-
-        button7.text = "导出为文本"
-        button7.addMouseListener(object : MouseAdapter() {
+    }
+    private val button7 = JButton().apply {
+        this.text = "导出为文本"
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 expoToStringMouseClicked(e)
             }
         })
-        panel1.add(button7, "cell 0 5")
-
-        button1.text = "生成证明"
-        button1.addMouseListener(object : MouseAdapter() {
+    }
+    private val button1 = JButton().apply {
+        this.text = "生成证明"
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 generateWordMouseClicked(e)
             }
         })
-        panel1.add(button1, "cell 0 6")
-        add(panel1, "cell 1 0")
     }
-
-    private lateinit var label1: JLabel
-    private lateinit var scrollPane1: JScrollPane
-    private lateinit var table1: JTable
-    private lateinit var panel1: JPanel
-    private lateinit var button2: JButton
-    private lateinit var button3: JButton
-    private lateinit var button4: JButton
-    private lateinit var button8: JButton
-    private lateinit var button6: JButton
-    private lateinit var button7: JButton
-    private lateinit var button1: JButton
 
     init {
         instance = this

@@ -68,7 +68,7 @@ class ParfaitFrame : JFrame() {
                 ParConfig.instance!!.file!!.name + " - Parfait Demo"
             }
         }else "Parfait Demo"
-        StudentDataPanel.instance.reload()
+        StudentDataPanel.instance.table1.model.fireTableDataChanged()
     }
 
     private fun newActionPerformed() {

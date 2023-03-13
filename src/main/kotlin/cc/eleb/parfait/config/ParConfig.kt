@@ -1,5 +1,9 @@
 package cc.eleb.parfait.config
 
+import cc.eleb.parfait.entity.Certificate
+import cc.eleb.parfait.entity.Student
+import cc.eleb.parfait.i18n.Language
+import cc.eleb.parfait.ui.panel.StudentDataPanel
 import cc.eleb.parfait.utils.file.ZipUtils
 import java.io.File
 import java.io.FileNotFoundException
@@ -60,6 +64,11 @@ class ParConfig(var file: File?) {
         newed = false
         inited = false
         instance = null
+        Student.students.clear()
+        GPAConfig.ranks.clear()
+        Language.langs.clear()
+        Certificate.ces.clear()
+        StudentDataPanel.instance.table1.model.fireTableDataChanged()
     }
 
     companion object{
