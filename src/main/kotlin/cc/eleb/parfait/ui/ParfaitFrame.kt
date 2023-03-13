@@ -7,17 +7,15 @@ import cc.eleb.parfait.theme.ColorUtils
 import cc.eleb.parfait.theme.FontUtils
 import cc.eleb.parfait.ui.panel.GPAPanel
 import cc.eleb.parfait.ui.panel.I18nPanel
-import cc.eleb.parfait.ui.panel.StudentDataPanel
 import cc.eleb.parfait.ui.panel.WelcomePanel
 import cc.eleb.parfait.theme.ThemeUtils
+import cc.eleb.parfait.ui.panel.StudentDataPanel
 import com.formdev.flatlaf.*
 import com.formdev.flatlaf.extras.FlatDesktop
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
 import com.formdev.flatlaf.extras.components.FlatButton
-import com.formdev.flatlaf.icons.FlatAbstractIcon
 import com.formdev.flatlaf.ui.JBRCustomDecorations
-import com.formdev.flatlaf.util.ColorFunctions
 import com.formdev.flatlaf.util.SystemInfo
 import net.miginfocom.layout.ConstraintParser
 import net.miginfocom.layout.LC
@@ -33,7 +31,6 @@ import java.io.IOException
 import java.net.URI
 import java.net.URISyntaxException
 import java.time.Year
-import java.util.*
 import javax.swing.*
 import javax.swing.filechooser.FileFilter
 
@@ -146,8 +143,40 @@ class ParfaitFrame : JFrame() {
     }
 
     private fun openActionPerformed() {
-        val chooser = JFileChooser()
-        chooser.showOpenDialog(this)
+        checkToSave()
+        val fd = JFileChooser()
+        fd.fileFilter = object : FileFilter() {
+            override fun accept(f: File): Boolean {
+                return f.isDirectory || f.name.endsWith(".par")
+            }
+
+            override fun getDescription(): String {
+                return "Parfait文件(.par)"
+            }
+        }
+        fd.isMultiSelectionEnabled = false
+        fd.fileSelectionMode = JFileChooser.FILES_ONLY
+        if (fd.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                if(fd.selectedFile.name.endsWith(".par")){
+                    ParConfig(fd.selectedFile)
+                    this.reloadAllFrame()
+                }
+                else JOptionPane.showMessageDialog(
+                    this,
+                    "请选择一个Parfait文件(.par)。",
+                    "打开失败",
+                    JOptionPane.ERROR_MESSAGE
+                )
+            } catch (e: Exception) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "未知错误。\n${e.stackTraceToString()}",
+                    "打开失败",
+                    JOptionPane.ERROR_MESSAGE
+                )
+            }
+        }
     }
 
     private fun saveAsActionPerformed() {

@@ -5,8 +5,7 @@ package cc.eleb.parfait.ui.panel
 
 import cc.eleb.parfait.config.ParConfig
 import cc.eleb.parfait.entity.Student
-import cc.eleb.parfait.ui.frame.ScoreFrame
-import kotlinx.coroutines.*
+import cc.eleb.parfait.ui.dialog.ScoreDialog
 import net.miginfocom.swing.MigLayout
 import java.awt.Dimension
 import java.awt.Toolkit
@@ -57,8 +56,17 @@ class StudentDataPanel : JPanel() {
     private fun deleteStudentMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         if(!ParConfig.checkInited())return
+        if (table1.selectedRows.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                this, "您未选中任何学生，无法进行删除操作。", "错误",
+                JOptionPane.ERROR_MESSAGE
+            )
+            return
+        }
         for (selectedRow: Int in table1.selectedRows) {
-            (table1.model as DefaultTableModel).removeRow(table1.selectedRow)
+            val slt = table1.selectedRow
+            Student.students.remove((table1.model as DefaultTableModel).getValueAt(slt,0))
+            (table1.model as DefaultTableModel).removeRow(slt)
         }
     }
 
@@ -106,8 +114,31 @@ class StudentDataPanel : JPanel() {
     private fun editScoreMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         if(!ParConfig.checkInited())return
-        val sf: ScoreFrame = ScoreFrame()
-        sf.isVisible = true
+        if (table1.selectedRows.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                this, "您未选中任何学生，无法导出数据为文本。", "错误",
+                JOptionPane.ERROR_MESSAGE
+            )
+            return
+        }
+        if (table1.selectedRows.size!=1) {
+            JOptionPane.showMessageDialog(
+                this, "您只能选择一个学生进行成绩编辑。", "错误",
+                JOptionPane.ERROR_MESSAGE
+            )
+            return
+        }
+        try {
+            val sf = ScoreDialog(table1.model.getValueAt(table1.selectedRow,0).toString().toInt())
+            sf.isVisible = true
+        }catch (e:Exception){
+            JOptionPane.showMessageDialog(
+                this,
+                "发生错误。\n${e.stackTraceToString()}",
+                "打开失败",
+                JOptionPane.ERROR_MESSAGE
+            )
+        }
     }
 
     private fun generateWordMouseClicked(e: MouseEvent) {
