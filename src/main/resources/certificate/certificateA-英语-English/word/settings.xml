@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:settings xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
             xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
             xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:v="urn:schemas-microsoft-com:vml"
+            xmlns:w10="urn:schemas-microsoft-com:office:word"
             xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
             xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
             xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"
+            xmlns:w16cex="http://schemas.microsoft.com/office/word/2018/wordml/cex"
+            xmlns:w16cid="http://schemas.microsoft.com/office/word/2016/wordml/cid"
+            xmlns:w16="http://schemas.microsoft.com/office/word/2018/wordml"
+            xmlns:w16sdtdh="http://schemas.microsoft.com/office/word/2020/wordml/sdtdatahash"
+            xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex"
+            xmlns:sl="http://schemas.openxmlformats.org/schemaLibrary/2006/main"
             mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh">
-    <w:zoom w:percent="130"/>
+    <w:zoom w:percent="100"/>
     <w:bordersDoNotSurroundHeader/>
     <w:bordersDoNotSurroundFooter/>
     <w:proofState w:spelling="clean" w:grammar="clean"/>
@@ -15,17 +23,6 @@
     <w:displayHorizontalDrawingGridEvery w:val="0"/>
     <w:displayVerticalDrawingGridEvery w:val="2"/>
     <w:characterSpacingControl w:val="compressPunctuation"/>
-    <w:hdrShapeDefaults>
-        <o:shapedefaults v:ext="edit" spidmax="2050"/>
-    </w:hdrShapeDefaults>
-    <w:footnotePr>
-        <w:footnote w:id="-1"/>
-        <w:footnote w:id="0"/>
-    </w:footnotePr>
-    <w:endnotePr>
-        <w:endnote w:id="-1"/>
-        <w:endnote w:id="0"/>
-    </w:endnotePr>
     <w:compat>
         <w:spaceForUL/>
         <w:balanceSingleByteDoubleByteWidth/>
@@ -42,24 +39,15 @@
         <w:compatSetting w:name="differentiateMultirowTableHeaders" w:uri="http://schemas.microsoft.com/office/word"
                          w:val="1"/>
         <w:compatSetting w:name="useWord2013TrackBottomHyphenation" w:uri="http://schemas.microsoft.com/office/word"
-                         w:val="1"/>
+                         w:val="0"/>
     </w:compat>
     <w:rsids>
-        <w:rsidRoot w:val="00085902"/>
-        <w:rsid w:val="00085902"/>
-        <w:rsid w:val="001D35E8"/>
-        <w:rsid w:val="002E7825"/>
-        <w:rsid w:val="0041722B"/>
-        <w:rsid w:val="004854DE"/>
-        <w:rsid w:val="004C7019"/>
-        <w:rsid w:val="004D25CB"/>
-        <w:rsid w:val="004F230B"/>
-        <w:rsid w:val="00890D10"/>
-        <w:rsid w:val="008C7C91"/>
-        <w:rsid w:val="008F65D8"/>
-        <w:rsid w:val="00907E73"/>
-        <w:rsid w:val="00EC7831"/>
-        <w:rsid w:val="00F722AD"/>
+        <w:rsidRoot w:val="001A7C5A"/>
+        <w:rsid w:val="001A7C5A"/>
+        <w:rsid w:val="005E60EC"/>
+        <w:rsid w:val="00620E77"/>
+        <w:rsid w:val="007F50EB"/>
+        <w:rsid w:val="00B956B4"/>
     </w:rsids>
     <m:mathPr>
         <m:mathFont m:val="Cambria Math"/>
@@ -79,14 +67,14 @@
                         w:accent3="accent3" w:accent4="accent4" w:accent5="accent5" w:accent6="accent6"
                         w:hyperlink="hyperlink" w:followedHyperlink="followedHyperlink"/>
     <w:shapeDefaults>
-        <o:shapedefaults v:ext="edit" spidmax="2050"/>
+        <o:shapedefaults v:ext="edit" spidmax="1026"/>
         <o:shapelayout v:ext="edit">
-            <o:idmap v:ext="edit" data="2"/>
+            <o:idmap v:ext="edit" data="1"/>
         </o:shapelayout>
     </w:shapeDefaults>
     <w:decimalSymbol w:val="."/>
     <w:listSeparator w:val=","/>
-    <w14:docId w14:val="5377511D"/>
+    <w14:docId w14:val="4721EB35"/>
     <w15:chartTrackingRefBased/>
-    <w15:docId w15:val="{6F096DB9-6296-4FB0-82ED-DDDC3A38EEA3}"/>
+    <w15:docId w15:val="{FB548F9B-5AF8-4FA4-80C9-648D541E1FA2}"/>
 </w:settings>
