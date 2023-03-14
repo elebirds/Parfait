@@ -69,6 +69,7 @@ class ParfaitFrame : JFrame() {
             }
         }else "Parfait Demo"
         StudentDataPanel.instance.table1.model.fireTableDataChanged()
+        GPAPanel.instance.reload()
     }
 
     private fun newActionPerformed() {

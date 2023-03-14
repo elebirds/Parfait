@@ -25,6 +25,7 @@ data class Student(
 ) {
     val weightedMean: Double
         get() {
+            if(scores.isEmpty()) return -1.0
             var a = 0.0
             var b = 0.0
             scores.forEach { u ->
@@ -53,6 +54,7 @@ data class Student(
 
     val simpleMean: Double
         get() {
+            if(scores.isEmpty()) return -1.0
             var a = 0.0
             var b = 0
             scores.forEach { u ->
@@ -64,6 +66,7 @@ data class Student(
 
     val gpa: Double
         get() {
+            if(scores.isEmpty()) return -1.0
             var a = 0.0
             var b = 0.0
             scores.forEach { u ->

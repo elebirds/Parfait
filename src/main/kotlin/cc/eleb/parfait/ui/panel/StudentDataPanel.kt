@@ -7,6 +7,7 @@ import cc.eleb.parfait.config.ParConfig
 import cc.eleb.parfait.entity.Certificate
 import cc.eleb.parfait.entity.Student
 import cc.eleb.parfait.ui.dialog.ScoreDialog
+import cc.eleb.parfait.ui.dialog.StudentAddDialog
 import cc.eleb.parfait.ui.table.StudentDataTable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,9 +30,7 @@ class StudentDataPanel : JPanel() {
     private fun addStudentMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         if(!ParConfig.checkInited())return
-        Student
-        JOptionPane.showInputDialog(this, "测试", "", JOptionPane.INFORMATION_MESSAGE)
-        JOptionPane.showMessageDialog(null, "呃呃", "就", JOptionPane.INFORMATION_MESSAGE)
+        StudentAddDialog(this).isVisible = true
     }
 
     private fun deleteStudentMouseClicked(e: MouseEvent) {
@@ -46,7 +45,7 @@ class StudentDataPanel : JPanel() {
         }
         for (selectedRow: Int in table1.selectedRows) {
             val slt = table1.selectedRow
-            Student.students.remove(table1.model.getValueAt(slt,0))
+            Student.students.remove(table1.model.getValueAt(table1.convertRowIndexToModel(slt),0))
         }
         table1.model.fireTableDataChanged()
     }
@@ -110,8 +109,7 @@ class StudentDataPanel : JPanel() {
             return
         }
         try {
-            this.isEnabled = false
-            val sf = ScoreDialog(this,table1.getValueAt(table1.selectedRow,0).toString().toInt())
+            val sf = ScoreDialog(this,table1.getValueAt(table1.convertRowIndexToModel(table1.selectedRow),0).toString().toInt())
             sf.isVisible = true
         }catch (e:Exception){
             JOptionPane.showMessageDialog(
@@ -142,7 +140,7 @@ class StudentDataPanel : JPanel() {
             if (res == JFileChooser.APPROVE_OPTION) {
                 CoroutineScope(Dispatchers.IO).launch {
                     for (selectedRow: Int in table1.selectedRows) {
-                        val student = Student.students[table1.model.getValueAt(selectedRow,0)]!!
+                        val student = Student.students[table1.model.getValueAt(table1.convertRowIndexToModel(selectedRow),0)]!!
                         Certificate.generate(fd.selectedFile,student)
                     }
                 }
@@ -166,7 +164,7 @@ class StudentDataPanel : JPanel() {
             if (res == JFileChooser.APPROVE_OPTION) {
                 CoroutineScope(Dispatchers.IO).launch {
                     for (selectedRow: Int in table1.selectedRows) {
-                        val student = Student.students[table1.model.getValueAt(selectedRow,0)]!!
+                        val student = Student.students[table1.model.getValueAt(table1.convertRowIndexToModel(selectedRow),0)]!!
                         Certificate.generate(File(fd.selectedFile.absolutePath+"/${student.id}-${student.name}-证明.docx"),student)
                     }
                 }
@@ -192,7 +190,7 @@ class StudentDataPanel : JPanel() {
         }
         var res = ""
         for (selectedRow: Int in table1.selectedRows) {
-            val si: Any = table1.model.getValueAt(selectedRow,0) ?: continue
+            val si: Any = table1.model.getValueAt(table1.convertRowIndexToModel(selectedRow),0) ?: continue
             val sid: Int = si as Int
             val st = Student.students[sid]!!
             res += "姓名：${st.name}，性别:${st.genderT}，学号:${sid}，系${st.school}${st.grade}级${st.profession}专业的学生。" +
@@ -213,6 +211,7 @@ class StudentDataPanel : JPanel() {
             "[]" + "[]" + "[]"
         )
         this.add(label1, "cell 0 0")
+        table1.autoCreateRowSorter = true
         scrollPane1.setViewportView(table1)
         this.add(scrollPane1, "cell 0 0,dock center")
         panel1.add(button2, "cell 0 0")
