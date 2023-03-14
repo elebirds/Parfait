@@ -2,6 +2,7 @@ package cc.eleb.parfait.entity
 
 import cc.eleb.parfait.PARFAIT_FULL_NAME
 import cc.eleb.parfait.config.CertificateConfig
+import cc.eleb.parfait.i18n.Language
 import cc.eleb.parfait.i18n.translateTo
 import cc.eleb.parfait.utils.DateUtils
 import cc.eleb.parfait.utils.HanziUtils
@@ -40,6 +41,7 @@ class Certificate(val lang: String, val name: String, val data: HashMap<String, 
         })
     }
 
+
     companion object {
         val ces: LinkedHashMap<String, Certificate> = linkedMapOf()
         val nf: NumberFormat = NumberFormat.getInstance().apply {
@@ -50,5 +52,11 @@ class Certificate(val lang: String, val name: String, val data: HashMap<String, 
         const val REPLACE_FILE = "/word/document.xml"
 
         const val CORE_FILE = "/docProps/core.xml"
+
+        fun generate(outFile: File, student:Student){
+            val cer = if(ces.containsKey("certificate${if (student.status==0)"A" else "B"}-${Language.nowLanguage}"))ces["certificate${if (student.status==0)"A" else "B"}-${Language.nowLanguage}"]!!
+            else ces["certificate${if (student.status==0)"A" else "B"}-英语-English"]!!
+            cer.replaceAndGenerate(outFile,student)
+        }
     }
 }

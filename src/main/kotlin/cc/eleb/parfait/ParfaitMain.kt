@@ -4,6 +4,7 @@ import cc.eleb.parfait.config.ParConfig
 import cc.eleb.parfait.ui.DemoPrefs.init
 import cc.eleb.parfait.ui.DemoPrefs.setupLaf
 import cc.eleb.parfait.ui.ParfaitFrame
+import cc.eleb.parfait.utils.Charset
 import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.extras.FlatInspector
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
@@ -12,18 +13,23 @@ import com.formdev.flatlaf.fonts.jetbrains_mono.FlatJetBrainsMonoFont
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont
 import com.formdev.flatlaf.fonts.roboto_mono.FlatRobotoMonoFont
 import com.formdev.flatlaf.util.SystemInfo
+import org.apache.commons.io.FileUtils
 import java.awt.Dimension
+import java.io.File
 import java.lang.Boolean
 import javax.swing.JDialog
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
+import kotlin.random.Random
 
 const val PREFS_ROOT_PATH = "/flatlaf-demo"
 const val KEY_TAB = "tab"
 
-const val PARFAIT_FULL_NAME = ""
+const val PARFAIT_FULL_NAME = "Parfait"
 
 var screenshotsMode = Boolean.parseBoolean(System.getProperty("flatlaf.demo.screenshotsMode"))
+
+data class Person(val department:String,val name:String,val gender:String,val id:String,val grade:String,val cit:String,val prof:String,val telep:String,val wechat:String){}
 
 fun main() {
     // macOS  (see https://www.formdev.com/flatlaf/macos/)
@@ -89,8 +95,6 @@ fun main() {
         // install inspectors
         FlatInspector.install("ctrl shift alt X")
         FlatUIDefaultsInspector.install("ctrl shift alt Y")
-
-        // create frame
         val frame = ParfaitFrame()
         if (screenshotsMode) {
             frame.preferredSize = if (SystemInfo.isJava_9_orLater) Dimension(830, 440) else Dimension(1660, 880)
@@ -101,4 +105,5 @@ fun main() {
         frame.setLocationRelativeTo(null)
         frame.isVisible = true
     }
+
 }

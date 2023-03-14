@@ -6,7 +6,7 @@
             xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
             xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"
             mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh">
-    <w:zoom w:percent="100"/>
+    <w:zoom w:percent="130"/>
     <w:bordersDoNotSurroundHeader/>
     <w:bordersDoNotSurroundFooter/>
     <w:proofState w:spelling="clean" w:grammar="clean"/>
@@ -47,11 +47,15 @@
     <w:rsids>
         <w:rsidRoot w:val="00085902"/>
         <w:rsid w:val="00085902"/>
+        <w:rsid w:val="001D35E8"/>
         <w:rsid w:val="002E7825"/>
         <w:rsid w:val="0041722B"/>
+        <w:rsid w:val="004854DE"/>
         <w:rsid w:val="004C7019"/>
         <w:rsid w:val="004D25CB"/>
+        <w:rsid w:val="004F230B"/>
         <w:rsid w:val="00890D10"/>
+        <w:rsid w:val="008C7C91"/>
         <w:rsid w:val="008F65D8"/>
         <w:rsid w:val="00907E73"/>
         <w:rsid w:val="00EC7831"/>

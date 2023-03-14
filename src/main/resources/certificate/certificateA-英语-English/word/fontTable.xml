@@ -29,6 +29,7 @@
                w:csb1="00000000"/>
     </w:font>
     <w:font w:name="华文楷体">
+        <w:altName w:val="STKaiti"/>
         <w:panose1 w:val="02010600040101010101"/>
         <w:charset w:val="86"/>
         <w:family w:val="auto"/>
@@ -45,6 +46,7 @@
                w:csb1="00000000"/>
     </w:font>
     <w:font w:name="等线 Light">
+        <w:altName w:val="DengXian Light"/>
         <w:panose1 w:val="02010600030101010101"/>
         <w:charset w:val="86"/>
         <w:family w:val="auto"/>

@@ -4,9 +4,13 @@
 package cc.eleb.parfait.ui.panel
 
 import cc.eleb.parfait.config.ParConfig
+import cc.eleb.parfait.entity.Certificate
 import cc.eleb.parfait.entity.Student
 import cc.eleb.parfait.ui.dialog.ScoreDialog
 import cc.eleb.parfait.ui.table.StudentDataTable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import net.miginfocom.swing.MigLayout
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
@@ -130,7 +134,43 @@ class StudentDataPanel : JPanel() {
             return
         }
         if (table1.selectedRows.size==1) {
-            return
+            val fd = JFileChooser().apply {
+                this.isMultiSelectionEnabled = false
+                this.fileSelectionMode = JFileChooser.FILES_ONLY
+            }
+            val res: Int = fd.showSaveDialog(this)
+            if (res == JFileChooser.APPROVE_OPTION) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    for (selectedRow: Int in table1.selectedRows) {
+                        val student = Student.students[table1.model.getValueAt(selectedRow,0)]!!
+                        Certificate.generate(fd.selectedFile,student)
+                    }
+                }
+            }
+        }else {
+            //多人
+            val fd = JFileChooser().apply {
+                this.fileFilter = object : FileFilter() {
+                    override fun accept(f: File): Boolean {
+                        return f.isDirectory
+                    }
+
+                    override fun getDescription(): String {
+                        return "文件夹"
+                    }
+                }
+                this.isMultiSelectionEnabled = false
+                this.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+            }
+            val res: Int = fd.showSaveDialog(this)
+            if (res == JFileChooser.APPROVE_OPTION) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    for (selectedRow: Int in table1.selectedRows) {
+                        val student = Student.students[table1.model.getValueAt(selectedRow,0)]!!
+                        Certificate.generate(File(fd.selectedFile.absolutePath+"/${student.id}-${student.name}-证明.docx"),student)
+                    }
+                }
+            }
         }
     }
 

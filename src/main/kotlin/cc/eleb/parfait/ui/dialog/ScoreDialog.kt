@@ -41,6 +41,7 @@ class ScoreDialog(val sdp:StudentDataPanel,sid:Int) : JDialog() {
 
             override fun windowClosed(e: WindowEvent) {
                 sdp.table1.model.fireTableDataChanged()
+                sdp.repaint()
             }
 
             override fun windowIconified(e: WindowEvent) {

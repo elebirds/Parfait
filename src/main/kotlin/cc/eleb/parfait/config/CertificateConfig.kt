@@ -65,6 +65,8 @@ class CertificateConfig {
             "/docProps/core.xml",
             "/docProps/custom.xml",
             "/word/document.xml",
+            "/word/endnotes.xml",
+            "/word/footnotes.xml",
             "/word/fontTable.xml",
             "/word/settings.xml",
             "/word/styles.xml",

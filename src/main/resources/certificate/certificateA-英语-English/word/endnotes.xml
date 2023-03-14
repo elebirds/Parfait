@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:endnotes
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+        xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+        mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh wp14">
+    <w:endnote w:type="separator" w:id="-1">
+        <w:p w14:paraId="7F0B1291" w14:textId="77777777" w:rsidR="004F230B" w:rsidRDefault="004F230B">
+            <w:r>
+                <w:separator/>
+            </w:r>
+        </w:p>
+    </w:endnote>
+    <w:endnote w:type="continuationSeparator" w:id="0">
+        <w:p w14:paraId="7A5D26B8" w14:textId="77777777" w:rsidR="004F230B" w:rsidRDefault="004F230B">
+            <w:r>
+                <w:continuationSeparator/>
+            </w:r>
+        </w:p>
+    </w:endnote>
+</w:endnotes>

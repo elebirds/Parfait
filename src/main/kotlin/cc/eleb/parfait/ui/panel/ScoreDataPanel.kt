@@ -15,8 +15,6 @@ import javax.swing.filechooser.FileFilter
  * @author hhmcn
  */
 class ScoreDataPanel(private val student:Student) : JPanel() {
-    private var edited = false
-
     private fun addScoreMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         student.scores.add(Score().apply {
