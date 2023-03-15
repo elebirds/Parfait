@@ -10,10 +10,14 @@ import org.apache.commons.io.IOUtils
 class CertificateConfig {
     val default = linkedMapOf(
         "a" to linkedMapOf(//在校
-            "英语-English" to "certificateA-英语-English"
+            "英语-English" to "certificateA-英语-English",
+            "日语-にほんご" to "certificateA-日语-にほんご",
+            "法语-Français" to "certificateA-法语-Français"
         ),
         "b" to linkedMapOf(//毕业
-            "英语-English" to "certificateB-英语-English"
+            "英语-English" to "certificateB-英语-English",
+            "日语-にほんご" to "certificateB-日语-にほんご",
+            "法语-Français" to "certificateB-法语-Français"
         )
     )
 

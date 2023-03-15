@@ -3,6 +3,7 @@ package cc.eleb.parfait.ui
 
 import cc.eleb.parfait.KEY_TAB
 import cc.eleb.parfait.config.ParConfig
+import cc.eleb.parfait.i18n.Language
 import cc.eleb.parfait.theme.ColorUtils
 import cc.eleb.parfait.theme.FontUtils
 import cc.eleb.parfait.ui.panel.GPAPanel
@@ -13,6 +14,7 @@ import cc.eleb.parfait.ui.panel.StudentDataPanel
 import com.formdev.flatlaf.*
 import com.formdev.flatlaf.extras.FlatDesktop
 import com.formdev.flatlaf.extras.FlatSVGIcon
+import com.formdev.flatlaf.extras.FlatSVGUtils
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
 import com.formdev.flatlaf.extras.components.FlatButton
 import com.formdev.flatlaf.ui.JBRCustomDecorations
@@ -33,6 +35,7 @@ import java.net.URISyntaxException
 import java.time.Year
 import javax.swing.*
 import javax.swing.filechooser.FileFilter
+import kotlin.system.exitProcess
 
 class ParfaitFrame : JFrame() {
     override fun dispose() {
@@ -40,16 +43,26 @@ class ParfaitFrame : JFrame() {
         FlatUIDefaultsInspector.hide()
     }
 
-    private fun showHints() {
-        val fontMenuHint: HintManager.Hint = HintManager.Hint(
-            "Use 'Font' menu to increase/decrease font size or try different fonts.",
-            FontUtils.fontMenu, SwingConstants.BOTTOM, "hint.fontMenu", null
-        )
+    private fun showHints(flag:Boolean) {
+        if(flag&&DemoPrefs.state.getBoolean("InitHitss",false))return
+        DemoPrefs.state.putBoolean("InitHitss",true)
         val optionsMenuHint: HintManager.Hint = HintManager.Hint(
-            "Use 'Options' menu to try out various FlatLaf options.", optionsMenu,
-            SwingConstants.BOTTOM, "hint.optionsMenu", fontMenuHint
+            "使用“选项”菜单来切换偏好样式或者再次显示提示", optionsMenu,
+            SwingConstants.BOTTOM, "hint.optionsMenu", null
         )
-        HintManager.showHint(optionsMenuHint)
+        val fontMenuHint: HintManager.Hint = HintManager.Hint(
+            "使用“字体”菜单来改变字体大小或者切换字体",
+            FontUtils.fontMenu, SwingConstants.BOTTOM, "hint.fontMenu", optionsMenuHint
+        )
+        val themeMenuHint: HintManager.Hint = HintManager.Hint(
+            "使用“主题”菜单来改变界面主题",
+            ThemeUtils.themeMenu, SwingConstants.BOTTOM, "hint.themeMenu", fontMenuHint
+        )
+        val fileMenuHint: HintManager.Hint = HintManager.Hint(
+            "使用“文件”菜单来新建、打开、保存、关闭一个Parfait文件(.par)以开始学生管理",
+            fileMenu, SwingConstants.BOTTOM, "hint.themeMenu", themeMenuHint
+        )
+        HintManager.showHint(fileMenuHint)
     }
 
     private fun clearHints() {
@@ -68,8 +81,10 @@ class ParfaitFrame : JFrame() {
                 ParConfig.instance!!.file!!.name + " - Parfait Demo"
             }
         }else "Parfait Demo"
+        Language.nowLanguage = "英语-English"
         StudentDataPanel.instance.table1.model.fireTableDataChanged()
         GPAPanel.instance.reload()
+        I18nPanel.instance.reload()
     }
 
     private fun newActionPerformed() {
@@ -139,7 +154,8 @@ class ParfaitFrame : JFrame() {
     }
 
     private fun close(){
-        ParConfig.instance?.close()
+        if(ParConfig.instance==null)return
+        ParConfig.instance!!.close()
         reloadAllFrame()
     }
 
@@ -190,7 +206,8 @@ class ParfaitFrame : JFrame() {
     }
 
     private fun exitActionPerformed() {
-        dispose()
+        this.dispose()
+        exitProcess(0)
     }
 
     private fun aboutActionPerformed() {
@@ -225,25 +242,6 @@ class ParfaitFrame : JFrame() {
         )
     }
 
-    private fun showPreferences() {
-        JOptionPane.showMessageDialog(
-            this,
-            "Sorry, but FlatLaf Demo does not have preferences. :(\n" + "This dialog is here to demonstrate usage of class 'FlatDesktop' on macOS.",
-            "Preferences", JOptionPane.PLAIN_MESSAGE
-        )
-    }
-
-    private fun menuItemActionPerformed(e: ActionEvent) {
-        SwingUtilities.invokeLater {
-            JOptionPane.showMessageDialog(
-                this,
-                e.actionCommand,
-                "Menu Item",
-                JOptionPane.PLAIN_MESSAGE
-            )
-        }
-    }
-
     private fun windowDecorationsChanged() {
         val windowDecorations: Boolean = windowDecorationsCheckBoxMenuItem.isSelected
 
@@ -274,27 +272,13 @@ class ParfaitFrame : JFrame() {
         UIManager.put("TitlePane.showIcon", showIcon)
     }
 
-    private fun underlineMenuSelection() {
-        UIManager.put("MenuItem.selectionType", if (underlineMenuSelectionMenuItem.isSelected) "underline" else null)
-    }
-
-    private fun alwaysShowMnemonics() {
-        UIManager.put("Component.hideMnemonics", !alwaysShowMnemonicsMenuItem.isSelected)
-        repaint()
-    }
-
-    private fun animatedLafChangeChanged() {
-        System.setProperty("flatlaf.animatedLafChange", animatedLafChangeMenuItem.isSelected.toString())
-    }
-
     private fun showHintsChanged() {
         clearHints()
-        showHints()
+        showHints(false)
     }
     
     private fun initComponents() {
         val menuBar1 = JMenuBar()
-        val fileMenu = JMenu()
         val newMenuItem = JMenuItem()
         val openMenuItem = JMenuItem()
         val saveAsMenuItem = JMenuItem()
@@ -302,33 +286,17 @@ class ParfaitFrame : JFrame() {
         val showHintsMenuItem = JMenuItem()
         val showUIDefaultsInspectorMenuItem = JMenuItem()
         val helpMenu = JMenu()
-        val backButton = JButton()
-        val forwardButton = JButton()
-        val cutButton = JButton()
-        val copyButton = JButton()
-        val pasteButton = JButton()
-        val refreshButton = JButton()
-        val showToggleButton = JToggleButton()
         val contentPanel = JPanel()
         val panel1 = WelcomePanel()
         val studentDataPanel = StudentDataPanel()
         val panel2 = I18nPanel()
         val panel3 = GPAPanel()
-
-        //======== this ========
-        title = "Parfait Demo"
+        title = "Parfait"
         defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
         val contentPane: Container = contentPane
         contentPane.layout = BorderLayout()
-
-        //======== menuBar1 ========
-
-
-        //======== fileMenu ========
         fileMenu.text = "文件"
         fileMenu.setMnemonic('F')
-
-        //---- newMenuItem ----
         newMenuItem.text = "新建"
         newMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_N,
@@ -337,8 +305,6 @@ class ParfaitFrame : JFrame() {
         newMenuItem.setMnemonic('N')
         newMenuItem.addActionListener { newActionPerformed() }
         fileMenu.add(newMenuItem)
-
-        //---- openMenuItem ----
         openMenuItem.text = "打开"
         openMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_O,
@@ -347,8 +313,6 @@ class ParfaitFrame : JFrame() {
         openMenuItem.setMnemonic('O')
         openMenuItem.addActionListener { openActionPerformed() }
         fileMenu.add(openMenuItem)
-
-        //---- saveAsMenuItem ----
         saveAsMenuItem.text = "保存"
         saveAsMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_S,
@@ -358,8 +322,6 @@ class ParfaitFrame : JFrame() {
         saveAsMenuItem.addActionListener { saveAsActionPerformed() }
         fileMenu.add(saveAsMenuItem)
         fileMenu.addSeparator()
-
-        //---- closeMenuItem ----
         closeMenuItem.text = "关闭"
         closeMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_W,
@@ -369,8 +331,6 @@ class ParfaitFrame : JFrame() {
         closeMenuItem.addActionListener { closeActionPerformed() }
         fileMenu.add(closeMenuItem)
         fileMenu.addSeparator()
-
-        //---- exitMenuItem ----
         exitMenuItem.text = "退出"
         exitMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_Q,
@@ -379,151 +339,55 @@ class ParfaitFrame : JFrame() {
         exitMenuItem.setMnemonic('X')
         exitMenuItem.addActionListener { exitActionPerformed() }
         fileMenu.add(exitMenuItem)
-
         menuBar1.add(fileMenu)
-
         menuBar1.add(ThemeUtils.themeMenu)
         menuBar1.add(FontUtils.fontMenu)
-
-        //======== optionsMenu ========
         optionsMenu.text = "选项"
-
-        //---- windowDecorationsCheckBoxMenuItem ----
-        windowDecorationsCheckBoxMenuItem.text = "Window decorations"
+        windowDecorationsCheckBoxMenuItem.text = "窗口装饰"
         windowDecorationsCheckBoxMenuItem.addActionListener { windowDecorationsChanged() }
         optionsMenu.add(windowDecorationsCheckBoxMenuItem)
-
-        //---- menuBarEmbeddedCheckBoxMenuItem ----
-        menuBarEmbeddedCheckBoxMenuItem.text = "Embedded menu bar"
+        menuBarEmbeddedCheckBoxMenuItem.text = "嵌入式菜单栏"
         menuBarEmbeddedCheckBoxMenuItem.addActionListener { menuBarEmbeddedChanged() }
         optionsMenu.add(menuBarEmbeddedCheckBoxMenuItem)
-
-        //---- unifiedTitleBarMenuItem ----
-        unifiedTitleBarMenuItem.text = "Unified window title bar"
+        unifiedTitleBarMenuItem.text = "统一窗口标题栏"
         unifiedTitleBarMenuItem.addActionListener { unifiedTitleBar() }
         optionsMenu.add(unifiedTitleBarMenuItem)
-
-        //---- showTitleBarIconMenuItem ----
-        showTitleBarIconMenuItem.text = "Show window title bar icon"
+        showTitleBarIconMenuItem.text = "显示窗口标题栏图标"
         showTitleBarIconMenuItem.addActionListener {  showTitleBarIcon() }
         optionsMenu.add(showTitleBarIconMenuItem)
-
-        //---- underlineMenuSelectionMenuItem ----
-        underlineMenuSelectionMenuItem.text = "Use underline menu selection"
-        underlineMenuSelectionMenuItem.addActionListener { underlineMenuSelection() }
-        optionsMenu.add(underlineMenuSelectionMenuItem)
-
-        //---- alwaysShowMnemonicsMenuItem ----
-        alwaysShowMnemonicsMenuItem.text = "Always show mnemonics"
-        alwaysShowMnemonicsMenuItem.addActionListener {  alwaysShowMnemonics() }
-        optionsMenu.add(alwaysShowMnemonicsMenuItem)
-
-        //---- animatedLafChangeMenuItem ----
-        animatedLafChangeMenuItem.text = "Animated Laf Change"
-        animatedLafChangeMenuItem.isSelected = true
-        animatedLafChangeMenuItem.addActionListener { animatedLafChangeChanged() }
-        optionsMenu.add(animatedLafChangeMenuItem)
-
-        //---- showHintsMenuItem ----
-        showHintsMenuItem.text = "Show hints"
+        showHintsMenuItem.text = "显示提示"
         showHintsMenuItem.addActionListener { showHintsChanged() }
         optionsMenu.add(showHintsMenuItem)
-
-        //---- showUIDefaultsInspectorMenuItem ----
-        showUIDefaultsInspectorMenuItem.text = "Show UI Defaults Inspector"
+        showUIDefaultsInspectorMenuItem.text = "UI默认值检查器"
         showUIDefaultsInspectorMenuItem.addActionListener { showUIDefaultsInspector() }
         optionsMenu.add(showUIDefaultsInspectorMenuItem)
-
         menuBar1.add(optionsMenu)
-
-        //======== helpMenu ========
         helpMenu.text = "帮助"
         helpMenu.setMnemonic('H')
-
-        //---- aboutMenuItem ----
         aboutMenuItem.text = "关于"
         aboutMenuItem.setMnemonic('A')
         aboutMenuItem.addActionListener { aboutActionPerformed() }
         helpMenu.add(aboutMenuItem)
         menuBar1.add(helpMenu)
-
         jMenuBar = menuBar1
-
-        //======== toolBar ========
         toolBar.margin = Insets(3, 3, 3, 3)
-
-        //---- backButton ----
-        backButton.toolTipText = "Back"
-        toolBar.add(backButton)
-
-        //---- forwardButton ----
-        forwardButton.toolTipText = "Forward"
-        toolBar.add(forwardButton)
-        toolBar.addSeparator()
-
-        //---- cutButton ----
-        cutButton.toolTipText = "Cut"
-        toolBar.add(cutButton)
-
-        //---- copyButton ----
-        copyButton.toolTipText = "Copy"
-        toolBar.add(copyButton)
-
-        //---- pasteButton ----
-        pasteButton.toolTipText = "Paste"
-        toolBar.add(pasteButton)
-        toolBar.addSeparator()
-
-        //---- refreshButton ----
-        refreshButton.toolTipText = "从文件重新读取"
-        toolBar.add(refreshButton)
-        toolBar.addSeparator()
-
-        //---- showToggleButton ----
-        showToggleButton.isSelected = true
-        showToggleButton.toolTipText = "Show Details"
-        toolBar.add(showToggleButton)
         contentPane.add(toolBar, BorderLayout.NORTH)
-
-        //======== contentPanel ========
-        contentPanel.layout = MigLayout(
-            "insets dialog,hidemode 3",  // columns
-            "[grow,fill]",  // rows
-            "[]" +
-                    "[grow,fill]"
-        )
-
-        //======== tabbedPane ========
+        contentPanel.layout = MigLayout("insets dialog,hidemode 3", "[grow,fill]", "[][grow,fill]")
         tabbedPane.addTab("欢迎", panel1)
         tabbedPane.addTab("学生管理", studentDataPanel)
         tabbedPane.addTab("翻译管理", panel2)
         tabbedPane.addTab("GPA标准管理", panel3)
-
         contentPanel.add(tabbedPane, "cell 0 0")
-
         contentPane.add(contentPanel, BorderLayout.CENTER)
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents
-
-        // add "Users" button to menubar
         val usersButton = FlatButton()
-        usersButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/users.svg")
+        usersButton.icon = FlatSVGIcon("cc/eleb/parfait/icons/users.svg")
         usersButton.buttonType = FlatButton.ButtonType.toolBarButton
         usersButton.isFocusable = false
         usersButton.addActionListener {
-            JOptionPane.showMessageDialog(
-                null, "Hello User! How are you?", "User",
-                JOptionPane.INFORMATION_MESSAGE
-            )
+            JOptionPane.showMessageDialog(null, "哈喽啊(,,･∀･)ﾉ゛hello", "菜单", JOptionPane.INFORMATION_MESSAGE)
         }
         menuBar1.add(Box.createGlue())
         menuBar1.add(usersButton)
-        backButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/back.svg")
-        forwardButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/forward.svg")
-        cutButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/menu-cut.svg")
-        copyButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/copy.svg")
-        pasteButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/menu-paste.svg")
-        refreshButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/refresh.svg")
-        showToggleButton.icon = FlatSVGIcon("com/formdev/flatlaf/demo/icons/show.svg")
         if (FlatLaf.supportsNativeWindowDecorations() || (SystemInfo.isLinux && isDefaultLookAndFeelDecorated())) {
             if (SystemInfo.isLinux) unsupported(windowDecorationsCheckBoxMenuItem) else windowDecorationsCheckBoxMenuItem.isSelected =
                 FlatLaf.isUseNativeWindowDecorations()
@@ -542,8 +406,6 @@ class ParfaitFrame : JFrame() {
             unsupported(showTitleBarIconMenuItem)
         }
         if (SystemInfo.isMacOS) unsupported(underlineMenuSelectionMenuItem)
-
-        // remove contentPanel bottom insets
         val layout: MigLayout = contentPanel.layout as MigLayout
         val lc: LC = ConstraintParser.parseLayoutConstraint(layout.layoutConstraints as String?)
         val insets: Array<UnitValue> = lc.insets
@@ -562,20 +424,17 @@ class ParfaitFrame : JFrame() {
         menuItem.toolTipText = "Not supported on your system."
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    // Generated using JFormDesigner Evaluation license - csgo fps
-    val exitMenuItem = JMenuItem()
-    val optionsMenu = JMenu()
-    val windowDecorationsCheckBoxMenuItem = JCheckBoxMenuItem()
-    val menuBarEmbeddedCheckBoxMenuItem = JCheckBoxMenuItem()
-    val unifiedTitleBarMenuItem = JCheckBoxMenuItem()
-    val showTitleBarIconMenuItem = JCheckBoxMenuItem()
-    val underlineMenuSelectionMenuItem = JCheckBoxMenuItem()
-    val alwaysShowMnemonicsMenuItem = JCheckBoxMenuItem()
-    val animatedLafChangeMenuItem = JCheckBoxMenuItem()
-    val aboutMenuItem = JMenuItem()
+    private val exitMenuItem = JMenuItem()
+    private val optionsMenu = JMenu()
+    private val windowDecorationsCheckBoxMenuItem = JCheckBoxMenuItem()
+    private val menuBarEmbeddedCheckBoxMenuItem = JCheckBoxMenuItem()
+    private val unifiedTitleBarMenuItem = JCheckBoxMenuItem()
+    private val showTitleBarIconMenuItem = JCheckBoxMenuItem()
+    private val underlineMenuSelectionMenuItem = JCheckBoxMenuItem()
+    private val aboutMenuItem = JMenuItem()
     val toolBar = JToolBar()
-    val tabbedPane = JTabbedPane()
+    private val tabbedPane = JTabbedPane()
+    private val fileMenu = JMenu()
 
     init {
         instance = this
@@ -586,16 +445,11 @@ class ParfaitFrame : JFrame() {
         val tabIndex: Int = DemoPrefs.state.getInt(KEY_TAB, 0)
         if (tabIndex >= 0 && tabIndex < tabbedPane.tabCount && tabIndex != tabbedPane.selectedIndex) tabbedPane.selectedIndex =
             tabIndex
-        //TODO:
-        //setIconImages(FlatSVGUtils.createWindowIconImages("/com/formdev/flatlaf/demo/FlatLaf.svg"))
-
-        // macOS  (see https://www.formdev.com/flatlaf/macos/)
+        this.iconImages = FlatSVGUtils.createWindowIconImages("/cc/eleb/parfait/FlatLaf.svg")
         if (SystemInfo.isMacOS) {
-            // hide menu items that are in macOS application menu
             exitMenuItem.isVisible = false
             aboutMenuItem.isVisible = false
             if (SystemInfo.isMacFullWindowContentSupported) {
-                // expand window content into window title bar and make title bar transparent
                 getRootPane().putClientProperty("apple.awt.fullWindowContent", true)
                 getRootPane().putClientProperty("apple.awt.transparentTitleBar", true)
 
@@ -604,24 +458,15 @@ class ParfaitFrame : JFrame() {
                     "apple.awt.windowTitleVisible",
                     false
                 ) else title = null
-
-                // add gap to left side of toolbar
                 toolBar.add(Box.createHorizontalStrut(70), 0)
             }
-
-            // enable full screen mode for this window (for Java 8 - 10; not necessary for Java 11+)
             if (!SystemInfo.isJava_11_orLater) getRootPane().putClientProperty("apple.awt.fullscreenable", true)
         }
-
-        // integrate into macOS screen menu
         FlatDesktop.setAboutHandler { aboutActionPerformed() }
-        FlatDesktop.setPreferencesHandler { showPreferences() }
-        //FlatDesktop.setQuitHandler { FlatDesktop.QuitResponse.performQuit() }
-        //SwingUtilities.invokeLater(Runnable({ showHints() }))
+        SwingUtilities.invokeLater { showHints(true) }
     }
     companion object {
-        val THEMES_PACKAGE: String = "/com/formdev/flatlaf/intellijthemes/themes/"
-
+        val THEMES_PACKAGE: String = "/cc/eleb/parfait/intellijthemes/themes/"
         lateinit var instance:ParfaitFrame
     }
 }

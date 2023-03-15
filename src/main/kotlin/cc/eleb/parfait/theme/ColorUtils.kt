@@ -10,26 +10,22 @@ import com.formdev.flatlaf.util.LoggingFacade
 import java.awt.Color
 import java.awt.Component
 import java.awt.Graphics2D
-import java.awt.event.ActionEvent
 import java.beans.PropertyChangeEvent
 import java.util.ArrayList
 import javax.swing.*
 
 object ColorUtils {
-    // the real colors are defined in
-    // flatlaf-demo/src/main/resources/com/formdev/flatlaf/demo/FlatLightLaf.properties and
-    // flatlaf-demo/src/main/resources/com/formdev/flatlaf/demo/FlatDarkLaf.properties
     private val accentColorKeys: Array<String> = arrayOf(
         "Demo.accent.default", "Demo.accent.blue", "Demo.accent.purple",
         "Demo.accent.red", "Demo.accent.orange", "Demo.accent.yellow", "Demo.accent.green"
     )
-    private val accentColorNames: Array<String> =
-        arrayOf("Default", "Blue", "Purple", "Red", "Orange", "Yellow", "Green")
+    private val accentColorNames: Array<String> = arrayOf("Default", "Blue", "Purple", "Red", "Orange", "Yellow", "Green")
     private val accentColorButtons: ArrayList<JToggleButton> = arrayListOf()
     private lateinit var accentColorLabel: JLabel
     private var accentColor: Color? = null
 
     fun init() {
+
         accentColorLabel = JLabel("强调色: ")
         ParfaitFrame.instance.toolBar.let {
             it.add(Box.createHorizontalGlue())

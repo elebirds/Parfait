@@ -53,6 +53,7 @@ object ThemeUtils {
             tf.text = themes.values.toTypedArray()[i].name
             tf.addActionListener { e: ActionEvent -> setTheme(e) }
             bg.add(tf)
+            if(i==4) bg.setSelected(tf.model,true)
             themeMenu.add(tf)
         }
         themeMenu.add(JPopupMenu.Separator())

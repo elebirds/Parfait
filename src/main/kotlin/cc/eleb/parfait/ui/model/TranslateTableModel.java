@@ -2,9 +2,9 @@ package cc.eleb.parfait.ui.model;
 
 import javax.swing.table.DefaultTableModel;
 
-public class GPATableModel extends DefaultTableModel {
-    static final Class<?>[] columnTypes = new Class<?>[]{Integer.class, Double.class};
-    static final String[] columnNames = new String[]{"成绩（大于等于此值）", "GPA"};
+public class TranslateTableModel extends DefaultTableModel {
+    static final Class<?>[] columnTypes = new Class<?>[]{String.class, String.class};
+    static final String[] columnNames = new String[]{"中文", "外文"};
 
     @Override
     public String getColumnName(int column) {

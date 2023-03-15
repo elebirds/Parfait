@@ -19,6 +19,7 @@ import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.FlatLightLaf
 import com.formdev.flatlaf.FlatPropertiesLaf
 import com.formdev.flatlaf.IntelliJTheme
+import com.formdev.flatlaf.themes.FlatMacLightLaf
 import com.formdev.flatlaf.util.StringUtils
 import java.beans.PropertyChangeEvent
 import java.io.File
@@ -35,7 +36,7 @@ object DemoPrefs {
     const val KEY_LAF_THEME = "lafTheme"
     const val RESOURCE_PREFIX = "res:"
     const val FILE_PREFIX = "file:"
-    const val THEME_UI_KEY = "__FlatLaf.demo.theme"
+    private const val THEME_UI_KEY = "__Parfait.demo.theme"
     lateinit var state: Preferences
 
     fun init(rootPath: String) {
@@ -44,7 +45,7 @@ object DemoPrefs {
 
     fun setupLaf() {
         try {
-            val lafClassName: String = state.get(KEY_LAF, FlatLightLaf::class.java.name)
+            val lafClassName: String = state.get(KEY_LAF, FlatMacLightLaf::class.java.name)
             if (IntelliJTheme.ThemeLaf::class.java.name == lafClassName) {
                 val theme: String = state.get(KEY_LAF_THEME, "")
                 if (theme.startsWith(RESOURCE_PREFIX)) //IntelliJTheme.setup(
@@ -57,7 +58,7 @@ object DemoPrefs {
                     IntelliJTheme.createLaf(
                         Files.newInputStream(Paths.get(theme.substring(FILE_PREFIX.length)))
                     )
-                ) else FlatLightLaf.setup()
+                ) else FlatMacLightLaf.setup()
                 if (theme.isNotEmpty()) UIManager.getLookAndFeelDefaults()[THEME_UI_KEY] = theme
             } else if (FlatPropertiesLaf::class.java.name == lafClassName) {
                 val theme: String = state.get(KEY_LAF_THEME, "")
@@ -65,11 +66,11 @@ object DemoPrefs {
                     val themeFile = File(theme.substring(FILE_PREFIX.length))
                     val themeName = StringUtils.removeTrailing(themeFile.name, ".properties")
                     FlatLaf.setup(FlatPropertiesLaf(themeName, themeFile))
-                } else FlatLightLaf.setup()
+                } else FlatMacLightLaf.setup()
                 if (theme.isNotEmpty()) UIManager.getLookAndFeelDefaults()[THEME_UI_KEY] = theme
             } else UIManager.setLookAndFeel(lafClassName)
         } catch (ex: Throwable) {
-            FlatLightLaf.setup()
+            FlatMacLightLaf.setup()
         }
         UIManager.addPropertyChangeListener { e: PropertyChangeEvent ->
             if ("lookAndFeel" == e.propertyName) state.put(

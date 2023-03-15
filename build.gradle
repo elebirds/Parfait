@@ -53,20 +53,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")//协程
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4")
 
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-
-    implementation('io.vproxy:vfx:1.2.0')
-
     implementation('com.formdev:flatlaf:3.0')
     implementation('com.formdev:flatlaf-extras:3.0')
     implementation("com.formdev:flatlaf-fonts-jetbrains-mono:2.242")
     implementation("com.formdev:flatlaf-fonts-roboto:2.137")
     implementation("com.formdev:flatlaf-fonts-roboto-mono:3.000")
     implementation("com.formdev:flatlaf-fonts-inter:3.19")
-    implementation( "com.miglayout:miglayout-swing:5.3" )
-    implementation( "com.jgoodies:jgoodies-forms:1.9.0" )
+    implementation("com.miglayout:miglayout-swing:5.3")
+    implementation("com.jgoodies:jgoodies-forms:1.9.0")
 
     implementation('com.google.code.gson:gson:2.8.9')
     implementation('commons-io:commons-io:2.7')
@@ -77,9 +71,6 @@ dependencies {
     implementation("com.alibaba:easyexcel:3.2.1")//excel操作
 }
 
-test {
-    useJUnitPlatform()
-}
 
 jlink {
     imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
