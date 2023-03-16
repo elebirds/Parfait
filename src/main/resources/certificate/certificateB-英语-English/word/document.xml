@@ -582,7 +582,7 @@
                               w:cs="Times New Roman" w:hint="eastAsia"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve">weighted </w:t>
+                <w:t xml:space="preserve">${stype_for} </w:t>
             </w:r>
             <w:r w:rsidRPr="007B4BE7">
                 <w:rPr>

@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cc.eleb.parfait.ui
+package cc.eleb.parfait.utils
 
 import com.formdev.flatlaf.FlatLaf
-import com.formdev.flatlaf.FlatLightLaf
 import com.formdev.flatlaf.FlatPropertiesLaf
 import com.formdev.flatlaf.IntelliJTheme
 import com.formdev.flatlaf.themes.FlatMacLightLaf
@@ -31,7 +30,7 @@ import javax.swing.UIManager
 /**
  * @author Karl Tauber
  */
-object DemoPrefs {
+object ParfaitPrefs {
     const val KEY_LAF = "laf"
     const val KEY_LAF_THEME = "lafTheme"
     const val RESOURCE_PREFIX = "res:"
@@ -49,12 +48,12 @@ object DemoPrefs {
             if (IntelliJTheme.ThemeLaf::class.java.name == lafClassName) {
                 val theme: String = state.get(KEY_LAF_THEME, "")
                 if (theme.startsWith(RESOURCE_PREFIX)) //IntelliJTheme.setup(
-                    //IJThemesPanel::class.java.getResourceAsStream(
-                    //    IJThemesPanel.THEMES_PACKAGE + theme.substring(
-                    //        RESOURCE_PREFIX.length
-                    //    )
-                    //))
-                 else if (theme.startsWith(FILE_PREFIX)) FlatLaf.setup(
+                //IJThemesPanel::class.java.getResourceAsStream(
+                //    IJThemesPanel.THEMES_PACKAGE + theme.substring(
+                //        RESOURCE_PREFIX.length
+                //    )
+                //))
+                else if (theme.startsWith(FILE_PREFIX)) FlatLaf.setup(
                     IntelliJTheme.createLaf(
                         Files.newInputStream(Paths.get(theme.substring(FILE_PREFIX.length)))
                     )

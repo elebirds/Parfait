@@ -3,15 +3,19 @@ package cc.eleb.parfait.ui
 
 import cc.eleb.parfait.KEY_TAB
 import cc.eleb.parfait.config.ParConfig
-import cc.eleb.parfait.i18n.Language
+import cc.eleb.parfait.i18n.GenLanguage
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.theme.ColorUtils
 import cc.eleb.parfait.theme.FontUtils
+import cc.eleb.parfait.theme.ThemeUtils
+import cc.eleb.parfait.ui.dialog.GlobalSettingDialog
 import cc.eleb.parfait.ui.panel.GPAPanel
 import cc.eleb.parfait.ui.panel.I18nPanel
-import cc.eleb.parfait.ui.panel.WelcomePanel
-import cc.eleb.parfait.theme.ThemeUtils
 import cc.eleb.parfait.ui.panel.StudentDataPanel
-import com.formdev.flatlaf.*
+import cc.eleb.parfait.ui.panel.WelcomePanel
+import cc.eleb.parfait.utils.ParfaitPrefs
+import com.formdev.flatlaf.FlatClientProperties
+import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.extras.FlatDesktop
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.formdev.flatlaf.extras.FlatSVGUtils
@@ -24,7 +28,6 @@ import net.miginfocom.layout.LC
 import net.miginfocom.layout.UnitValue
 import net.miginfocom.swing.MigLayout
 import java.awt.*
-import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -43,23 +46,23 @@ class ParfaitFrame : JFrame() {
         FlatUIDefaultsInspector.hide()
     }
 
-    private fun showHints(flag:Boolean) {
-        if(flag&&DemoPrefs.state.getBoolean("InitHitss",false))return
-        DemoPrefs.state.putBoolean("InitHitss",true)
+    private fun showHints(flag: Boolean) {
+        if (flag && ParfaitPrefs.state.getBoolean("InitHitss", false)) return
+        ParfaitPrefs.state.putBoolean("InitHitss", true)
         val optionsMenuHint: HintManager.Hint = HintManager.Hint(
-            "使用“选项”菜单来切换偏好样式或者再次显示提示", optionsMenu,
+            "hit-4".trs(), optionsMenu,
             SwingConstants.BOTTOM, "hint.optionsMenu", null
         )
         val fontMenuHint: HintManager.Hint = HintManager.Hint(
-            "使用“字体”菜单来改变字体大小或者切换字体",
+            "hit-3".trs(),
             FontUtils.fontMenu, SwingConstants.BOTTOM, "hint.fontMenu", optionsMenuHint
         )
         val themeMenuHint: HintManager.Hint = HintManager.Hint(
-            "使用“主题”菜单来改变界面主题",
+            "hit-2".trs(),
             ThemeUtils.themeMenu, SwingConstants.BOTTOM, "hint.themeMenu", fontMenuHint
         )
         val fileMenuHint: HintManager.Hint = HintManager.Hint(
-            "使用“文件”菜单来新建、打开、保存、关闭一个Parfait文件(.par)以开始学生管理",
+            "hit-1".trs(),
             fileMenu, SwingConstants.BOTTOM, "hint.themeMenu", themeMenuHint
         )
         HintManager.showHint(fileMenuHint)
@@ -73,15 +76,15 @@ class ParfaitFrame : JFrame() {
         FlatUIDefaultsInspector.show()
     }
 
-    private fun reloadAllFrame(){
-        title = if(ParConfig.inited){
-            if(ParConfig.newed){
-                "新建文件 - Parfait Demo"
-            }else{
+    private fun reloadAllFrame() {
+        title = if (ParConfig.inited) {
+            if (ParConfig.newed) {
+                "${"global-new-file".trs()} - Parfait Demo"
+            } else {
                 ParConfig.instance!!.file!!.name + " - Parfait Demo"
             }
-        }else "Parfait Demo"
-        Language.nowLanguage = "英语-English"
+        } else "Parfait Demo"
+        GenLanguage.nowGenLanguage = "英语-English"
         StudentDataPanel.instance.table1.model.fireTableDataChanged()
         GPAPanel.instance.reload()
         I18nPanel.instance.reload()
@@ -93,20 +96,21 @@ class ParfaitFrame : JFrame() {
         reloadAllFrame()
     }
 
-    private fun checkToSave(){
-        if(ParConfig.inited){
-            if(JOptionPane.showConfirmDialog(
-                this,
-                "您已经打开了一个par文件，是否要保存？",
-                "警告",
-                JOptionPane.YES_NO_OPTION
-            )==JOptionPane.YES_OPTION){
+    private fun checkToSave() {
+        if (ParConfig.inited) {
+            if (JOptionPane.showConfirmDialog(
+                    this,
+                    "frame-check-save".trs(),
+                    "global-warning".trs(),
+                    JOptionPane.YES_NO_OPTION
+                ) == JOptionPane.YES_OPTION
+            ) {
                 save()
-            }else close()
+            } else close()
         }
     }
 
-    private fun saveTo(){
+    private fun saveTo() {
         val fd = JFileChooser()
         fd.fileFilter = object : FileFilter() {
             override fun accept(f: File): Boolean {
@@ -114,7 +118,7 @@ class ParfaitFrame : JFrame() {
             }
 
             override fun getDescription(): String {
-                return "Parfait文件(.par)"
+                return "global-par-file".trs()
             }
         }
         fd.isMultiSelectionEnabled = false
@@ -122,22 +126,22 @@ class ParfaitFrame : JFrame() {
         if (fd.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
                 ParConfig.instance?.saveTo(
-                    if(fd.selectedFile.endsWith(".par"))fd.selectedFile
-                    else File(fd.selectedFile.absolutePath+".par")
+                    if (fd.selectedFile.endsWith(".par")) fd.selectedFile
+                    else File(fd.selectedFile.absolutePath + ".par")
                 )
             } catch (e: Exception) {
                 JOptionPane.showMessageDialog(
                     this,
-                    "未知错误。\n${e.stackTraceToString()}",
-                    "保存失败",
+                    "${"global-error-unknown".trs()}\n${e.stackTraceToString()}",
+                    "global-error".trs(),
                     JOptionPane.ERROR_MESSAGE
                 )
             }
         }
     }
 
-    private fun save(){
-        if(ParConfig.newed){
+    private fun save() {
+        if (ParConfig.newed) {
             saveTo()
             return
         }
@@ -146,15 +150,15 @@ class ParfaitFrame : JFrame() {
         } catch (e: Exception) {
             JOptionPane.showMessageDialog(
                 this,
-                "未知错误。\n${e.stackTraceToString()}",
-                "保存失败",
+                "${"global-error-unknown".trs()}\n${e.stackTraceToString()}",
+                "global-error".trs(),
                 JOptionPane.ERROR_MESSAGE
             )
         }
     }
 
-    private fun close(){
-        if(ParConfig.instance==null)return
+    private fun close() {
+        if (ParConfig.instance == null) return
         ParConfig.instance!!.close()
         reloadAllFrame()
     }
@@ -168,28 +172,27 @@ class ParfaitFrame : JFrame() {
             }
 
             override fun getDescription(): String {
-                return "Parfait文件(.par)"
+                return "global-par-file".trs()
             }
         }
         fd.isMultiSelectionEnabled = false
         fd.fileSelectionMode = JFileChooser.FILES_ONLY
         if (fd.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
-                if(fd.selectedFile.name.endsWith(".par")){
+                if (fd.selectedFile.name.endsWith(".par")) {
                     ParConfig(fd.selectedFile)
                     this.reloadAllFrame()
-                }
-                else JOptionPane.showMessageDialog(
+                } else JOptionPane.showMessageDialog(
                     this,
-                    "请选择一个Parfait文件(.par)。",
-                    "打开失败",
+                    "frame-open-error-1".trs(),
+                    "global-error".trs(),
                     JOptionPane.ERROR_MESSAGE
                 )
             } catch (e: Exception) {
                 JOptionPane.showMessageDialog(
                     this,
-                    "未知错误。\n${e.stackTraceToString()}",
-                    "打开失败",
+                    "${"global-error-unknown".trs()}\n${e.stackTraceToString()}",
+                    "global-error".trs(),
                     JOptionPane.ERROR_MESSAGE
                 )
             }
@@ -197,10 +200,10 @@ class ParfaitFrame : JFrame() {
     }
 
     private fun saveAsActionPerformed() {
-        if(ParConfig.checkInited())save()
+        if (ParConfig.checkInited()) save()
     }
 
-    private fun closeActionPerformed(){
+    private fun closeActionPerformed() {
         checkToSave()
         close()
     }
@@ -220,24 +223,16 @@ class ParfaitFrame : JFrame() {
             override fun mouseClicked(e: MouseEvent) {
                 try {
                     Desktop.getDesktop().browse(URI(link))
-                } catch (ex: IOException) {
-                    JOptionPane.showMessageDialog(
-                        linkLabel, "无法在浏览器中打开 '$link'.", "关于",
-                        JOptionPane.PLAIN_MESSAGE
-                    )
-                } catch (ex: URISyntaxException) {
-                    JOptionPane.showMessageDialog(
-                        linkLabel, "无法在浏览器中打开 '$link'.", "关于",
-                        JOptionPane.PLAIN_MESSAGE
-                    )
+                } catch (_: IOException) {
+                } catch (_: URISyntaxException) {
                 }
             }
         })
         JOptionPane.showMessageDialog(
             this, arrayOf<Any>(
-                titleLabel, "简易的学生数据管理系统.", " ",
+                titleLabel, "frame-about".trs(), " ",
                 "Copyright 2023-" + Year.now() + " Elebird(Grow Zheng).", "All rights reserved.", linkLabel
-            ), "关于",
+            ), "frame-about-title".trs(),
             JOptionPane.PLAIN_MESSAGE
         )
     }
@@ -276,28 +271,47 @@ class ParfaitFrame : JFrame() {
         clearHints()
         showHints(false)
     }
-    
+
+    fun reloadTranslation(flag: Boolean = false){
+        fileMenu.text = "frame-menu-file".trs()
+        newMenuItem.text = "frame-menu-file-new".trs()
+        openMenuItem.text = "frame-menu-file-open".trs()
+        saveAsMenuItem.text = "frame-menu-file-save".trs()
+        closeMenuItem.text = "frame-menu-file-close".trs()
+        exitMenuItem.text = "frame-menu-file-quit".trs()
+        settingMenuItem.text = "frame-menu-file-settings".trs()
+        optionsMenu.text = "frame-menu-option".trs()
+        windowDecorationsCheckBoxMenuItem.text = "frame-menu-option-1".trs()
+        menuBarEmbeddedCheckBoxMenuItem.text = "frame-menu-option-2".trs()
+        unifiedTitleBarMenuItem.text = "frame-menu-option-3".trs()
+        showTitleBarIconMenuItem.text = "frame-menu-option-4".trs()
+        showHintsMenuItem.text = "frame-menu-option-5".trs()
+        showUIDefaultsInspectorMenuItem.text = "frame-menu-option-6".trs()
+        helpMenu.text = "frame-menu-help".trs()
+        aboutMenuItem.text = "frame-about-title".trs()
+        ColorUtils.reloadTranslation()
+        FontUtils.reloadTranslation()
+        ThemeUtils.reloadTranslation()
+        panel3.reloadTranslation()
+        panel1.reloadTranslation()
+        panel2.reloadTranslation()
+        studentDataPanel.reloadTranslation()
+        if(flag){
+            tabbedPane.setTitleAt(0,"frame-pane-1".trs())
+            tabbedPane.setTitleAt(1,"frame-pane-2".trs())
+            tabbedPane.setTitleAt(2,"frame-pane-3".trs())
+            tabbedPane.setTitleAt(3,"frame-pane-4".trs())
+        }
+        this.repaint()
+    }
+
     private fun initComponents() {
-        val menuBar1 = JMenuBar()
-        val newMenuItem = JMenuItem()
-        val openMenuItem = JMenuItem()
-        val saveAsMenuItem = JMenuItem()
-        val closeMenuItem = JMenuItem()
-        val showHintsMenuItem = JMenuItem()
-        val showUIDefaultsInspectorMenuItem = JMenuItem()
-        val helpMenu = JMenu()
-        val contentPanel = JPanel()
-        val panel1 = WelcomePanel()
-        val studentDataPanel = StudentDataPanel()
-        val panel2 = I18nPanel()
-        val panel3 = GPAPanel()
+        this.reloadTranslation()
         title = "Parfait"
         defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
         val contentPane: Container = contentPane
         contentPane.layout = BorderLayout()
-        fileMenu.text = "文件"
         fileMenu.setMnemonic('F')
-        newMenuItem.text = "新建"
         newMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_N,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
@@ -305,7 +319,6 @@ class ParfaitFrame : JFrame() {
         newMenuItem.setMnemonic('N')
         newMenuItem.addActionListener { newActionPerformed() }
         fileMenu.add(newMenuItem)
-        openMenuItem.text = "打开"
         openMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_O,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
@@ -313,7 +326,6 @@ class ParfaitFrame : JFrame() {
         openMenuItem.setMnemonic('O')
         openMenuItem.addActionListener { openActionPerformed() }
         fileMenu.add(openMenuItem)
-        saveAsMenuItem.text = "保存"
         saveAsMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_S,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
@@ -321,50 +333,47 @@ class ParfaitFrame : JFrame() {
         saveAsMenuItem.setMnemonic('S')
         saveAsMenuItem.addActionListener { saveAsActionPerformed() }
         fileMenu.add(saveAsMenuItem)
-        fileMenu.addSeparator()
-        closeMenuItem.text = "关闭"
         closeMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_W,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
         )
         closeMenuItem.setMnemonic('C')
         closeMenuItem.addActionListener { closeActionPerformed() }
-        fileMenu.add(closeMenuItem)
-        fileMenu.addSeparator()
-        exitMenuItem.text = "退出"
         exitMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_Q,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
         )
+        fileMenu.add(closeMenuItem)
         exitMenuItem.setMnemonic('X')
         exitMenuItem.addActionListener { exitActionPerformed() }
+        fileMenu.addSeparator()
+        settingMenuItem.accelerator = KeyStroke.getKeyStroke(
+            KeyEvent.VK_T,
+            Toolkit.getDefaultToolkit().menuShortcutKeyMask
+        )
+        settingMenuItem.setMnemonic('T')
+        settingMenuItem.addActionListener {
+            GlobalSettingDialog().isVisible = true
+        }
+        fileMenu.add(settingMenuItem)
         fileMenu.add(exitMenuItem)
         menuBar1.add(fileMenu)
         menuBar1.add(ThemeUtils.themeMenu)
         menuBar1.add(FontUtils.fontMenu)
-        optionsMenu.text = "选项"
-        windowDecorationsCheckBoxMenuItem.text = "窗口装饰"
         windowDecorationsCheckBoxMenuItem.addActionListener { windowDecorationsChanged() }
         optionsMenu.add(windowDecorationsCheckBoxMenuItem)
-        menuBarEmbeddedCheckBoxMenuItem.text = "嵌入式菜单栏"
         menuBarEmbeddedCheckBoxMenuItem.addActionListener { menuBarEmbeddedChanged() }
         optionsMenu.add(menuBarEmbeddedCheckBoxMenuItem)
-        unifiedTitleBarMenuItem.text = "统一窗口标题栏"
         unifiedTitleBarMenuItem.addActionListener { unifiedTitleBar() }
         optionsMenu.add(unifiedTitleBarMenuItem)
-        showTitleBarIconMenuItem.text = "显示窗口标题栏图标"
-        showTitleBarIconMenuItem.addActionListener {  showTitleBarIcon() }
+        showTitleBarIconMenuItem.addActionListener { showTitleBarIcon() }
         optionsMenu.add(showTitleBarIconMenuItem)
-        showHintsMenuItem.text = "显示提示"
         showHintsMenuItem.addActionListener { showHintsChanged() }
         optionsMenu.add(showHintsMenuItem)
-        showUIDefaultsInspectorMenuItem.text = "UI默认值检查器"
         showUIDefaultsInspectorMenuItem.addActionListener { showUIDefaultsInspector() }
         optionsMenu.add(showUIDefaultsInspectorMenuItem)
         menuBar1.add(optionsMenu)
-        helpMenu.text = "帮助"
         helpMenu.setMnemonic('H')
-        aboutMenuItem.text = "关于"
         aboutMenuItem.setMnemonic('A')
         aboutMenuItem.addActionListener { aboutActionPerformed() }
         helpMenu.add(aboutMenuItem)
@@ -373,10 +382,10 @@ class ParfaitFrame : JFrame() {
         toolBar.margin = Insets(3, 3, 3, 3)
         contentPane.add(toolBar, BorderLayout.NORTH)
         contentPanel.layout = MigLayout("insets dialog,hidemode 3", "[grow,fill]", "[][grow,fill]")
-        tabbedPane.addTab("欢迎", panel1)
-        tabbedPane.addTab("学生管理", studentDataPanel)
-        tabbedPane.addTab("翻译管理", panel2)
-        tabbedPane.addTab("GPA标准管理", panel3)
+        tabbedPane.addTab("frame-pane-1".trs(), panel1)
+        tabbedPane.addTab("frame-pane-2".trs(), studentDataPanel)
+        tabbedPane.addTab("frame-pane-3".trs(), panel2)
+        tabbedPane.addTab("frame-pane-4".trs(), panel3)
         contentPanel.add(tabbedPane, "cell 0 0")
         contentPane.add(contentPanel, BorderLayout.CENTER)
         val usersButton = FlatButton()
@@ -384,7 +393,7 @@ class ParfaitFrame : JFrame() {
         usersButton.buttonType = FlatButton.ButtonType.toolBarButton
         usersButton.isFocusable = false
         usersButton.addActionListener {
-            JOptionPane.showMessageDialog(null, "哈喽啊(,,･∀･)ﾉ゛hello", "菜单", JOptionPane.INFORMATION_MESSAGE)
+            JOptionPane.showMessageDialog(null, "哈喽啊(,,･∀･)ﾉ゛hello", "Test", JOptionPane.INFORMATION_MESSAGE)
         }
         menuBar1.add(Box.createGlue())
         menuBar1.add(usersButton)
@@ -435,6 +444,20 @@ class ParfaitFrame : JFrame() {
     val toolBar = JToolBar()
     private val tabbedPane = JTabbedPane()
     private val fileMenu = JMenu()
+    val menuBar1 = JMenuBar()
+    val newMenuItem = JMenuItem()
+    val openMenuItem = JMenuItem()
+    val settingMenuItem = JMenuItem()
+    val saveAsMenuItem = JMenuItem()
+    val closeMenuItem = JMenuItem()
+    val showHintsMenuItem = JMenuItem()
+    val showUIDefaultsInspectorMenuItem = JMenuItem()
+    val helpMenu = JMenu()
+    val contentPanel = JPanel()
+    val panel1 = WelcomePanel()
+    val studentDataPanel = StudentDataPanel()
+    val panel2 = I18nPanel()
+    val panel3 = GPAPanel()
 
     init {
         instance = this
@@ -442,7 +465,7 @@ class ParfaitFrame : JFrame() {
         FontUtils.init()
         initComponents()
         ColorUtils.init()
-        val tabIndex: Int = DemoPrefs.state.getInt(KEY_TAB, 0)
+        val tabIndex: Int = ParfaitPrefs.state.getInt(KEY_TAB, 0)
         if (tabIndex >= 0 && tabIndex < tabbedPane.tabCount && tabIndex != tabbedPane.selectedIndex) tabbedPane.selectedIndex =
             tabIndex
         this.iconImages = FlatSVGUtils.createWindowIconImages("/cc/eleb/parfait/FlatLaf.svg")
@@ -465,8 +488,9 @@ class ParfaitFrame : JFrame() {
         FlatDesktop.setAboutHandler { aboutActionPerformed() }
         SwingUtilities.invokeLater { showHints(true) }
     }
+
     companion object {
         val THEMES_PACKAGE: String = "/cc/eleb/parfait/intellijthemes/themes/"
-        lateinit var instance:ParfaitFrame
+        lateinit var instance: ParfaitFrame
     }
 }

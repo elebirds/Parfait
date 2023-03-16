@@ -1,332 +1,357 @@
 package cc.eleb.parfait.ui;
 
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.ui.FlatDropShadowBorder;
+import com.formdev.flatlaf.ui.FlatEmptyBorder;
+import com.formdev.flatlaf.ui.FlatUIUtils;
+import com.formdev.flatlaf.util.UIScale;
+import net.miginfocom.swing.MigLayout;
+
+import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.border.Border;
-import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.ui.FlatDropShadowBorder;
-import com.formdev.flatlaf.ui.FlatEmptyBorder;
-import com.formdev.flatlaf.ui.FlatUIUtils;
-import com.formdev.flatlaf.util.UIScale;
-import net.miginfocom.swing.*;
 
 /**
  * @author Karl Tauber
  */
 
-class HintManager
-{
-	private static final List<HintPanel> hintPanels = new ArrayList<>();
+class HintManager {
+    private static final List<HintPanel> hintPanels = new ArrayList<>();
 
-	static void showHint( Hint hint ) {
-		HintPanel hintPanel = new HintPanel( hint );
-		hintPanel.showHint();
-		hintPanels.add( hintPanel );
-	}
+    static void showHint(Hint hint) {
+        HintPanel hintPanel = new HintPanel(hint);
+        hintPanel.showHint();
+        hintPanels.add(hintPanel);
+    }
 
-	static void hideAllHints() {
-		HintPanel[] hintPanels2 = hintPanels.toArray( new HintPanel[hintPanels.size()] );
-		for( HintPanel hintPanel : hintPanels2 )
-			hintPanel.hideHint();
-	}
-	static class Hint
-	{
-		private final String message;
-		private final Component owner;
-		private final int position;
-		private final String prefsKey;
-		private final Hint nextHint;
+    static void hideAllHints() {
+        HintPanel[] hintPanels2 = hintPanels.toArray(new HintPanel[hintPanels.size()]);
+        for (HintPanel hintPanel : hintPanels2)
+            hintPanel.hideHint();
+    }
 
-		Hint( String message, Component owner, int position, String prefsKey, Hint nextHint ) {
-			this.message = message;
-			this.owner = owner;
-			this.position = position;
-			this.prefsKey = prefsKey;
-			this.nextHint = nextHint;
-		}
-	}
+    static class Hint {
+        private final String message;
+        private final Component owner;
+        private final int position;
+        private final String prefsKey;
+        private final Hint nextHint;
 
-	//---- class HintPanel ----------------------------------------------------
+        Hint(String message, Component owner, int position, String prefsKey, Hint nextHint) {
+            this.message = message;
+            this.owner = owner;
+            this.position = position;
+            this.prefsKey = prefsKey;
+            this.nextHint = nextHint;
+        }
+    }
 
-	private static class HintPanel
-			extends JPanel
-	{
-		private final Hint hint;
+    //---- class HintPanel ----------------------------------------------------
 
-		private JPanel popup;
+    private static class HintPanel
+            extends JPanel {
+        private final Hint hint;
 
-		private HintPanel( Hint hint ) {
-			this.hint = hint;
+        private JPanel popup;
+        // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+        private JLabel hintLabel;
+        private JButton gotItButton;
 
-			initComponents();
+        private HintPanel(Hint hint) {
+            this.hint = hint;
 
-			setOpaque( false );
-			updateBalloonBorder();
+            initComponents();
 
-			hintLabel.setText( "<html>" + hint.message + "</html>" );
+            setOpaque(false);
+            updateBalloonBorder();
 
-			// grab all mouse events to avoid that components overlapped
-			// by the hint panel receive them
-			addMouseListener( new MouseAdapter() {} );
-		}
+            hintLabel.setText("<html>" + hint.message + "</html>");
 
-		@Override
-		public void updateUI() {
-			super.updateUI();
+            // grab all mouse events to avoid that components overlapped
+            // by the hint panel receive them
+            addMouseListener(new MouseAdapter() {
+            });
+        }
 
-			if( UIManager.getLookAndFeel() instanceof FlatLaf )
-				setBackground( UIManager.getColor( "HintPanel.backgroundColor" ) );
-			else {
-				// using nonUIResource() because otherwise Nimbus does not fill the background
-				setBackground( FlatUIUtils.nonUIResource( UIManager.getColor( "info" ) ) );
-			}
+        @Override
+        public void updateUI() {
+            super.updateUI();
 
-			if( hint != null )
-				updateBalloonBorder();
-		}
+            if (UIManager.getLookAndFeel() instanceof FlatLaf)
+                setBackground(UIManager.getColor("HintPanel.backgroundColor"));
+            else {
+                // using nonUIResource() because otherwise Nimbus does not fill the background
+                setBackground(FlatUIUtils.nonUIResource(UIManager.getColor("info")));
+            }
 
-		private void updateBalloonBorder() {
-			int direction;
-			switch( hint.position ) {
-				case SwingConstants.LEFT:	direction = SwingConstants.RIGHT; break;
-				case SwingConstants.TOP:	direction = SwingConstants.BOTTOM; break;
-				case SwingConstants.RIGHT:	direction = SwingConstants.LEFT; break;
-				case SwingConstants.BOTTOM:	direction = SwingConstants.TOP; break;
-				default: throw new IllegalArgumentException();
-			}
+            if (hint != null)
+                updateBalloonBorder();
+        }
 
-			setBorder( new BalloonBorder( direction, FlatUIUtils.getUIColor( "PopupMenu.borderColor", Color.gray ) ) );
-		}
+        private void updateBalloonBorder() {
+            int direction;
+            switch (hint.position) {
+                case SwingConstants.LEFT:
+                    direction = SwingConstants.RIGHT;
+                    break;
+                case SwingConstants.TOP:
+                    direction = SwingConstants.BOTTOM;
+                    break;
+                case SwingConstants.RIGHT:
+                    direction = SwingConstants.LEFT;
+                    break;
+                case SwingConstants.BOTTOM:
+                    direction = SwingConstants.TOP;
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
 
-		void showHint() {
-			JRootPane rootPane = SwingUtilities.getRootPane( hint.owner );
-			if( rootPane == null )
-				return;
+            setBorder(new BalloonBorder(direction, FlatUIUtils.getUIColor("PopupMenu.borderColor", Color.gray)));
+        }
 
-			JLayeredPane layeredPane = rootPane.getLayeredPane();
+        void showHint() {
+            JRootPane rootPane = SwingUtilities.getRootPane(hint.owner);
+            if (rootPane == null)
+                return;
 
-			// create a popup panel that has a drop shadow
-			popup = new JPanel( new BorderLayout() ) {
-				@Override
-				public void updateUI() {
-					super.updateUI();
+            JLayeredPane layeredPane = rootPane.getLayeredPane();
 
-					// use invokeLater because at this time the UI delegates
-					// of child components are not yet updated
-					EventQueue.invokeLater( () -> {
-						validate();
-						setSize( getPreferredSize() );
-					} );
-				}
-			};
-			popup.setOpaque( false );
-			popup.add( this );
+            // create a popup panel that has a drop shadow
+            popup = new JPanel(new BorderLayout()) {
+                @Override
+                public void updateUI() {
+                    super.updateUI();
 
-			// calculate x/y location for hint popup
-			Point pt = SwingUtilities.convertPoint( hint.owner, 0, 0, layeredPane );
-			int x = pt.x;
-			int y = pt.y;
-			Dimension size = popup.getPreferredSize();
-			int gap = UIScale.scale( 6 );
+                    // use invokeLater because at this time the UI delegates
+                    // of child components are not yet updated
+                    EventQueue.invokeLater(() -> {
+                        validate();
+                        setSize(getPreferredSize());
+                    });
+                }
+            };
+            popup.setOpaque(false);
+            popup.add(this);
 
-			switch( hint.position ) {
-				case SwingConstants.LEFT:
-					x -= size.width + gap;
-					break;
+            // calculate x/y location for hint popup
+            Point pt = SwingUtilities.convertPoint(hint.owner, 0, 0, layeredPane);
+            int x = pt.x;
+            int y = pt.y;
+            Dimension size = popup.getPreferredSize();
+            int gap = UIScale.scale(6);
 
-				case SwingConstants.TOP:
-					y -= size.height + gap;
-					break;
+            switch (hint.position) {
+                case SwingConstants.LEFT:
+                    x -= size.width + gap;
+                    break;
 
-				case SwingConstants.RIGHT:
-					x += hint.owner.getWidth() + gap;
-					break;
+                case SwingConstants.TOP:
+                    y -= size.height + gap;
+                    break;
 
-				case SwingConstants.BOTTOM:
-					y += hint.owner.getHeight() + gap;
-					break;
-			}
+                case SwingConstants.RIGHT:
+                    x += hint.owner.getWidth() + gap;
+                    break;
 
-			// set hint popup size and show it
-			popup.setBounds( x, y, size.width, size.height );
-			layeredPane.add( popup, JLayeredPane.POPUP_LAYER );
-		}
+                case SwingConstants.BOTTOM:
+                    y += hint.owner.getHeight() + gap;
+                    break;
+            }
 
-		void hideHint() {
-			if( popup != null ) {
-				Container parent = popup.getParent();
-				if( parent != null ) {
-					parent.remove( popup );
-					parent.repaint( popup.getX(), popup.getY(), popup.getWidth(), popup.getHeight() );
-				}
-			}
+            // set hint popup size and show it
+            popup.setBounds(x, y, size.width, size.height);
+            layeredPane.add(popup, JLayeredPane.POPUP_LAYER);
+        }
 
-			hintPanels.remove( this );
-		}
+        void hideHint() {
+            if (popup != null) {
+                Container parent = popup.getParent();
+                if (parent != null) {
+                    parent.remove(popup);
+                    parent.repaint(popup.getX(), popup.getY(), popup.getWidth(), popup.getHeight());
+                }
+            }
 
-		private void gotIt() {
-			hideHint();
-			if( hint.nextHint != null )
-				HintManager.showHint( hint.nextHint );
-		}
+            hintPanels.remove(this);
+        }
 
-		private void initComponents() {
-			// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-			hintLabel = new JLabel();
-			gotItButton = new JButton();
+        private void gotIt() {
+            hideHint();
+            if (hint.nextHint != null)
+                HintManager.showHint(hint.nextHint);
+        }
 
-			//======== this ========
-			setLayout(new MigLayout(
-					"insets dialog,hidemode 3",
-					// columns
-					"[::200,fill]",
-					// rows
-					"[]para" +
-							"[]"));
+        private void initComponents() {
+            // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+            hintLabel = new JLabel();
+            gotItButton = new JButton();
 
-			//---- hintLabel ----
-			hintLabel.setText("hint");
-			add(hintLabel, "cell 0 0");
+            //======== this ========
+            setLayout(new MigLayout(
+                    "insets dialog,hidemode 3",
+                    // columns
+                    "[::200,fill]",
+                    // rows
+                    "[]para" +
+                            "[]"));
 
-			//---- gotItButton ----
-			gotItButton.setText("明白啦！");
-			gotItButton.setFocusable(false);
-			gotItButton.addActionListener(e -> gotIt());
-			add(gotItButton, "cell 0 1,alignx right,growx 0");
-			// JFormDesigner - End of component initialization  //GEN-END:initComponents
-		}
+            //---- hintLabel ----
+            hintLabel.setText("hint");
+            add(hintLabel, "cell 0 0");
 
-		// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-		private JLabel hintLabel;
-		private JButton gotItButton;
-		// JFormDesigner - End of variables declaration  //GEN-END:variables
-	}
+            //---- gotItButton ----
+            gotItButton.setText("明白啦！");
+            gotItButton.setFocusable(false);
+            gotItButton.addActionListener(e -> gotIt());
+            add(gotItButton, "cell 0 1,alignx right,growx 0");
+            // JFormDesigner - End of component initialization  //GEN-END:initComponents
+        }
+        // JFormDesigner - End of variables declaration  //GEN-END:variables
+    }
 
-	//---- class BalloonBorder ------------------------------------------------
+    //---- class BalloonBorder ------------------------------------------------
 
-	private static class BalloonBorder
-			extends FlatEmptyBorder
-	{
-		private static int ARC = 8;
-		private static int ARROW_XY = 16;
-		private static int ARROW_SIZE = 8;
-		private static int SHADOW_SIZE = 6;
-		private static int SHADOW_TOP_SIZE = 3;
-		private static int SHADOW_SIZE2 = SHADOW_SIZE + 2;
+    private static class BalloonBorder
+            extends FlatEmptyBorder {
+        private static int ARC = 8;
+        private static int ARROW_XY = 16;
+        private static int ARROW_SIZE = 8;
+        private static int SHADOW_SIZE = 6;
+        private static int SHADOW_TOP_SIZE = 3;
+        private static int SHADOW_SIZE2 = SHADOW_SIZE + 2;
 
-		private final int direction;
-		private final Color borderColor;
+        private final int direction;
+        private final Color borderColor;
 
-		private final Border shadowBorder;
+        private final Border shadowBorder;
 
-		public BalloonBorder( int direction, Color borderColor ) {
-			super( 1 + SHADOW_TOP_SIZE, 1 + SHADOW_SIZE, 1 + SHADOW_SIZE, 1 + SHADOW_SIZE );
+        public BalloonBorder(int direction, Color borderColor) {
+            super(1 + SHADOW_TOP_SIZE, 1 + SHADOW_SIZE, 1 + SHADOW_SIZE, 1 + SHADOW_SIZE);
 
-			this.direction = direction;
-			this.borderColor = borderColor;
+            this.direction = direction;
+            this.borderColor = borderColor;
 
-			switch( direction ) {
-				case SwingConstants.LEFT:	left += ARROW_SIZE; break;
-				case SwingConstants.TOP:	top += ARROW_SIZE; break;
-				case SwingConstants.RIGHT:	right += ARROW_SIZE; break;
-				case SwingConstants.BOTTOM:	bottom += ARROW_SIZE; break;
-			}
+            switch (direction) {
+                case SwingConstants.LEFT:
+                    left += ARROW_SIZE;
+                    break;
+                case SwingConstants.TOP:
+                    top += ARROW_SIZE;
+                    break;
+                case SwingConstants.RIGHT:
+                    right += ARROW_SIZE;
+                    break;
+                case SwingConstants.BOTTOM:
+                    bottom += ARROW_SIZE;
+                    break;
+            }
 
-			shadowBorder = UIManager.getLookAndFeel() instanceof FlatLaf
-					? new FlatDropShadowBorder(
-					UIManager.getColor( "Popup.dropShadowColor" ),
-					new Insets( SHADOW_SIZE2, SHADOW_SIZE2, SHADOW_SIZE2, SHADOW_SIZE2 ),
-					FlatUIUtils.getUIFloat( "Popup.dropShadowOpacity", 0.5f ) )
-					: null;
-		}
+            shadowBorder = UIManager.getLookAndFeel() instanceof FlatLaf
+                    ? new FlatDropShadowBorder(
+                    UIManager.getColor("Popup.dropShadowColor"),
+                    new Insets(SHADOW_SIZE2, SHADOW_SIZE2, SHADOW_SIZE2, SHADOW_SIZE2),
+                    FlatUIUtils.getUIFloat("Popup.dropShadowOpacity", 0.5f))
+                    : null;
+        }
 
-		@Override
-		public void paintBorder( Component c, Graphics g, int x, int y, int width, int height ) {
-			Graphics2D g2 = (Graphics2D) g.create();
-			try {
-				FlatUIUtils.setRenderingHints( g2 );
-				g2.translate( x, y );
+        @Override
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            try {
+                FlatUIUtils.setRenderingHints(g2);
+                g2.translate(x, y);
 
-				// shadow coordinates
-				int sx = 0;
-				int sy = 0;
-				int sw = width;
-				int sh = height;
-				int arrowSize = UIScale.scale( ARROW_SIZE );
-				switch( direction ) {
-					case SwingConstants.LEFT:	sx += arrowSize; sw -= arrowSize; break;
-					case SwingConstants.TOP:	sy += arrowSize; sh -= arrowSize; break;
-					case SwingConstants.RIGHT:	sw -= arrowSize; break;
-					case SwingConstants.BOTTOM:	sh -= arrowSize; break;
-				}
+                // shadow coordinates
+                int sx = 0;
+                int sy = 0;
+                int sw = width;
+                int sh = height;
+                int arrowSize = UIScale.scale(ARROW_SIZE);
+                switch (direction) {
+                    case SwingConstants.LEFT:
+                        sx += arrowSize;
+                        sw -= arrowSize;
+                        break;
+                    case SwingConstants.TOP:
+                        sy += arrowSize;
+                        sh -= arrowSize;
+                        break;
+                    case SwingConstants.RIGHT:
+                        sw -= arrowSize;
+                        break;
+                    case SwingConstants.BOTTOM:
+                        sh -= arrowSize;
+                        break;
+                }
 
-				// paint shadow
-				if( shadowBorder != null )
-					shadowBorder.paintBorder( c, g2, sx, sy, sw, sh );
+                // paint shadow
+                if (shadowBorder != null)
+                    shadowBorder.paintBorder(c, g2, sx, sy, sw, sh);
 
-				// create balloon shape
-				int bx = UIScale.scale( SHADOW_SIZE );
-				int by = UIScale.scale( SHADOW_TOP_SIZE );
-				int bw = width - UIScale.scale( SHADOW_SIZE + SHADOW_SIZE );
-				int bh = height - UIScale.scale( SHADOW_TOP_SIZE + SHADOW_SIZE );
-				g2.translate( bx, by );
-				Shape shape = createBalloonShape( bw, bh );
+                // create balloon shape
+                int bx = UIScale.scale(SHADOW_SIZE);
+                int by = UIScale.scale(SHADOW_TOP_SIZE);
+                int bw = width - UIScale.scale(SHADOW_SIZE + SHADOW_SIZE);
+                int bh = height - UIScale.scale(SHADOW_TOP_SIZE + SHADOW_SIZE);
+                g2.translate(bx, by);
+                Shape shape = createBalloonShape(bw, bh);
 
-				// fill balloon background
-				g2.setColor( c.getBackground() );
-				g2.fill( shape );
+                // fill balloon background
+                g2.setColor(c.getBackground());
+                g2.fill(shape);
 
-				// paint balloon border
-				g2.setColor( borderColor );
-				g2.setStroke( new BasicStroke( UIScale.scale( 1f ) ) );
-				g2.draw( shape );
-			} finally {
-				g2.dispose();
-			}
-		}
+                // paint balloon border
+                g2.setColor(borderColor);
+                g2.setStroke(new BasicStroke(UIScale.scale(1f)));
+                g2.draw(shape);
+            } finally {
+                g2.dispose();
+            }
+        }
 
-		private Shape createBalloonShape( int width, int height ) {
-			int arc = UIScale.scale( ARC );
-			int xy = UIScale.scale( ARROW_XY );
-			int awh = UIScale.scale( ARROW_SIZE );
+        private Shape createBalloonShape(int width, int height) {
+            int arc = UIScale.scale(ARC);
+            int xy = UIScale.scale(ARROW_XY);
+            int awh = UIScale.scale(ARROW_SIZE);
 
-			Shape rect;
-			Shape arrow;
-			switch( direction ) {
-				case SwingConstants.LEFT:
-					rect = new RoundRectangle2D.Float( awh, 0, width - 1 - awh, height - 1, arc, arc );
-					arrow = FlatUIUtils.createPath( awh,xy, 0,xy+awh, awh,xy+awh+awh );
-					break;
+            Shape rect;
+            Shape arrow;
+            switch (direction) {
+                case SwingConstants.LEFT:
+                    rect = new RoundRectangle2D.Float(awh, 0, width - 1 - awh, height - 1, arc, arc);
+                    arrow = FlatUIUtils.createPath(awh, xy, 0, xy + awh, awh, xy + awh + awh);
+                    break;
 
-				case SwingConstants.TOP:
-					rect = new RoundRectangle2D.Float( 0, awh, width - 1, height - 1 - awh, arc, arc );
-					arrow = FlatUIUtils.createPath( xy,awh, xy+awh,0, xy+awh+awh,awh );
-					break;
+                case SwingConstants.TOP:
+                    rect = new RoundRectangle2D.Float(0, awh, width - 1, height - 1 - awh, arc, arc);
+                    arrow = FlatUIUtils.createPath(xy, awh, xy + awh, 0, xy + awh + awh, awh);
+                    break;
 
-				case SwingConstants.RIGHT:
-					rect = new RoundRectangle2D.Float( 0, 0, width - 1 - awh, height - 1, arc, arc );
-					int x = width - 1 - awh;
-					arrow = FlatUIUtils.createPath( x,xy, x+awh,xy+awh, x,xy+awh+awh );
-					break;
+                case SwingConstants.RIGHT:
+                    rect = new RoundRectangle2D.Float(0, 0, width - 1 - awh, height - 1, arc, arc);
+                    int x = width - 1 - awh;
+                    arrow = FlatUIUtils.createPath(x, xy, x + awh, xy + awh, x, xy + awh + awh);
+                    break;
 
-				case SwingConstants.BOTTOM:
-					rect = new RoundRectangle2D.Float( 0, 0, width - 1, height - 1 - awh, arc, arc );
-					int y = height - 1 - awh;
-					arrow = FlatUIUtils.createPath( xy,y, xy+awh,y+awh, xy+awh+awh,y );
-					break;
+                case SwingConstants.BOTTOM:
+                    rect = new RoundRectangle2D.Float(0, 0, width - 1, height - 1 - awh, arc, arc);
+                    int y = height - 1 - awh;
+                    arrow = FlatUIUtils.createPath(xy, y, xy + awh, y + awh, xy + awh + awh, y);
+                    break;
 
-				default:
-					throw new RuntimeException();
-			}
+                default:
+                    throw new RuntimeException();
+            }
 
-			Area area = new Area( rect );
-			area.add( new Area( arrow ) );
-			return area;
-		}
-	}
+            Area area = new Area(rect);
+            area.add(new Area(arrow));
+            return area;
+        }
+    }
 }

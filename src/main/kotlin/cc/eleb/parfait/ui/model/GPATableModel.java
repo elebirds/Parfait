@@ -1,10 +1,16 @@
 package cc.eleb.parfait.ui.model;
 
+import cc.eleb.parfait.i18n.Language;
+
 import javax.swing.table.DefaultTableModel;
 
 public class GPATableModel extends DefaultTableModel {
     static final Class<?>[] columnTypes = new Class<?>[]{Integer.class, Double.class};
-    static final String[] columnNames = new String[]{"成绩（大于等于此值）", "GPA"};
+    static String[] columnNames = new String[]{Language.trs("gpa-table-column1"), Language.trs("gpa-table-column2")};
+
+    public void reloadTranslation(){
+        columnNames = new String[]{Language.trs("gpa-table-column1"), Language.trs("gpa-table-column2")};
+    }
 
     @Override
     public String getColumnName(int column) {

@@ -1,6 +1,6 @@
 package cc.eleb.parfait.config
 
-import cc.eleb.parfait.i18n.Language
+import cc.eleb.parfait.i18n.GenLanguage
 import cc.eleb.parfait.utils.config.Config
 import cc.eleb.parfait.utils.config.ConfigData
 import cc.eleb.parfait.utils.config.ConfigType
@@ -14,7 +14,7 @@ class I18nConfig {
             "信用管理" to "Credit Management",
             "金融工程" to "Financial Engineering",
             "金融学（拔尖人才实验班）" to "Finance (Top talent experimental class)",
-            "金融学(数学金融人工智能实验班)" to "Finance (Mathematics， Finance and Artificial Intelligence Experimental Class)",
+            "金融学（数学金融人工智能实验班）" to "Finance (Mathematics， Finance and Artificial Intelligence Experimental Class)",
             "金融科技" to "Financial Technology",
             "经济学" to "Economics",
             "经济学（中美合作）" to "Economics (Sino-US Cooperation)",
@@ -42,7 +42,7 @@ class I18nConfig {
             "信用管理" to "クレジットマネジメント",
             "金融工程" to "金融工学",
             "金融学（拔尖人才实验班）" to "ファイナンス（トップタレントのための実験室）",
-            "金融学(数学金融人工智能实验班)" to "ファイナンス（数学・金融の人工知能実験室）",
+            "金融学（数学金融人工智能实验班）" to "ファイナンス（数学・金融の人工知能実験室）",
             "金融科技" to "金融技術",
             "经济学" to "経済学",
             "经济学（中美合作）" to "経済学（中米協力）",
@@ -58,7 +58,7 @@ class I18nConfig {
             "她的" to "彼女の",
             "他" to "彼",
             "她" to "彼女",
-            "商学院"  to "ビジネススクール ",
+            "商学院" to "ビジネススクール ",
             "加权" to "加重",
             "算数" to "算術",
             "未知" to "不明"
@@ -70,7 +70,7 @@ class I18nConfig {
             "信用管理" to "Gestion du crédit",
             "金融工程" to "Ingénierie financière",
             "金融学（拔尖人才实验班）" to "Finance (cours expérimental pour les meilleurs talents)",
-            "金融学(数学金融人工智能实验班)" to "Finance (cours expérimental sur l'intelligence artificielle en mathématiques et en finance)",
+            "金融学（数学金融人工智能实验班）" to "Finance (cours expérimental sur l'intelligence artificielle en mathématiques et en finance)",
             "金融科技" to "Technologie financière",
             "经济学" to "Économie",
             "经济学（中美合作）" to "Économie (coopération sino-américaine)",
@@ -96,11 +96,11 @@ class I18nConfig {
     lateinit var config: Config
     fun load(content: String = "") {
         config = Config(content, ConfigType.YAML)
-        Language.langs.clear()
+        GenLanguage.langs.clear()
         val dt = if (content == "") default else config.data
         dt.forEach { (id, data) ->
             val d: Map<*, *> = data as Map<*, *>
-            Language.langs[id] = Language(
+            GenLanguage.langs[id] = GenLanguage(
                 name = id,
                 data = linkedMapOf<String, String>().apply {
                     d.forEach { (t, u) ->
@@ -113,7 +113,7 @@ class I18nConfig {
 
     fun toMap(): LinkedHashMap<String, Any> {
         return linkedMapOf<String, Any>().apply {
-            Language.langs.forEach { (t, u) ->
+            GenLanguage.langs.forEach { (t, u) ->
                 this[t] = u.data
             }
         }

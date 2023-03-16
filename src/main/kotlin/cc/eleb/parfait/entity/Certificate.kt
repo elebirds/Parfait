@@ -2,9 +2,10 @@ package cc.eleb.parfait.entity
 
 import cc.eleb.parfait.PARFAIT_FULL_NAME
 import cc.eleb.parfait.config.CertificateConfig
-import cc.eleb.parfait.i18n.Language
+import cc.eleb.parfait.i18n.GenLanguage
 import cc.eleb.parfait.i18n.translateTo
 import cc.eleb.parfait.utils.DateUtils
+import cc.eleb.parfait.utils.GlobalSettings
 import cc.eleb.parfait.utils.HanziUtils
 import cc.eleb.parfait.utils.file.ZipUtils
 import java.io.File
@@ -29,9 +30,9 @@ class Certificate(val lang: String, val name: String, val data: HashMap<String, 
                 .replace("\${school_for}", st.school.translateTo())
                 .replace("\${prof}", st.profession)
                 .replace("\${prof_for}", st.profession.translateTo())
-                .replace("\${stype}", "加权")
-                .replace("\${stype_for}", "加权".translateTo())
-                .replace("\${score}", nf.format(st.weightedMean))
+                .replace("\${stype}", if(GlobalSettings.SCORE_TYPE==1)"算数" else "加权")
+                .replace("\${stype_for}", (if(GlobalSettings.SCORE_TYPE==1)"算数" else "加权").translateTo())
+                .replace("\${score}", nf.format(if(GlobalSettings.SCORE_TYPE==1)st.simpleMean else st.weightedMean))
                 .replace("\${date}", DateUtils.getCurrentFormattedDate2())
                 .replace("\${date_for}", DateUtils.getCurrentFormattedDateEnglish())
                 .replace("\${gpa}", nf.format(st.gpa))
@@ -53,10 +54,11 @@ class Certificate(val lang: String, val name: String, val data: HashMap<String, 
 
         const val CORE_FILE = "/docProps/core.xml"
 
-        fun generate(outFile: File, student:Student){
-            val cer = if(ces.containsKey("certificate${if (student.status==0)"A" else "B"}-${Language.nowLanguage}"))ces["certificate${if (student.status==0)"A" else "B"}-${Language.nowLanguage}"]!!
-            else ces["certificate${if (student.status==0)"A" else "B"}-英语-English"]!!
-            cer.replaceAndGenerate(outFile,student)
+        fun generate(outFile: File, student: Student) {
+            val cer =
+                if (ces.containsKey("certificate${if (student.status == 0) "A" else "B"}-${GenLanguage.nowGenLanguage}")) ces["certificate${if (student.status == 0) "A" else "B"}-${GenLanguage.nowGenLanguage}"]!!
+                else ces["certificate${if (student.status == 0) "A" else "B"}-英语-English"]!!
+            cer.replaceAndGenerate(outFile, student)
         }
     }
 }

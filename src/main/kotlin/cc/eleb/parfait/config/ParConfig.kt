@@ -2,7 +2,7 @@ package cc.eleb.parfait.config
 
 import cc.eleb.parfait.entity.Certificate
 import cc.eleb.parfait.entity.Student
-import cc.eleb.parfait.i18n.Language
+import cc.eleb.parfait.i18n.GenLanguage
 import cc.eleb.parfait.ui.panel.StudentDataPanel
 import cc.eleb.parfait.utils.file.ZipUtils
 import java.io.File
@@ -18,16 +18,16 @@ class ParConfig(var file: File?) {
     init {
         instance = this
         inited = true
-        if(file==null) newed = true
+        if (file == null) newed = true
         this.load()
     }
 
     private fun load() {
-        val data = if(file!=null)try {
+        val data = if (file != null) try {
             ZipUtils.zip2Strings(file!!)
         } catch (e: FileNotFoundException) {
             linkedMapOf()
-        }else linkedMapOf()
+        } else linkedMapOf()
         studentConfig.load(data["student"] ?: "")
         i18nConfig.load(data["i18n"] ?: "")
         gpaConfig.load(data["gpa"] ?: "")
@@ -60,24 +60,24 @@ class ParConfig(var file: File?) {
         )
     }
 
-    fun close(){
+    fun close() {
         newed = false
         inited = false
         instance = null
         Student.students.clear()
         GPAConfig.ranks.clear()
-        Language.langs.clear()
+        GenLanguage.langs.clear()
         Certificate.ces.clear()
         StudentDataPanel.instance.table1.model.fireTableDataChanged()
     }
 
-    companion object{
+    companion object {
         var inited = false
         var newed = false
         var instance: ParConfig? = null
 
-        fun checkInited():Boolean {
-            if(!inited){
+        fun checkInited(): Boolean {
+            if (!inited) {
                 JOptionPane.showMessageDialog(
                     null,
                     "请先新建或打开一个par文件！",

@@ -3,10 +3,9 @@
  */
 package cc.eleb.parfait.ui.panel
 
-import cc.eleb.parfait.config.GPAConfig
-import cc.eleb.parfait.config.I18nConfig
 import cc.eleb.parfait.config.ParConfig
-import cc.eleb.parfait.i18n.Language
+import cc.eleb.parfait.i18n.GenLanguage
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.model.TranslateTableModel
 import net.miginfocom.swing.MigLayout
 import java.awt.Dimension
@@ -15,21 +14,29 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.*
-import javax.swing.table.DefaultTableModel
 
 /**
  * @author hhmcn
  */
 class I18nPanel : JPanel() {
-    fun reload(){
-        comboBox1.model = DefaultComboBoxModel(Language.langs.keys.toTypedArray())
+    fun reload() {
+        comboBox1.model = DefaultComboBoxModel(GenLanguage.langs.keys.toTypedArray())
         this.reloadModel()
+    }
+
+    fun reloadTranslation(){
+        label1.text = "i18n-panel-label1".trs()
+        label2.text = "i18n-panel-label2".trs()
+        button2.text = "global-save".trs()
+        button3.text = "global-reload".trs()
+        (table1.model as TranslateTableModel).reloadTranslation()
+        (table1.model as TranslateTableModel).fireTableStructureChanged()
     }
 
     private fun reloadModel() {
         (table1.model as TranslateTableModel).apply {
             this.dataVector.clear()
-            Language.langs[Language.nowLanguage]?.data?.forEach { (t, u) ->
+            GenLanguage.langs[GenLanguage.nowGenLanguage]?.data?.forEach { (t, u) ->
                 this.dataVector.add(Vector<String>().also {
                     it.add(t)
                     it.add(u)
@@ -40,12 +47,13 @@ class I18nPanel : JPanel() {
     }
 
     private fun initComponents() {
+        this.reloadTranslation()
         this.layout = MigLayout("insets 0,hidemode 3", "[fill][fill][fill][fill][fill][fill][fill]", "[][][][]")
         this.add(label1, "cell 0 0")
-        comboBox1.model = DefaultComboBoxModel(Language.langs.keys.toTypedArray())
+        comboBox1.model = DefaultComboBoxModel(GenLanguage.langs.keys.toTypedArray())
         comboBox1.addItemListener {
-            if(it.stateChange != ItemEvent.SELECTED)return@addItemListener
-            Language.nowLanguage = comboBox1.selectedItem!!.toString()
+            if (it.stateChange != ItemEvent.SELECTED) return@addItemListener
+            GenLanguage.nowGenLanguage = comboBox1.selectedItem!!.toString()
             this.reloadModel()
         }
         this.add(comboBox1, "cell 1 0")
@@ -58,13 +66,9 @@ class I18nPanel : JPanel() {
         this.add(panel1, "cell 1 1")
     }
 
-    private val label1 = JLabel().apply { 
-        this.text = "当前语言："
-    }
+    private val label1 = JLabel()
     private val comboBox1 = JComboBox<String>()
-    private val label2 = JLabel().apply {
-        this.text = "对应翻译："
-    }
+    private val label2 = JLabel()
     private val scrollPane1 = JScrollPane()
     private val table1 = JTable().apply {
         this.model = TranslateTableModel()
@@ -72,11 +76,10 @@ class I18nPanel : JPanel() {
     }
     private val panel1 = JPanel()
     private val button2 = JButton().apply {
-        this.text = "保存"
-        this.addMouseListener(object : MouseAdapter(){
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                if(!ParConfig.checkInited())return
-                Language.langs[comboBox1.selectedItem!!.toString()]!!.data.apply {
+                if (!ParConfig.checkInited()) return
+                GenLanguage.langs[comboBox1.selectedItem!!.toString()]!!.data.apply {
                     this.clear()
                     (table1.model as TranslateTableModel).dataVector.forEach {
                         this[it[0].toString()] = it[1].toString()
@@ -86,10 +89,9 @@ class I18nPanel : JPanel() {
         })
     }
     private val button3 = JButton().apply {
-        this.text = "重新加载"
-        this.addMouseListener(object : MouseAdapter(){
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                if(!ParConfig.checkInited())return
+                if (!ParConfig.checkInited()) return
                 reload()
             }
         })
@@ -100,7 +102,7 @@ class I18nPanel : JPanel() {
         initComponents()
     }
 
-    companion object{
-        lateinit var instance:I18nPanel
+    companion object {
+        lateinit var instance: I18nPanel
     }
 }

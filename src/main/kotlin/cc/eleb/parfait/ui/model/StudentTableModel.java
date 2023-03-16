@@ -1,13 +1,26 @@
 package cc.eleb.parfait.ui.model;
 
 import cc.eleb.parfait.entity.Student;
+import cc.eleb.parfait.i18n.Language;
 
 import javax.swing.table.AbstractTableModel;
 
 public class StudentTableModel extends AbstractTableModel {
     static final boolean[] editable = new boolean[]{false, true, true, true, true, true, true, true, false};
     static final Class<?>[] columnTypes = new Class<?>[]{Integer.class, String.class, String.class, String.class, Integer.class, String.class, String.class, String.class, Double.class};
-    static final String[] columnNames = new String[]{"学号", "姓名", "性别", "学籍", "年级", "学院", "专业", "班级", "加权平均分"};
+    static String[] columnNames = new String[]{Language.trs("student-table-column1"), Language.trs("student-table-column2"),
+            Language.trs("student-table-column3"), Language.trs("student-table-column4"),
+            Language.trs("student-table-column5"), Language.trs("student-table-column6"),
+            Language.trs("student-table-column7"), Language.trs("student-table-column8"),
+            Language.trs("student-table-column9")};
+
+    public void reloadTranslation(){
+        columnNames = new String[]{Language.trs("student-table-column1"), Language.trs("student-table-column2"),
+                Language.trs("student-table-column3"), Language.trs("student-table-column4"),
+                Language.trs("student-table-column5"), Language.trs("student-table-column6"),
+                Language.trs("student-table-column7"), Language.trs("student-table-column8"),
+                Language.trs("student-table-column9")};
+    }
 
     @Override
     public String getColumnName(int column) {
@@ -32,7 +45,7 @@ public class StudentTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int row, int column) {
         Student student = (Student) Student.getStudents().values().toArray()[row];
-        switch (column){
+        switch (column) {
             case 0:
                 return student.getId();
             case 1:
@@ -63,30 +76,32 @@ public class StudentTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int row, int column) {
         Student student = (Student) Student.getStudents().values().toArray()[row];
-        super.setValueAt(aValue, row, column);
-        switch (column){
+        switch (column) {
             case 1:
                 student.setName(aValue.toString());
                 break;
             case 2:
-                student.setGender(aValue.toString().equals("未知")?0:aValue.toString().equals("男")?1:2);
+                student.setGender(aValue.toString().equals("未知") ? 0 : aValue.toString().equals("男") ? 1 : 2);
                 break;
             case 3:
-                student.setStatus(aValue.toString().equals("在籍")?0:1);
+                student.setStatus(aValue.toString().equals("在籍") ? 0 : 1);
                 break;
             case 4:
-                student.setGrade((int)aValue);
+                student.setGrade((int) aValue);
                 break;
             case 5:
                 student.setSchool(aValue.toString());
                 break;
             case 6:
-                student.setProfession(aValue.toString());
-                break;
+                String s = aValue.toString().replace('(', '（').replace(')', '）');
+                student.setProfession(s);
+                super.setValueAt(s, row, column);
+                return;
             case 7:
                 student.setClazz(aValue.toString());
                 break;
         }
+        super.setValueAt(aValue, row, column);
     }
 
     @Override

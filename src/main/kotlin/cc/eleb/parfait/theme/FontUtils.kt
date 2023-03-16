@@ -1,5 +1,6 @@
 package cc.eleb.parfait.theme
 
+import cc.eleb.parfait.i18n.trs
 import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange
 import com.formdev.flatlaf.util.FontUtils
@@ -16,33 +17,33 @@ object FontUtils {
     val availableFontFamilyNames: Array<String> = FontUtils.getAvailableFontFamilyNames().clone()
     var initialFontMenuItemCount: Int = -1
 
-    fun init(){
+
+    val restoreFontMenuItem = JMenuItem()
+    val incrFontMenuItem = JMenuItem()
+    val decrFontMenuItem = JMenuItem()
+
+    fun reloadTranslation(){
+        fontMenu.text = "frame-menu-font".trs()
+        restoreFontMenuItem.text = "frame-menu-font-1".trs()
+        incrFontMenuItem.text = "frame-menu-font-2".trs()
+        decrFontMenuItem.text = "frame-menu-font-3".trs()
+    }
+
+    fun init() {
+        this.reloadTranslation()
         Arrays.sort(availableFontFamilyNames)
-        //======== fontMenu ========
-        fontMenu.text = "字体"
-        val restoreFontMenuItem = JMenuItem()
-        val incrFontMenuItem = JMenuItem()
-        val decrFontMenuItem = JMenuItem()
-        //---- restoreFontMenuItem ----
-        restoreFontMenuItem.text = "还原字体"
         restoreFontMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_0,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
         )
         restoreFontMenuItem.addActionListener { restoreFont() }
         fontMenu.add(restoreFontMenuItem)
-
-        //---- incrFontMenuItem ----
-        incrFontMenuItem.text = "加大字体"
         incrFontMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_PLUS,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
         )
         incrFontMenuItem.addActionListener { incrFont() }
         fontMenu.add(incrFontMenuItem)
-
-        //---- decrFontMenuItem ----
-        decrFontMenuItem.text = "减小字体"
         decrFontMenuItem.accelerator = KeyStroke.getKeyStroke(
             KeyEvent.VK_MINUS,
             Toolkit.getDefaultToolkit().menuShortcutKeyMask
@@ -136,8 +137,6 @@ object FontUtils {
             fontMenu.add(item)
             sizesGroup.add(item)
         }
-
-        // enabled/disable items
         val enabled: Boolean = UIManager.getLookAndFeel() is FlatLaf
         for (item: Component in fontMenu.menuComponents) item.isEnabled = enabled
     }

@@ -16,7 +16,7 @@ import javax.swing.JPanel
 /**
  * @author hhmcn
  */
-class ScoreDialog(val sdp:StudentDataPanel,sid:Int) : JDialog() {
+class ScoreDialog(val sdp: StudentDataPanel, sid: Int) : JDialog() {
     private fun initComponents() {
         val contentPane = contentPane
         contentPane.layout = BorderLayout()
@@ -32,7 +32,7 @@ class ScoreDialog(val sdp:StudentDataPanel,sid:Int) : JDialog() {
         contentPane.add(dialogPane, BorderLayout.CENTER)
         this.pack()
         this.setLocationRelativeTo(owner)
-        this.addWindowListener(object : WindowListener{
+        this.addWindowListener(object : WindowListener {
             override fun windowOpened(e: WindowEvent) {
             }
 

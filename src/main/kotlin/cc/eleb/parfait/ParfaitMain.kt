@@ -1,9 +1,10 @@
 package cc.eleb.parfait
 
-import cc.eleb.parfait.ui.DemoPrefs.init
-import cc.eleb.parfait.ui.DemoPrefs.setupLaf
+import cc.eleb.parfait.i18n.Language
 import cc.eleb.parfait.ui.ParfaitFrame
-
+import cc.eleb.parfait.utils.GlobalSettings
+import cc.eleb.parfait.utils.ParfaitPrefs.init
+import cc.eleb.parfait.utils.ParfaitPrefs.setupLaf
 import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.extras.FlatInspector
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
@@ -12,7 +13,6 @@ import com.formdev.flatlaf.fonts.jetbrains_mono.FlatJetBrainsMonoFont
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont
 import com.formdev.flatlaf.fonts.roboto_mono.FlatRobotoMonoFont
 import com.formdev.flatlaf.util.SystemInfo
-
 import javax.swing.JDialog
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
@@ -32,7 +32,9 @@ fun main() {
         JDialog.setDefaultLookAndFeelDecorated(true)
     }
     SwingUtilities.invokeLater {
-        init("Parfait B")
+        init("Parfait C")
+        GlobalSettings.loadFromPrefs()
+        Language.load()
         FlatInterFont.installLazy()
         FlatJetBrainsMonoFont.installLazy()
         FlatRobotoFont.installLazy()

@@ -5,12 +5,12 @@ package cc.eleb.parfait.ui.panel
 
 import cc.eleb.parfait.config.GPAConfig
 import cc.eleb.parfait.config.ParConfig
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.model.GPATableModel
 import net.miginfocom.swing.MigLayout
 import java.awt.Dimension
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.event.MouseListener
 import java.util.*
 import javax.swing.*
 import javax.swing.table.DefaultTableModel
@@ -20,7 +20,14 @@ import javax.swing.table.TableColumnModel
  * @author hhmcn
  */
 class GPAPanel : JPanel() {
-    fun reload(){
+    fun reloadTranslation(){
+        button2.text = "global-save".trs()
+        button3.text = "global-reload".trs()
+        (table1.model as GPATableModel).reloadTranslation()
+        (table1.model as GPATableModel).fireTableStructureChanged()
+    }
+
+    fun reload() {
         (table1.model as DefaultTableModel).dataVector.also {
             it.clear()
             GPAConfig.ranks.forEach { (t, u) ->
@@ -34,6 +41,7 @@ class GPAPanel : JPanel() {
     }
 
     private fun initComponents() {
+        this.reloadTranslation()
         layout = MigLayout("insets 0,hidemode 3,gap 0 0", "[grow,fill][305,grow,fill][grow,fill]", "[grow,fill]")
         add(label1, "cell 0 0")
         val cm: TableColumnModel = table1.columnModel
@@ -46,6 +54,7 @@ class GPAPanel : JPanel() {
         panel1.add(button3, "cell 1 1")
         add(panel1, "cell 2 0")
     }
+
     private var label1 = JLabel()
     private var scrollPane1 = JScrollPane()
     private var table1 = JTable().apply {
@@ -53,10 +62,9 @@ class GPAPanel : JPanel() {
     }
     private var panel1 = JPanel()
     private var button2 = JButton().apply {
-        this.text = "保存"
-        this.addMouseListener(object : MouseAdapter(){
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                if(!ParConfig.checkInited())return
+                if (!ParConfig.checkInited()) return
                 GPAConfig.ranks.clear()
                 (table1.model as DefaultTableModel).dataVector.forEach {
                     GPAConfig.ranks[it[0].toString().toInt()] = it[1].toString().toDouble()
@@ -65,10 +73,9 @@ class GPAPanel : JPanel() {
         })
     }
     private var button3 = JButton().apply {
-        this.text = "重新加载"
-        this.addMouseListener(object : MouseAdapter(){
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                if(!ParConfig.checkInited())return
+                if (!ParConfig.checkInited()) return
                 reload()
             }
         })
@@ -79,7 +86,7 @@ class GPAPanel : JPanel() {
         initComponents()
     }
 
-    companion object{
-        lateinit var instance:GPAPanel
+    companion object {
+        lateinit var instance: GPAPanel
     }
 }

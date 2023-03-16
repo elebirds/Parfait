@@ -2,14 +2,8 @@ package cc.eleb.parfait.entity
 
 import cc.eleb.parfait.config.GPAConfig
 import cc.eleb.parfait.i18n.translateTo
-import cc.eleb.parfait.ui.panel.StudentDataPanel
-
 import com.alibaba.excel.EasyExcel
 import com.alibaba.excel.read.listener.PageReadListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-
 import java.io.File
 
 data class Student(
@@ -25,7 +19,7 @@ data class Student(
 ) {
     val weightedMean: Double
         get() {
-            if(scores.isEmpty()) return -1.0
+            if (scores.isEmpty()) return -1.0
             var a = 0.0
             var b = 0.0
             scores.forEach { u ->
@@ -54,7 +48,7 @@ data class Student(
 
     val simpleMean: Double
         get() {
-            if(scores.isEmpty()) return -1.0
+            if (scores.isEmpty()) return -1.0
             var a = 0.0
             var b = 0
             scores.forEach { u ->
@@ -66,7 +60,7 @@ data class Student(
 
     val gpa: Double
         get() {
-            if(scores.isEmpty()) return -1.0
+            if (scores.isEmpty()) return -1.0
             var a = 0.0
             var b = 0.0
             scores.forEach { u ->

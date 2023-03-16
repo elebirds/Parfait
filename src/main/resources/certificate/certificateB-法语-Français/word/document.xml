@@ -377,7 +377,7 @@
                 <w:spacing w:beforeLines="50" w:before="156" w:line="360" w:lineRule="auto"/>
                 <w:jc w:val="center"/>
                 <w:rPr>
-                    <w:rFonts w:ascii="华文楷体" w:eastAsia="华文楷体" w:hAnsi="华文楷体" w:cs="Arial"/>
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman" w:cs="Arial"/>
                     <w:b/>
                     <w:sz w:val="48"/>
                     <w:szCs w:val="28"/>
@@ -385,13 +385,13 @@
             </w:pPr>
             <w:r>
                 <w:rPr>
-                    <w:rFonts w:ascii="华文楷体" w:eastAsia="华文楷体" w:hAnsi="华文楷体" w:cs="Arial"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman" w:cs="Arial"
                               w:hint="eastAsia"/>
                     <w:b/>
                     <w:sz w:val="48"/>
                     <w:szCs w:val="28"/>
                 </w:rPr>
-                <w:t>Certificate</w:t>
+                <w:t>Certificat</w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="6E4EC2B2" w14:textId="77777777" w:rsidR="001A7C5A" w:rsidRPr="002D169D"
@@ -401,18 +401,18 @@
                 <w:spacing w:beforeLines="50" w:before="156" w:line="360" w:lineRule="auto"/>
                 <w:ind w:firstLineChars="200" w:firstLine="560"/>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
             </w:pPr>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve">To whom it may concern, </w:t>
+                <w:t xml:space="preserve">À qui de droit, </w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="5E901CE6" w14:textId="77777777" w:rsidR="001A7C5A" w:rsidRPr="002D169D"
@@ -422,22 +422,22 @@
                 <w:spacing w:beforeLines="50" w:before="156" w:line="276" w:lineRule="auto"/>
                 <w:ind w:firstLineChars="200" w:firstLine="560"/>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
             </w:pPr>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve">This is to certify that the student </w:t>
+                <w:t xml:space="preserve">Ce document a pour but de certifier que l'étudiant(e) </w:t>
             </w:r>
             <w:r>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -445,7 +445,7 @@
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -453,7 +453,7 @@
             </w:r>
             <w:r>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -461,23 +461,23 @@
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>), Student Number</w:t>
+                <w:t>), Numéro d'étudiant(e)</w:t>
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>:</w:t>
+                <w:t xml:space="preserve">: </w:t>
             </w:r>
             <w:r>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -485,7 +485,7 @@
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -493,15 +493,15 @@
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve">has registered in </w:t>
+                <w:t xml:space="preserve">s'est inscrit en </w:t>
             </w:r>
             <w:r>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -509,15 +509,15 @@
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve"> in the major of </w:t>
+                <w:t xml:space="preserve"> dans la spécialité </w:t>
             </w:r>
             <w:r>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -525,15 +525,15 @@
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve"> at </w:t>
+                <w:t xml:space="preserve"> à l'</w:t>
             </w:r>
             <w:r w:rsidRPr="00F722AD">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -541,11 +541,11 @@
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve"> of Shanghai Normal University. </w:t>
+                <w:t xml:space="preserve"> de l'Université normale de Shanghai. </w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="33FF4C78" w14:textId="7D469CA4" w:rsidR="001A7C5A" w:rsidRPr="007B4BE7"
@@ -555,14 +555,14 @@
                 <w:spacing w:beforeLines="50" w:before="156" w:line="360" w:lineRule="auto"/>
                 <w:ind w:firstLineChars="200" w:firstLine="560"/>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
             </w:pPr>
             <w:r>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman" w:hint="eastAsia"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -570,31 +570,31 @@
             </w:r>
             <w:r w:rsidRPr="007B4BE7">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve"> graduated from the school with the </w:t>
+                <w:t xml:space="preserve"> a terminé l'école avec un score</w:t>
             </w:r>
             <w:r>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman" w:hint="eastAsia"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve">weighted </w:t>
+                <w:t xml:space="preserve"> ${stype_for} </w:t>
             </w:r>
             <w:r w:rsidRPr="007B4BE7">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>average score of</w:t>
+                <w:t>de</w:t>
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -602,7 +602,7 @@
             </w:r>
             <w:r>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -610,11 +610,11 @@
             </w:r>
             <w:r w:rsidRPr="007B4BE7">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve"> out of 100.</w:t>
+                <w:t xml:space="preserve"> sur 100.</w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="0E08E8E0" w14:textId="77777777" w:rsidR="001A7C5A" w:rsidRPr="002D169D"
@@ -625,18 +625,18 @@
                 <w:ind w:firstLineChars="200" w:firstLine="560"/>
                 <w:jc w:val="left"/>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
             </w:pPr>
             <w:r w:rsidRPr="007B4BE7">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>Hereby certify.</w:t>
+                <w:t>Faite pour serviret valoir ce que de droit.</w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="06DA7ED8" w14:textId="77777777" w:rsidR="001A7C5A" w:rsidRPr="002D169D"
@@ -647,7 +647,7 @@
                 <w:ind w:firstLineChars="200" w:firstLine="560"/>
                 <w:jc w:val="right"/>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -655,7 +655,7 @@
             <w:bookmarkStart w:id="0" w:name="_Hlk129211727"/>
             <w:r>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
@@ -671,18 +671,18 @@
                 <w:ind w:firstLineChars="200" w:firstLine="560"/>
                 <w:jc w:val="right"/>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
             </w:pPr>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>Shanghai Normal University</w:t>
+                <w:t>Université normale de Shanghai</w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="598CB257" w14:textId="482FB0AC" w:rsidR="00B956B4" w:rsidRPr="001A7C5A"
@@ -698,7 +698,7 @@
             </w:pPr>
             <w:r>
                 <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
+                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>

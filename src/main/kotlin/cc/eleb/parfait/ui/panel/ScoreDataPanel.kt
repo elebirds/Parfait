@@ -2,6 +2,7 @@ package cc.eleb.parfait.ui.panel
 
 import cc.eleb.parfait.entity.Score
 import cc.eleb.parfait.entity.Student
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.model.ScoreTableModel
 import cc.eleb.parfait.ui.table.ScoreDataTable
 import net.miginfocom.swing.MigLayout
@@ -14,11 +15,11 @@ import javax.swing.filechooser.FileFilter
 /**
  * @author hhmcn
  */
-class ScoreDataPanel(private val student:Student) : JPanel() {
+class ScoreDataPanel(private val student: Student) : JPanel() {
     private fun addScoreMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         student.scores.add(Score().apply {
-            this.name = "新建成绩"
+            this.name = "score-panel-new".trs()
             this.aType = "考试"
             this.cType = "专业基础课程"
             this.score = 0
@@ -27,11 +28,11 @@ class ScoreDataPanel(private val student:Student) : JPanel() {
         (table1.model as ScoreTableModel).fireTableDataChanged()
     }
 
-    private fun removeScoreMouseClicked(e:MouseEvent){
+    private fun removeScoreMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         if (table1.selectedRows.isEmpty()) {
             JOptionPane.showMessageDialog(
-                this, "您未选中任何成绩，无法进行删除操作。", "错误",
+                this, "score-panel-error-1".trs(), "global-error".trs(),
                 JOptionPane.ERROR_MESSAGE
             )
             return
@@ -52,18 +53,18 @@ class ScoreDataPanel(private val student:Student) : JPanel() {
             }
 
             override fun getDescription(): String {
-                return "Excel文件(.xlsx)"
+                return "global-excel-file".trs()
             }
         }
         fd.isMultiSelectionEnabled = false
         fd.fileSelectionMode = JFileChooser.FILES_ONLY
         val res: Int = fd.showOpenDialog(this)
         if (res == JFileChooser.APPROVE_OPTION) {
-            if (!fd.selectedFile.toString().endsWith(".xlsx")){
+            if (!fd.selectedFile.toString().endsWith(".xlsx")) {
                 JOptionPane.showMessageDialog(
                     this,
-                    "请选择Excel表格文件！",
-                    "导入失败",
+                    "score-panel-error-2".trs(),
+                    "global-error".trs(),
                     JOptionPane.ERROR_MESSAGE
                 )
                 return
@@ -74,8 +75,8 @@ class ScoreDataPanel(private val student:Student) : JPanel() {
             } catch (e: Exception) {
                 JOptionPane.showMessageDialog(
                     this,
-                    "请选择正确的成绩数据。\n${e.stackTraceToString()}",
-                    "导入失败",
+                    "${"score-panel-error-3".trs()}\n${e.stackTraceToString()}",
+                    "global-error".trs(),
                     JOptionPane.ERROR_MESSAGE
                 )
             }
@@ -105,7 +106,7 @@ class ScoreDataPanel(private val student:Student) : JPanel() {
     private val table1 = ScoreDataTable(student)
     private val panel1 = JPanel()
     private val button1 = JButton().also {
-        it.text = "添加成绩"
+        it.text = "score-panel-button-1".trs()
         it.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 addScoreMouseClicked(e)
@@ -114,7 +115,7 @@ class ScoreDataPanel(private val student:Student) : JPanel() {
     }
 
     private val button2 = JButton().also {
-        it.text = "删除成绩"
+        it.text = "score-panel-button-2".trs()
         it.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 removeScoreMouseClicked(e)
@@ -122,7 +123,7 @@ class ScoreDataPanel(private val student:Student) : JPanel() {
         })
     }
     private val button3 = JButton().also {
-        it.text = "导入成绩"
+        it.text = "score-panel-button-3".trs()
         it.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 impoScoreMouseClicked(e)

@@ -1,10 +1,16 @@
 package cc.eleb.parfait.ui.model;
 
+import cc.eleb.parfait.i18n.Language;
+
 import javax.swing.table.DefaultTableModel;
 
 public class TranslateTableModel extends DefaultTableModel {
     static final Class<?>[] columnTypes = new Class<?>[]{String.class, String.class};
-    static final String[] columnNames = new String[]{"中文", "外文"};
+    static String[] columnNames = new String[]{Language.trs("translate-table-column1"), Language.trs("translate-table-column1")};
+
+    public void reloadTranslation(){
+        columnNames = new String[]{Language.trs("translate-table-column1"), Language.trs("translate-table-column1")};
+    }
 
     @Override
     public String getColumnName(int column) {

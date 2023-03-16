@@ -1,14 +1,18 @@
 package cc.eleb.parfait.ui.model;
 
 import cc.eleb.parfait.entity.Student;
+import cc.eleb.parfait.i18n.Language;
 
 import javax.swing.table.AbstractTableModel;
 
 public class ScoreTableModel extends AbstractTableModel {
     static final Class<?>[] columnTypes = new Class<?>[]{String.class, String.class, String.class, Boolean.class, Double.class, Integer.class};
-    static final String[] columnNames = new String[]{"课程名称", "课程类型", "考核类型", "学位课", "学分", "成绩"};
+    static final String[] columnNames = new String[]{Language.trs("score-table-column1"),
+            Language.trs("score-table-column2"), Language.trs("score-table-column3"),
+            Language.trs("score-table-column4"), Language.trs("score-table-column5"), Language.trs("score-table-column6")};
     private final Student student;
-    public ScoreTableModel(Student student){
+
+    public ScoreTableModel(Student student) {
         this.student = student;
     }
 
@@ -34,7 +38,7 @@ public class ScoreTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int column) {
-        switch (column){
+        switch (column) {
             case 0:
                 return student.getScores().get(row).getName();
             case 1:
@@ -59,7 +63,7 @@ public class ScoreTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int row, int column) {
         super.setValueAt(aValue, row, column);
-        switch (column){
+        switch (column) {
             case 0:
                 student.getScores().get(row).setName(aValue.toString());
                 break;
@@ -73,10 +77,10 @@ public class ScoreTableModel extends AbstractTableModel {
                 student.getScores().get(row).setGpa((boolean) aValue);
                 break;
             case 4:
-                student.getScores().get(row).setCredit((double)aValue);
+                student.getScores().get(row).setCredit((double) aValue);
                 break;
             case 5:
-                student.getScores().get(row).setScore((int)aValue);
+                student.getScores().get(row).setScore((int) aValue);
                 break;
         }
     }

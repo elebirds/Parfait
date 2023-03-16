@@ -391,7 +391,7 @@
                     <w:sz w:val="48"/>
                     <w:szCs w:val="28"/>
                 </w:rPr>
-                <w:t>Certificate</w:t>
+                <w:t>証明書</w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="6E4EC2B2" w14:textId="77777777" w:rsidR="001A7C5A" w:rsidRPr="002D169D"
@@ -412,7 +412,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve">To whom it may concern, </w:t>
+                <w:t xml:space="preserve">拝启, </w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="5E901CE6" w14:textId="77777777" w:rsidR="001A7C5A" w:rsidRPr="002D169D"
@@ -427,21 +427,13 @@
                     <w:sz w:val="28"/>
                 </w:rPr>
             </w:pPr>
-            <w:r w:rsidRPr="002D169D">
-                <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
-                              w:cs="Times New Roman"/>
-                    <w:sz w:val="28"/>
-                </w:rPr>
-                <w:t xml:space="preserve">This is to certify that the student </w:t>
-            </w:r>
             <w:r>
                 <w:rPr>
                     <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>${name_for}</w:t>
+                <w:t>${name}</w:t>
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
@@ -449,7 +441,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>(</w:t>
+                <w:t>（</w:t>
             </w:r>
             <w:r>
                 <w:rPr>
@@ -465,15 +457,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>), Student Number</w:t>
-            </w:r>
-            <w:r w:rsidRPr="002D169D">
-                <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
-                              w:cs="Times New Roman"/>
-                    <w:sz w:val="28"/>
-                </w:rPr>
-                <w:t>:</w:t>
+                <w:t>）、学生番号：</w:t>
             </w:r>
             <w:r>
                 <w:rPr>
@@ -489,7 +473,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>,</w:t>
+                <w:t>，</w:t>
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
@@ -497,7 +481,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve">has registered in </w:t>
+                <w:t xml:space="preserve">上海師範大学</w:t>
             </w:r>
             <w:r>
                 <w:rPr>
@@ -505,7 +489,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>${grade}</w:t>
+                <w:t>${school_for}</w:t>
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
@@ -513,7 +497,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve"> in the major of </w:t>
+                <w:t xml:space="preserve">の</w:t>
             </w:r>
             <w:r>
                 <w:rPr>
@@ -529,7 +513,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve"> at </w:t>
+                <w:t xml:space="preserve">専攻</w:t>
             </w:r>
             <w:r w:rsidRPr="00F722AD">
                 <w:rPr>
@@ -537,7 +521,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>${school_for}</w:t>
+                <w:t>${grade}</w:t>
             </w:r>
             <w:r w:rsidRPr="002D169D">
                 <w:rPr>
@@ -545,7 +529,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve"> of Shanghai Normal University. </w:t>
+                <w:t xml:space="preserve">年に登録したことを証明する。</w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="33FF4C78" w14:textId="7D469CA4" w:rsidR="001A7C5A" w:rsidRPr="007B4BE7"
@@ -560,21 +544,13 @@
                     <w:sz w:val="28"/>
                 </w:rPr>
             </w:pPr>
-            <w:r>
-                <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
-                              w:cs="Times New Roman" w:hint="eastAsia"/>
-                    <w:sz w:val="28"/>
-                </w:rPr>
-                <w:t>${ti_for}</w:t>
-            </w:r>
             <w:r w:rsidRPr="007B4BE7">
                 <w:rPr>
                     <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve"> graduated from the school with the </w:t>
+                <w:t xml:space="preserve">${ti_for}は100点満点中</w:t>
             </w:r>
             <w:r>
                 <w:rPr>
@@ -582,7 +558,7 @@
                               w:cs="Times New Roman" w:hint="eastAsia"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve">weighted </w:t>
+                <w:t xml:space="preserve">${score}</w:t>
             </w:r>
             <w:r w:rsidRPr="007B4BE7">
                 <w:rPr>
@@ -590,15 +566,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>average score of</w:t>
-            </w:r>
-            <w:r w:rsidRPr="002D169D">
-                <w:rPr>
-                    <w:rFonts w:ascii="Times New Roman" w:eastAsia="华文楷体" w:hAnsi="Times New Roman"
-                              w:cs="Times New Roman"/>
-                    <w:sz w:val="28"/>
-                </w:rPr>
-                <w:t xml:space="preserve"> </w:t>
+                <w:t>点の</w:t>
             </w:r>
             <w:r>
                 <w:rPr>
@@ -606,7 +574,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>${score}</w:t>
+                <w:t>${stype_for}</w:t>
             </w:r>
             <w:r w:rsidRPr="007B4BE7">
                 <w:rPr>
@@ -614,7 +582,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t xml:space="preserve"> out of 100.</w:t>
+                <w:t xml:space="preserve">平均点で学校を卒業した。</w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="0E08E8E0" w14:textId="77777777" w:rsidR="001A7C5A" w:rsidRPr="002D169D"
@@ -636,7 +604,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>Hereby certify.</w:t>
+                <w:t>ここに証明する。</w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="06DA7ED8" w14:textId="77777777" w:rsidR="001A7C5A" w:rsidRPr="002D169D"
@@ -682,7 +650,7 @@
                               w:cs="Times New Roman"/>
                     <w:sz w:val="28"/>
                 </w:rPr>
-                <w:t>Shanghai Normal University</w:t>
+                <w:t>上海師範大学</w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="598CB257" w14:textId="482FB0AC" w:rsidR="00B956B4" w:rsidRPr="001A7C5A"

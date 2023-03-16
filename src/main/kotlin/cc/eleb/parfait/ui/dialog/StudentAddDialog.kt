@@ -1,88 +1,126 @@
 package cc.eleb.parfait.ui.dialog
 
 import cc.eleb.parfait.entity.Student
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.panel.StudentDataPanel
 import net.miginfocom.swing.MigLayout
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.Dimension
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.event.MouseListener
 import javax.swing.*
-import javax.swing.border.CompoundBorder
-import javax.swing.border.EmptyBorder
-import javax.swing.border.TitledBorder
 
 /**
  * @author hhmcn
  */
-class StudentAddDialog(val sdp:StudentDataPanel) : JDialog() {
+class StudentAddDialog(val sdp: StudentDataPanel) : JDialog() {
     private fun initComponents() {
-        title = "添加学生"
+        title = "student-add-title".trs()
         preferredSize = Dimension(500, 400)
         minimumSize = Dimension(450, 300)
         val contentPane = contentPane
         contentPane.layout = BorderLayout()
         dialogPane.layout = BorderLayout()
         contentPanel.layout = MigLayout("insets dialog,hidemode 3", "[fill][fill]", "[][][][][][][][]")
-        label1.text = "学号："
+        label1.text = "student-add-label1".trs()
         contentPanel.add(label1, "cell 0 0")
         contentPanel.add(textField1, "cell 1 0")
-        label2.text = "姓名："
+        label2.text = "student-add-label2".trs()
         contentPanel.add(label2, "cell 0 1")
         contentPanel.add(textField2, "cell 1 1")
-        label3.text = "性别："
+        label3.text = "student-add-label3".trs()
         contentPanel.add(label3, "cell 0 2")
-        comboBox1.model = DefaultComboBoxModel(arrayOf("未知", "男", "女"))
+        comboBox1.model =
+            DefaultComboBoxModel(arrayOf("global-unknown".trs(), "global-sex-m".trs(), "global-sex-f".trs()))
         contentPanel.add(comboBox1, "cell 1 2")
-        label4.text = "学籍状态："
+        label4.text = "student-add-label4".trs()
         contentPanel.add(label4, "cell 0 3")
-        comboBox2.model = DefaultComboBoxModel(arrayOf("在籍", "毕业"))
+        comboBox2.model = DefaultComboBoxModel(arrayOf("global-status-in".trs(), "global-status-out".trs()))
         contentPanel.add(comboBox2, "cell 1 3")
-        label5.text = "年级："
+        label5.text = "student-add-label5".trs()
         contentPanel.add(label5, "cell 0 4")
         contentPanel.add(textField6, "cell 1 4")
-        label6.text = "学院："
+        label6.text = "student-add-label6".trs()
         contentPanel.add(label6, "cell 0 5")
         contentPanel.add(textField3, "cell 1 5")
-        label7.text = "专业："
+        label7.text = "student-add-label7".trs()
         contentPanel.add(label7, "cell 0 6")
         contentPanel.add(textField4, "cell 1 6")
-        label8.text = "班级"
+        label8.text = "student-add-label8".trs()
         contentPanel.add(label8, "cell 0 7")
         contentPanel.add(textField5, "cell 1 7")
         dialogPane.add(contentPanel, BorderLayout.CENTER)
         buttonBar.layout = MigLayout("insets dialog,alignx right", "[button,fill][button,fill]", null)
-        okButton.text = "确定"
+        okButton.text = "global-yes".trs()
 
         okButton.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                if(e.button!=MouseEvent.BUTTON1) return
-                try { textField1.text.toInt() }catch (e:Exception){
-                    JOptionPane.showMessageDialog(null,"学号必须输入数字！","错误",JOptionPane.ERROR_MESSAGE)
+                if (e.button != MouseEvent.BUTTON1) return
+                try {
+                    textField1.text.toInt()
+                } catch (e: Exception) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "student-add-error-label1".trs(),
+                        "global-error".trs(),
+                        JOptionPane.ERROR_MESSAGE
+                    )
                     return
                 }
-                try { textField6.text.toInt() }catch (e:Exception){
-                    JOptionPane.showMessageDialog(null,"年级必须输入数字！","错误",JOptionPane.ERROR_MESSAGE)
+                try {
+                    textField6.text.toInt()
+                } catch (e: Exception) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "student-add-error-label5".trs(),
+                        "global-error".trs(),
+                        JOptionPane.ERROR_MESSAGE
+                    )
                     return
                 }
-                if(textField2.text==null){
-                    JOptionPane.showMessageDialog(null,"必须输入姓名！","错误",JOptionPane.ERROR_MESSAGE)
+                if (textField2.text == null) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "student-add-error-label2".trs(),
+                        "global-error".trs(),
+                        JOptionPane.ERROR_MESSAGE
+                    )
                     return
                 }
-                if(textField3.text==null){
-                    JOptionPane.showMessageDialog(null,"必须输入学院！","错误",JOptionPane.ERROR_MESSAGE)
+                if (textField3.text == null) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "student-add-error-label3".trs(),
+                        "global-error".trs(),
+                        JOptionPane.ERROR_MESSAGE
+                    )
                     return
                 }
-                if(textField4.text==null){
-                    JOptionPane.showMessageDialog(null,"必须输入专业！","错误",JOptionPane.ERROR_MESSAGE)
+                if (textField4.text == null) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "student-add-error-label6".trs(),
+                        "global-error".trs(),
+                        JOptionPane.ERROR_MESSAGE
+                    )
                     return
                 }
-                if(textField5.text==null){
-                    JOptionPane.showMessageDialog(null,"必须输入班级！","错误",JOptionPane.ERROR_MESSAGE)
+                if (textField5.text == null) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "student-add-error-label7".trs(),
+                        "global-error".trs(),
+                        JOptionPane.ERROR_MESSAGE
+                    )
                     return
                 }
-                if(Student.students.containsKey(textField1.text.toInt())){
-                    JOptionPane.showMessageDialog(null,"已经存在使用这个学号的学生了！","错误",JOptionPane.ERROR_MESSAGE)
+                if (Student.students.containsKey(textField1.text.toInt())) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "student-add-error-label4".trs(),
+                        "global-error".trs(),
+                        JOptionPane.ERROR_MESSAGE
+                    )
                     return
                 }
                 try {
@@ -99,16 +137,21 @@ class StudentAddDialog(val sdp:StudentDataPanel) : JDialog() {
                     )
                     sdp.table1.model.fireTableDataChanged()
                     dispose()
-                }catch (e:Exception){
-                    JOptionPane.showMessageDialog(null,"未知错误！\n${e.stackTraceToString()}","错误",JOptionPane.ERROR_MESSAGE)
+                } catch (e: Exception) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "${"global-error-unknown".trs()}\n${e.stackTraceToString()}",
+                        "global-error".trs(),
+                        JOptionPane.ERROR_MESSAGE
+                    )
                 }
             }
         })
         buttonBar.add(okButton, "cell 0 0")
-        cancelButton.text = "取消"
-        cancelButton.addMouseListener(object : MouseAdapter(){
+        cancelButton.text = "global-cancel".trs()
+        cancelButton.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                if(e.button!=MouseEvent.BUTTON1) return
+                if (e.button != MouseEvent.BUTTON1) return
                 dispose()
             }
         })

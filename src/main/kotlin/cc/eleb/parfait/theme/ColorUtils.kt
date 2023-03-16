@@ -1,5 +1,6 @@
 package cc.eleb.parfait.theme
 
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.ParfaitFrame
 import com.formdev.flatlaf.*
 import com.formdev.flatlaf.icons.FlatAbstractIcon
@@ -11,7 +12,6 @@ import java.awt.Color
 import java.awt.Component
 import java.awt.Graphics2D
 import java.beans.PropertyChangeEvent
-import java.util.ArrayList
 import javax.swing.*
 
 object ColorUtils {
@@ -19,14 +19,18 @@ object ColorUtils {
         "Demo.accent.default", "Demo.accent.blue", "Demo.accent.purple",
         "Demo.accent.red", "Demo.accent.orange", "Demo.accent.yellow", "Demo.accent.green"
     )
-    private val accentColorNames: Array<String> = arrayOf("Default", "Blue", "Purple", "Red", "Orange", "Yellow", "Green")
+    private val accentColorNames: Array<String> =
+        arrayOf("Default", "Blue", "Purple", "Red", "Orange", "Yellow", "Green")
     private val accentColorButtons: ArrayList<JToggleButton> = arrayListOf()
-    private lateinit var accentColorLabel: JLabel
+    private var accentColorLabel = JLabel()
     private var accentColor: Color? = null
 
-    fun init() {
+    fun reloadTranslation(){
+        accentColorLabel.text = "frame-accent".trs()
+    }
 
-        accentColorLabel = JLabel("强调色: ")
+    fun init() {
+        this.reloadTranslation()
         ParfaitFrame.instance.toolBar.let {
             it.add(Box.createHorizontalGlue())
             it.add(accentColorLabel)
@@ -35,7 +39,7 @@ object ColorUtils {
         for (i in accentColorKeys.indices) {
             val jtb = JToggleButton(AccentColorIcon(accentColorKeys[i]))
             jtb.toolTipText = accentColorNames[i]
-            jtb.addActionListener{ accentColorChanged() }
+            jtb.addActionListener { accentColorChanged() }
             accentColorButtons.add(jtb);
             ParfaitFrame.instance.toolBar.add(jtb)
             group.add(jtb);
@@ -54,7 +58,8 @@ object ColorUtils {
                 break
             }
         }
-        accentColor = if (accentColorKey != null && accentColorKey !== accentColorKeys[0]) UIManager.getColor(accentColorKey) else null
+        accentColor =
+            if (accentColorKey != null && accentColorKey !== accentColorKeys[0]) UIManager.getColor(accentColorKey) else null
         val lafClass: Class<out LookAndFeel> = UIManager.getLookAndFeel().javaClass
         try {
             FlatLaf.setup(lafClass.newInstance())
