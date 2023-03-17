@@ -2,12 +2,15 @@ package cc.eleb.parfait.ui.panel
 
 import cc.eleb.parfait.config.ParConfig
 import cc.eleb.parfait.entity.Certificate
+import cc.eleb.parfait.entity.SimpleWriteStudent
 import cc.eleb.parfait.entity.Student
 import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.ui.dialog.ImpoStudentFromStringDialog
 import cc.eleb.parfait.ui.dialog.ScoreDialog
 import cc.eleb.parfait.ui.dialog.StudentAddDialog
 import cc.eleb.parfait.ui.table.StudentDataTable
 import cc.eleb.parfait.utils.GlobalSettings
+import com.alibaba.excel.EasyExcel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,8 +35,59 @@ class StudentDataPanel : JPanel() {
         button6.text = "student-panel-button-5".trs()
         button7.text = "student-panel-button-6".trs()
         button1.text = "student-panel-button-7".trs()
+        button5.text = "student-panel-button-8".trs()
         this.table1.model.reloadTranslation()
         this.table1.model.fireTableStructureChanged()
+    }
+
+    private fun expoToExcelMouseClicked(e: MouseEvent){
+        if (e.button != MouseEvent.BUTTON1) return
+        if (!ParConfig.checkInited()) return
+        if (table1.selectedRows.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                this, "student-panel-error-2".trs(), "global-error".trs(),
+                JOptionPane.ERROR_MESSAGE
+            )
+            return
+        }
+        val fd = JFileChooser().apply {
+            this.isMultiSelectionEnabled = false
+            this.fileSelectionMode = JFileChooser.FILES_ONLY
+            this.fileFilter = object : FileFilter() {
+                override fun accept(f: File): Boolean {
+                    return f.isDirectory || f.name.endsWith(".xlsx")
+                }
+
+                override fun getDescription(): String {
+                    return "global-excel-file".trs()
+                }
+            }
+        }
+        val res: Int = fd.showSaveDialog(this)
+        if (res == JFileChooser.APPROVE_OPTION) {
+            val sf = if(fd.selectedFile.absolutePath.endsWith(".xlsx"))fd.selectedFile else File(fd.selectedFile.absolutePath+".xlsx")
+            CoroutineScope(Dispatchers.IO).launch {
+                val al = arrayListOf<SimpleWriteStudent>().apply {
+                    Student.students.forEach { (t, u) ->
+                        this.add(SimpleWriteStudent().also {
+                            it.id = t
+                            it.name = u.name
+                            it.gender = u.genderT
+                            it.clazz = u.clazz
+                            it.profession = u.profession
+                            it.grade = u.grade
+                            it.school = u.school
+                            it.status = u.statusT
+                            it.gpa = Certificate.nf.format(u.gpa)
+                            it.simpleMean = Certificate.nf.format(u.simpleMean)
+                            it.weightedMean = Certificate.nf.format(u.weightedMean)
+                        })
+                    }
+                }
+                EasyExcel.write(sf, SimpleWriteStudent::class.java).sheet("模板").doWrite(al)
+            }
+        }
+
     }
 
     private fun addStudentMouseClicked(e: MouseEvent) {
@@ -150,11 +204,12 @@ class StudentDataPanel : JPanel() {
             }
             val res: Int = fd.showSaveDialog(this)
             if (res == JFileChooser.APPROVE_OPTION) {
+                val sf = if(fd.selectedFile.absolutePath.endsWith(".docx"))fd.selectedFile else File(fd.selectedFile.absolutePath+".docx")
                 CoroutineScope(Dispatchers.IO).launch {
                     for (selectedRow: Int in table1.selectedRows) {
                         val student =
                             Student.students[table1.model.getValueAt(table1.convertRowIndexToModel(selectedRow), 0)]!!
-                        Certificate.generate(fd.selectedFile, student)
+                        Certificate.generate(sf, student)
                     }
                 }
             }
@@ -191,7 +246,7 @@ class StudentDataPanel : JPanel() {
     private fun impoStudentFromStringMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         if (!ParConfig.checkInited()) return
-        // TODO add your code here
+        ImpoStudentFromStringDialog().isVisible = true
     }
 
     private fun expoToStringMouseClicked(e: MouseEvent) {
@@ -213,6 +268,8 @@ class StudentDataPanel : JPanel() {
                 .replace("%name", st.name)
                 .replace("%grade", st.grade.toString())
                 .replace("%id", st.id.toString())
+                .replace("%class", st.clazz)
+                .replace("%status", st.statusT)
                 .replace("%gender", st.genderT)
                 .replace("%school", st.school)
                 .replace("%prof", st.profession)
@@ -221,8 +278,9 @@ class StudentDataPanel : JPanel() {
                 .replace("%gpa", Certificate.nf.format(st.gpa))
             res += "\n"
         }
+        res.substring(0,res.length-3)
         if (JOptionPane.showConfirmDialog(
-                this, res, "global.clipboard".trs(), JOptionPane.OK_CANCEL_OPTION,
+                this, res, "global-clipboard".trs(), JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.INFORMATION_MESSAGE
             ) == JOptionPane.OK_OPTION
         ) {
@@ -246,7 +304,8 @@ class StudentDataPanel : JPanel() {
         panel1.add(button8, "cell 0 3")
         panel1.add(button6, "cell 0 4")
         panel1.add(button7, "cell 0 5")
-        panel1.add(button1, "cell 0 6")
+        panel1.add(button5, "cell 0 6")
+        panel1.add(button1, "cell 0 7")
         this.add(panel1, "cell 1 0")
     }
 
@@ -254,7 +313,7 @@ class StudentDataPanel : JPanel() {
     private val scrollPane1 = JScrollPane()
     val table1 = StudentDataTable()
     private val panel1 = JPanel().apply {
-        this.layout = MigLayout("hidemode 3", "[fill]", "[][][][][][][][][][][]")
+        this.layout = MigLayout("hidemode 3", "[fill]", "[][][][][][][][][][][][]")
     }
     private val button2 = JButton().apply {
         this.addMouseListener(object : MouseAdapter() {
@@ -295,6 +354,13 @@ class StudentDataPanel : JPanel() {
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 expoToStringMouseClicked(e)
+            }
+        })
+    }
+    private val button5 = JButton().apply {
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                expoToExcelMouseClicked(e)
             }
         })
     }

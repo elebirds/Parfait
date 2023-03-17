@@ -28,4 +28,4 @@ object Language {
     fun trs(s: String): String = s.trs()
 }
 
-fun String.trs(): String = Language.data[GlobalSettings.LANGUAGE]!![this] ?: "语言配置错误"
+fun String.trs(): String = Language.data[GlobalSettings.LANGUAGE]!![this] ?: this

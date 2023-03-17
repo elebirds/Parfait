@@ -83,3 +83,16 @@ jlink {
 jlinkZip {
     group = 'distribution'
 }
+jar {
+    archiveFileName = "Parfait.jar"
+    manifest {
+        attributes(
+                "Main-Class": "cc.eleb.parfait.ParfaitMainKt"
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = 'include'
+    zip64(true)
+}

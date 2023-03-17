@@ -106,7 +106,7 @@ data class Student(
         val students: LinkedHashMap<Int, Student> = linkedMapOf()
 
         fun addStudentsFromFile(f: File) {
-            EasyExcel.read(f, SimpleStudent::class.java, PageReadListener<SimpleStudent> {
+            EasyExcel.read(f, SimpleReadStudent::class.java, PageReadListener<SimpleReadStudent> {
                 it.forEach { t ->
                     t.clazz = t.clazz.replace("(", "（").replace(")", "）")
                     students[t.id] = Student(

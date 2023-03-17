@@ -2,7 +2,7 @@ package cc.eleb.parfait.entity
 
 import com.alibaba.excel.annotation.ExcelProperty
 
-class SimpleStudent {
+class SimpleReadStudent {
     @ExcelProperty("学号")
     var id: Int = 0
 

@@ -14,12 +14,11 @@ import javax.swing.*
 /**
  * @author hhmcn
  */
-class GlobalSettingDialog() : JDialog() {
+class GlobalSettingDialog : JDialog() {
     private fun initComponents() {
         title = "global-setting-title".trs()
         preferredSize = Dimension(650, 400)
         minimumSize = Dimension(600, 350)
-        val contentPane = contentPane
         contentPane.layout = BorderLayout()
         dialogPane.layout = BorderLayout()
         contentPanel.layout = MigLayout("insets dialog,hidemode 3", "[fill][fill]", "[][][][][][][][]")
