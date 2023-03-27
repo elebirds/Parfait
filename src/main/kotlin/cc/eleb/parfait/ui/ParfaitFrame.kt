@@ -45,6 +45,20 @@ class ParfaitFrame : JFrame() {
         FlatUIDefaultsInspector.hide()
     }
 
+    private fun switchTabbed(flag:Boolean){
+        if(flag){
+            tabbedPane.setEnabledAt(1,true)
+            tabbedPane.setEnabledAt(2,true)
+            tabbedPane.setEnabledAt(3,true)
+            tabbedPane.selectedIndex = 1
+        }else {
+            tabbedPane.setEnabledAt(1, false)
+            tabbedPane.setEnabledAt(2, false)
+            tabbedPane.setEnabledAt(3, false)
+            tabbedPane.selectedIndex = 0
+        }
+    }
+
     private fun showHints(flag: Boolean) {
         if (flag && ParfaitPrefs.state.getBoolean("InitHitss", false)) return
         ParfaitPrefs.state.putBoolean("InitHitss", true)
@@ -93,7 +107,7 @@ class ParfaitFrame : JFrame() {
         checkToSave()
         ParConfig(null)
         reloadAllFrame()
-        tabbedPane.selectedIndex = 1
+        switchTabbed(true)
     }
 
     private fun checkToSave() {
@@ -161,7 +175,7 @@ class ParfaitFrame : JFrame() {
         if (ParConfig.instance == null) return
         ParConfig.instance!!.close()
         reloadAllFrame()
-        tabbedPane.selectedIndex = 0
+        switchTabbed(false)
     }
 
     private fun openActionPerformed() {
@@ -183,7 +197,7 @@ class ParfaitFrame : JFrame() {
                 if (fd.selectedFile.name.endsWith(".par")) {
                     ParConfig(fd.selectedFile)
                     this.reloadAllFrame()
-                    tabbedPane.selectedIndex = 1
+                    switchTabbed(true)
                 } else JOptionPane.showMessageDialog(
                     this,
                     "frame-open-error-1".trs(),
@@ -386,6 +400,7 @@ class ParfaitFrame : JFrame() {
         tabbedPane.addTab("frame-pane-2".trs(), studentDataPanel)
         tabbedPane.addTab("frame-pane-3".trs(), panel2)
         tabbedPane.addTab("frame-pane-4".trs(), panel3)
+        switchTabbed(false)
         contentPanel.add(tabbedPane, "cell 0 0")
         contentPane.add(contentPanel, BorderLayout.CENTER)
         val usersButton = FlatButton()
