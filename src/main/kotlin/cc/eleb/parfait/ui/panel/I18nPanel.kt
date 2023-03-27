@@ -1,6 +1,3 @@
-/*
- * Created by JFormDesigner on Sat Mar 11 20:39:09 CST 2023
- */
 package cc.eleb.parfait.ui.panel
 
 import cc.eleb.parfait.config.ParConfig
@@ -15,9 +12,6 @@ import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.*
 
-/**
- * @author hhmcn
- */
 class I18nPanel : JPanel() {
     fun reload() {
         comboBox1.model = DefaultComboBoxModel(GenLanguage.langs.keys.toTypedArray())

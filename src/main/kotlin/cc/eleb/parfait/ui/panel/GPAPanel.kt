@@ -1,6 +1,3 @@
-/*
- * Created by JFormDesigner on Sat Mar 11 20:53:53 CST 2023
- */
 package cc.eleb.parfait.ui.panel
 
 import cc.eleb.parfait.config.GPAConfig
@@ -16,9 +13,6 @@ import javax.swing.*
 import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableColumnModel
 
-/**
- * @author hhmcn
- */
 class GPAPanel : JPanel() {
     fun reloadTranslation(){
         button2.text = "global-save".trs()

@@ -10,9 +10,6 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 
-/**
- * @author hhmcn
- */
 class StudentAddDialog(val sdp: StudentDataPanel) : JDialog() {
     private fun initComponents() {
         title = "student-add-title".trs()

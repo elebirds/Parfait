@@ -1,11 +1,5 @@
 package cc.eleb.parfait.utils.config
 
-/**
- * Project FoundHi-Apollo
- *
- * @author hhm-GrowZheng
- * @createDate 2020/3/3 21:13
- */
 class ConfigData : LinkedHashMap<String, Any> {
     constructor() : super()
 

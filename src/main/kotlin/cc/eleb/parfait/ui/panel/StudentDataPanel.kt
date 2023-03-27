@@ -11,6 +11,7 @@ import cc.eleb.parfait.ui.dialog.StudentAddDialog
 import cc.eleb.parfait.ui.table.StudentDataTable
 import cc.eleb.parfait.utils.GlobalSettings
 import com.alibaba.excel.EasyExcel
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,9 +24,6 @@ import java.io.File
 import javax.swing.*
 import javax.swing.filechooser.FileFilter
 
-/**
- * @author hhmcn
- */
 class StudentDataPanel : JPanel() {
     fun reloadTranslation(){
         button2.text = "student-panel-button-1".trs()
@@ -84,7 +82,9 @@ class StudentDataPanel : JPanel() {
                         })
                     }
                 }
-                EasyExcel.write(sf, SimpleWriteStudent::class.java).sheet("模板").doWrite(al)
+                EasyExcel.write(sf, SimpleWriteStudent::class.java).registerWriteHandler(
+                    LongestMatchColumnWidthStyleStrategy()
+                ).sheet("模板").doWrite(al)
             }
         }
 

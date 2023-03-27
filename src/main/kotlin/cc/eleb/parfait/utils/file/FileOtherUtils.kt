@@ -3,17 +3,6 @@ package cc.eleb.parfait.utils.file
 import java.io.*
 import java.util.*
 
-/**
- * Project FoundHi-Apollo
- *
- * 你可以先去看 {@see org.apache.commons.io.FileUtils}
- * 如果没有再到这里来找
- * 如果还没有就自己写个 添加到这里
- *
- * @author hhm-GrowZheng
- * @createDate 2020/3/3 21:13
- */
-
 object FileOtherUtils {
     @JvmOverloads
     fun getResource(filename: String, classLoader: ClassLoader = this.javaClass.classLoader): InputStream? {

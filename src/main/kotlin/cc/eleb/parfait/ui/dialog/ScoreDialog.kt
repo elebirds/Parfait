@@ -1,6 +1,3 @@
-/*
- * Created by JFormDesigner on Fri Mar 10 15:52:56 CST 2023
- */
 package cc.eleb.parfait.ui.dialog
 
 import cc.eleb.parfait.entity.Student.Companion.students
@@ -13,9 +10,6 @@ import java.awt.event.WindowListener
 import javax.swing.JDialog
 import javax.swing.JPanel
 
-/**
- * @author hhmcn
- */
 class ScoreDialog(val sdp: StudentDataPanel, sid: Int) : JDialog() {
     private fun initComponents() {
         val contentPane = contentPane

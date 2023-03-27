@@ -6,13 +6,6 @@ import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.*
 
-/**
- * Project FoundHi-Apollo
- *
- * @author hhm-GrowZheng
- * @createDate 2020/3/3 21:13
- */
-
 val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 val formatcf = SimpleDateFormat("yyyy-MM-dd￥HH:mm:ss&")
 val format2 = SimpleDateFormat("yyyy年MM月dd日")

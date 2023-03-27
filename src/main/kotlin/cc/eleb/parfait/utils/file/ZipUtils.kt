@@ -4,12 +4,6 @@ import cc.eleb.parfait.utils.Charset
 import java.io.*
 import java.util.zip.*
 
-/**
- * Project FoundHi-Apollo
- *
- * @author hhm-GrowZheng
- * @createDate 2020/3/3 21:13
- */
 object ZipUtils {
     /** 缓冲器大小  */
     private const val BUFFER = 512

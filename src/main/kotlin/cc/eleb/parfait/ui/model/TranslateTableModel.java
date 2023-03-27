@@ -3,7 +3,6 @@ package cc.eleb.parfait.ui.model;
 import cc.eleb.parfait.i18n.Language;
 
 import javax.swing.table.DefaultTableModel;
-
 public class TranslateTableModel extends DefaultTableModel {
     static final Class<?>[] columnTypes = new Class<?>[]{String.class, String.class};
     static String[] columnNames = new String[]{Language.trs("translate-table-column1"), Language.trs("translate-table-column1")};

@@ -5,12 +5,6 @@ import java.io.ByteArrayOutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
-/**
- * Project FoundHi-Apollo
- *
- * @author hhm-GrowZheng
- * @createDate 2020/3/3 21:13
- */
 object GZipUtils {
     @JvmStatic
     @Throws(Exception::class)

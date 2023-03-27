@@ -1,6 +1,5 @@
 package cc.eleb.parfait.ui
 
-
 import cc.eleb.parfait.KEY_TAB
 import cc.eleb.parfait.config.ParConfig
 import cc.eleb.parfait.i18n.GenLanguage
@@ -79,11 +78,11 @@ class ParfaitFrame : JFrame() {
     private fun reloadAllFrame() {
         title = if (ParConfig.inited) {
             if (ParConfig.newed) {
-                "${"global-new-file".trs()} - Parfait Demo"
+                "${"global-new-file".trs()} - Parfait"
             } else {
-                ParConfig.instance!!.file!!.name + " - Parfait Demo"
+                ParConfig.instance!!.file!!.name + " - Parfait"
             }
-        } else "Parfait Demo"
+        } else "Parfait"
         GenLanguage.nowGenLanguage = "英语-English"
         StudentDataPanel.instance.table1.model.fireTableDataChanged()
         GPAPanel.instance.reload()
@@ -94,6 +93,7 @@ class ParfaitFrame : JFrame() {
         checkToSave()
         ParConfig(null)
         reloadAllFrame()
+        tabbedPane.selectedIndex = 1
     }
 
     private fun checkToSave() {
@@ -161,6 +161,7 @@ class ParfaitFrame : JFrame() {
         if (ParConfig.instance == null) return
         ParConfig.instance!!.close()
         reloadAllFrame()
+        tabbedPane.selectedIndex = 0
     }
 
     private fun openActionPerformed() {
@@ -182,6 +183,7 @@ class ParfaitFrame : JFrame() {
                 if (fd.selectedFile.name.endsWith(".par")) {
                     ParConfig(fd.selectedFile)
                     this.reloadAllFrame()
+                    tabbedPane.selectedIndex = 1
                 } else JOptionPane.showMessageDialog(
                     this,
                     "frame-open-error-1".trs(),
@@ -239,8 +241,6 @@ class ParfaitFrame : JFrame() {
 
     private fun windowDecorationsChanged() {
         val windowDecorations: Boolean = windowDecorationsCheckBoxMenuItem.isSelected
-
-        // change window decoration of all frames and dialogs
         FlatLaf.setUseNativeWindowDecorations(windowDecorations)
         menuBarEmbeddedCheckBoxMenuItem.isEnabled = windowDecorations
         unifiedTitleBarMenuItem.isEnabled = windowDecorations
@@ -475,8 +475,6 @@ class ParfaitFrame : JFrame() {
             if (SystemInfo.isMacFullWindowContentSupported) {
                 getRootPane().putClientProperty("apple.awt.fullWindowContent", true)
                 getRootPane().putClientProperty("apple.awt.transparentTitleBar", true)
-
-                // hide window title
                 if (SystemInfo.isJava_17_orLater) getRootPane().putClientProperty(
                     "apple.awt.windowTitleVisible",
                     false

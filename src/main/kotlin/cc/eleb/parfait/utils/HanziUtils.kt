@@ -4,7 +4,6 @@ import net.sourceforge.pinyin4j.PinyinHelper
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType
 
-
 object HanziUtils {
     val of = HanyuPinyinOutputFormat().apply {
         this.toneType = HanyuPinyinToneType.WITHOUT_TONE

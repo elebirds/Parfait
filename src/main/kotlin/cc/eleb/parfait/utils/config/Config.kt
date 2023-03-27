@@ -15,12 +15,6 @@ import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
 
-/**
- * Project FoundHi-Apollo
- *
- * @author hhm-GrowZheng
- * @createDate 2020/3/3 20:54
- */
 class Config {
     var type: ConfigType
     var file: File
