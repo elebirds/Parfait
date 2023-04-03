@@ -1,7 +1,5 @@
 package cc.eleb.parfait.utils
 
-import java.util.concurrent.ThreadLocalRandom
-
 /**
  * Project FoundHi-Apollo
  *

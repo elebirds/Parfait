@@ -32,7 +32,7 @@ fun main() {
         JDialog.setDefaultLookAndFeelDecorated(true)
     }
     SwingUtilities.invokeLater {
-        init("Parfait C")
+        init("Parfait SD")
         GlobalSettings.loadFromPrefs()
         Language.load()
         FlatInterFont.installLazy()

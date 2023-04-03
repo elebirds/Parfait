@@ -322,7 +322,6 @@ class ParfaitFrame : JFrame() {
     private fun initComponents() {
         this.reloadTranslation()
         title = "Parfait"
-        defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
         val contentPane: Container = contentPane
         contentPane.layout = BorderLayout()
         fileMenu.setMnemonic('F')
@@ -476,6 +475,7 @@ class ParfaitFrame : JFrame() {
 
     init {
         instance = this
+        defaultCloseOperation = EXIT_ON_CLOSE
         ThemeUtils.init()
         FontUtils.init()
         initComponents()
