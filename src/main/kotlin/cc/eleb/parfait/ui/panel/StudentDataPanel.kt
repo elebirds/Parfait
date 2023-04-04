@@ -174,7 +174,7 @@ class StudentDataPanel : JPanel() {
         try {
             val sf = ScoreDialog(
                 this,
-                table1.getValueAt(table1.convertRowIndexToModel(table1.selectedRow), 0).toString().toInt()
+                table1.model.getValueAt(table1.convertRowIndexToModel(table1.selectedRows[0]), 0).toString().toInt()
             )
             sf.isVisible = true
         } catch (e: Exception) {

@@ -50,9 +50,9 @@ public class StudentTableModel extends AbstractTableModel {
             case 1:
                 return student.getName();
             case 2:
-                return student.getGenderT();
+                return student.getGenderS();
             case 3:
-                return student.getStatusT();
+                return student.getStatusS();
             case 4:
                 return student.getGrade();
             case 5:
@@ -80,10 +80,10 @@ public class StudentTableModel extends AbstractTableModel {
                 student.setName(aValue.toString());
                 break;
             case 2:
-                student.setGender(aValue.toString().equals("未知") ? 0 : aValue.toString().equals("男") ? 1 : 2);
+                student.setGender(aValue.toString().equals(Language.trs("global-unknown")) ? 0 : aValue.toString().equals(Language.trs("global-sex-m")) ? 1 : 2);
                 break;
             case 3:
-                student.setStatus(aValue.toString().equals("在籍") ? 0 : 1);
+                student.setStatus(aValue.toString().equals(Language.trs("global-status-in")) ? 0 : 1);
                 break;
             case 4:
                 student.setGrade((int) aValue);

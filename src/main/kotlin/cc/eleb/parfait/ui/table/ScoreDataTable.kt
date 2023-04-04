@@ -13,9 +13,9 @@ class ScoreDataTable(private val student: Student) : JTable() {
         preferredViewportSize = Dimension(600, 400)
         this.model = ScoreTableModel(student)
         val cm = getColumnModel()
-        cm.getColumn(0).minWidth = 200
-        cm.getColumn(1).minWidth = 100
-        cm.getColumn(1).maxWidth = 100
+        cm.getColumn(0).minWidth = 150
+        cm.getColumn(1).minWidth = 150
+        cm.getColumn(1).maxWidth = 200
         cm.getColumn(1).cellEditor = DefaultCellEditor(
             JComboBox(
                 DefaultComboBoxModel(

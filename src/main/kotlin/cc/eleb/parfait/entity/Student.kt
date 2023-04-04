@@ -2,6 +2,7 @@ package cc.eleb.parfait.entity
 
 import cc.eleb.parfait.config.GPAConfig
 import cc.eleb.parfait.i18n.translateTo
+import cc.eleb.parfait.i18n.trs
 import com.alibaba.excel.EasyExcel
 import com.alibaba.excel.read.listener.PageReadListener
 import java.io.File
@@ -37,12 +38,28 @@ data class Student(
                 else -> "女"
             }
         }
+    val genderS: String
+        get() {
+            return when (gender) {
+                0 -> "global-unknown".trs()
+                1 -> "global-sex-m".trs()
+                else -> "global-sex-f".trs()
+            }
+        }
 
     val statusT: String
         get() {
             return when (status) {
                 0 -> "在籍"
                 else -> "毕业"
+            }
+        }
+
+    val statusS: String
+        get() {
+            return when (status) {
+                0 -> "global-status-in".trs()
+                else -> "global-status-out".trs()
             }
         }
 

@@ -10,6 +10,8 @@ class GenLanguage(val name: String, val data: LinkedHashMap<String, String> = li
         val langs: LinkedHashMap<String, GenLanguage> = linkedMapOf()
 
         var nowGenLanguage: String = "英语-English"
+
+        fun tst(s:String) = s.translateTo()
     }
 }
 

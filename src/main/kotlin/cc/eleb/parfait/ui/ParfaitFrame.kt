@@ -483,7 +483,7 @@ class ParfaitFrame : JFrame() {
         val tabIndex: Int = ParfaitPrefs.state.getInt(KEY_TAB, 0)
         if (tabIndex >= 0 && tabIndex < tabbedPane.tabCount && tabIndex != tabbedPane.selectedIndex) tabbedPane.selectedIndex =
             tabIndex
-        this.iconImages = FlatSVGUtils.createWindowIconImages("/cc/eleb/parfait/FlatLaf.svg")
+        this.iconImages = listOf(FlatSVGIcon("cc/eleb/parfait/FlatLaf.svg").image)
         if (SystemInfo.isMacOS) {
             exitMenuItem.isVisible = false
             aboutMenuItem.isVisible = false
