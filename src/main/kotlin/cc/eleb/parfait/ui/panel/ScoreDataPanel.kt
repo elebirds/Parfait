@@ -10,11 +10,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.miginfocom.swing.MigLayout
+import org.apache.xmlbeans.StringEnumAbstractBase.Table
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.io.File
 import javax.swing.*
 import javax.swing.filechooser.FileFilter
+import javax.swing.table.TableRowSorter
 
 class ScoreDataPanel(private val student: Student) : JPanel() {
     private fun addScoreMouseClicked(e: MouseEvent) {

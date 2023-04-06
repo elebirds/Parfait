@@ -7,7 +7,9 @@ import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.theme.ColorUtils
 import cc.eleb.parfait.theme.FontUtils
 import cc.eleb.parfait.theme.ThemeUtils
+import cc.eleb.parfait.ui.dialog.FilterDialog
 import cc.eleb.parfait.ui.dialog.GlobalSettingDialog
+import cc.eleb.parfait.ui.dialog.SearchDialog
 import cc.eleb.parfait.ui.panel.GPAPanel
 import cc.eleb.parfait.ui.panel.I18nPanel
 import cc.eleb.parfait.ui.panel.StudentDataPanel
@@ -98,6 +100,7 @@ class ParfaitFrame : JFrame() {
             }
         } else "Parfait"
         GenLanguage.nowGenLanguage = "英语-English"
+        StudentDataPanel.instance.sorter.rowFilter = null
         StudentDataPanel.instance.table1.model.fireTableDataChanged()
         GPAPanel.instance.reload()
         I18nPanel.instance.reload()
@@ -303,6 +306,11 @@ class ParfaitFrame : JFrame() {
         showUIDefaultsInspectorMenuItem.text = "frame-menu-option-6".trs()
         helpMenu.text = "frame-menu-help".trs()
         aboutMenuItem.text = "frame-about-title".trs()
+        searchButton.toolTipText = "global-search".trs()
+        filterButton.toolTipText = "global-filter".trs()
+        refreshButton.toolTipText = "global-refresh".trs()
+        redrawButton.toolTipText = "global-redraw".trs()
+        freshSFButton.toolTipText = "global-cancel-sf".trs()
         ColorUtils.reloadTranslation()
         FontUtils.reloadTranslation()
         ThemeUtils.reloadTranslation()
@@ -393,6 +401,13 @@ class ParfaitFrame : JFrame() {
         menuBar1.add(helpMenu)
         jMenuBar = menuBar1
         toolBar.margin = Insets(3, 3, 3, 3)
+        toolBar.add(searchButton)
+        toolBar.add(filterButton)
+        toolBar.add(freshSFButton)
+        toolBar.addSeparator()
+        toolBar.add(refreshButton)
+        toolBar.add(redrawButton)
+        toolBar.addSeparator()
         contentPane.add(toolBar, BorderLayout.NORTH)
         contentPanel.layout = MigLayout("insets dialog,hidemode 3", "[grow,fill]", "[][grow,fill]")
         tabbedPane.addTab("frame-pane-1".trs(), panel1)
@@ -458,20 +473,67 @@ class ParfaitFrame : JFrame() {
     val toolBar = JToolBar()
     private val tabbedPane = JTabbedPane()
     private val fileMenu = JMenu()
-    val menuBar1 = JMenuBar()
-    val newMenuItem = JMenuItem()
-    val openMenuItem = JMenuItem()
-    val settingMenuItem = JMenuItem()
-    val saveAsMenuItem = JMenuItem()
-    val closeMenuItem = JMenuItem()
-    val showHintsMenuItem = JMenuItem()
-    val showUIDefaultsInspectorMenuItem = JMenuItem()
-    val helpMenu = JMenu()
-    val contentPanel = JPanel()
-    val panel1 = WelcomePanel()
-    val studentDataPanel = StudentDataPanel()
-    val panel2 = I18nPanel()
-    val panel3 = GPAPanel()
+    private val menuBar1 = JMenuBar()
+    private val newMenuItem = JMenuItem()
+    private val openMenuItem = JMenuItem()
+    private val settingMenuItem = JMenuItem()
+    private val saveAsMenuItem = JMenuItem()
+    private val closeMenuItem = JMenuItem()
+    private val showHintsMenuItem = JMenuItem()
+    private val showUIDefaultsInspectorMenuItem = JMenuItem()
+    private val helpMenu = JMenu()
+    private val contentPanel = JPanel()
+    private val panel1 = WelcomePanel()
+    private val studentDataPanel = StudentDataPanel()
+    private val panel2 = I18nPanel()
+    private val panel3 = GPAPanel()
+    private val searchButton = JButton().apply {
+        this.icon = FlatSVGIcon("cc/eleb/parfait/icons/search.svg")
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if(!ParConfig.checkInited())return
+                SearchDialog().isVisible = true
+            }
+        })
+    }
+    private val filterButton = JButton().apply {
+        this.icon = FlatSVGIcon("cc/eleb/parfait/icons/listFiles.svg")
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                //if(!ParConfig.checkInited())return
+                FilterDialog().isVisible = true
+            }
+        })
+    }
+    private val refreshButton = JButton().apply {
+        this.icon = FlatSVGIcon("cc/eleb/parfait/icons/refresh.svg")
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if(!ParConfig.checkInited())return
+                if(JOptionPane.showConfirmDialog(null,"refresh-message-1","global-refresh".trs(),JOptionPane.YES_NO_OPTION)!=JOptionPane.YES_OPTION)return
+                ParConfig(ParConfig.instance!!.file)
+                reloadAllFrame()
+                switchTabbed(true)
+            }
+        })
+    }
+    private val redrawButton = JButton().apply {
+        this.icon = FlatSVGIcon("cc/eleb/parfait/icons/diff.svg")
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if(!ParConfig.checkInited())return
+                reloadAllFrame()
+            }
+        })
+    }
+    private val freshSFButton = JButton().apply {
+        this.icon = FlatSVGIcon("cc/eleb/parfait/icons/redo.svg")
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                studentDataPanel.sorter.rowFilter = null
+            }
+        })
+    }
 
     init {
         instance = this

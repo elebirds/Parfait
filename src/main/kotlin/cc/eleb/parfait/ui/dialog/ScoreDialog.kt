@@ -5,6 +5,7 @@ import cc.eleb.parfait.ui.panel.ScoreDataPanel
 import cc.eleb.parfait.ui.panel.StudentDataPanel
 import net.miginfocom.swing.MigLayout
 import java.awt.BorderLayout
+import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.awt.event.WindowListener
 import javax.swing.JDialog
@@ -15,41 +16,17 @@ class ScoreDialog(val sdp: StudentDataPanel, sid: Int) : JDialog() {
         val contentPane = contentPane
         contentPane.layout = BorderLayout()
         dialogPane.layout = BorderLayout()
-        contentPanel.layout = MigLayout(
-            "insets dialog,hidemode 3",  // columns
-            "[fill]" + "[fill]",  // rows
-            "[]" + "[]" + "[]"
-        )
+        contentPanel.layout = MigLayout("insets dialog,hidemode 3", "[fill][fill]", "[][][]")
         contentPanel.add(panel1, "cell 0 0")
-
         dialogPane.add(contentPanel, BorderLayout.CENTER)
         contentPane.add(dialogPane, BorderLayout.CENTER)
         this.pack()
         this.setLocationRelativeTo(owner)
-        this.addWindowListener(object : WindowListener {
-            override fun windowOpened(e: WindowEvent) {
-            }
-
-            override fun windowClosing(e: WindowEvent) {
-            }
-
+        this.addWindowListener(object : WindowAdapter() {
             override fun windowClosed(e: WindowEvent) {
                 sdp.table1.model.fireTableDataChanged()
                 sdp.repaint()
             }
-
-            override fun windowIconified(e: WindowEvent) {
-            }
-
-            override fun windowDeiconified(e: WindowEvent) {
-            }
-
-            override fun windowActivated(e: WindowEvent) {
-            }
-
-            override fun windowDeactivated(e: WindowEvent) {
-            }
-
         })
         this.isModal = true
     }

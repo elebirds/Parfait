@@ -12,13 +12,13 @@ import java.awt.event.MouseEvent
 import javax.swing.*
 
 /**
- * @author hhmcn
+ * @author elebird
  */
 class GlobalSettingDialog : JDialog() {
     private fun initComponents() {
         title = "global-setting-title".trs()
-        preferredSize = Dimension(650, 400)
-        minimumSize = Dimension(600, 350)
+        preferredSize = Dimension(700, 400)
+        minimumSize = Dimension(700, 400)
         contentPane.layout = BorderLayout()
         dialogPane.layout = BorderLayout()
         contentPanel.layout = MigLayout("insets dialog,hidemode 3", "[fill][fill]", "[][][][][][][][]")

@@ -23,6 +23,7 @@ import java.awt.event.MouseEvent
 import java.io.File
 import javax.swing.*
 import javax.swing.filechooser.FileFilter
+import javax.swing.table.TableRowSorter
 
 class StudentDataPanel : JPanel() {
     fun reloadTranslation(){
@@ -295,7 +296,7 @@ class StudentDataPanel : JPanel() {
             "[]" + "[]" + "[]"
         )
         this.add(label1, "cell 0 0")
-        table1.autoCreateRowSorter = true
+        table1.rowSorter = sorter
         scrollPane1.setViewportView(table1)
         this.add(scrollPane1, "cell 0 0,dock center")
         panel1.add(button2, "cell 0 0")
@@ -312,6 +313,7 @@ class StudentDataPanel : JPanel() {
     private val label1 = JLabel()
     private val scrollPane1 = JScrollPane()
     val table1 = StudentDataTable()
+    val sorter = TableRowSorter(table1.model)
     private val panel1 = JPanel().apply {
         this.layout = MigLayout("hidemode 3", "[fill]", "[][][][][][][][][][][][]")
     }
