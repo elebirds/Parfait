@@ -6,6 +6,7 @@ import cc.eleb.parfait.i18n.trs
 import com.alibaba.excel.EasyExcel
 import com.alibaba.excel.read.listener.PageReadListener
 import java.io.File
+import javax.swing.JOptionPane
 
 data class Student(
     val id: Int,//学号
@@ -124,8 +125,10 @@ data class Student(
 
         fun addStudentsFromFile(f: File) {
             EasyExcel.read(f, SimpleReadStudent::class.java, PageReadListener<SimpleReadStudent> {
+                var f = 0
                 it.forEach { t ->
                     t.clazz = t.clazz.replace("(", "（").replace(")", "）")
+                    if(students.containsKey(t.id))f++
                     students[t.id] = Student(
                         id = t.id,
                         name = t.name,
@@ -146,6 +149,7 @@ data class Student(
                     )
                     println(students[t.id]!!.profession.translateTo())
                 }
+                JOptionPane.showConfirmDialog(null,"impo-file-result".trs().replace("%i",f.toString()),"global-success".trs(),JOptionPane.WARNING_MESSAGE)
             }).sheet().doRead()
         }
     }

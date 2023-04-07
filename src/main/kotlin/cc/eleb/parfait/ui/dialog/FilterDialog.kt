@@ -268,8 +268,8 @@ class FilterDialog : JDialog() {
                     )
                 }
                 val s = AndFilter(filter)
-
                 StudentDataPanel.instance.sorter.rowFilter = s
+                dispose()
             }
         })
         buttonBar.add(okButton, "cell 0 0")
