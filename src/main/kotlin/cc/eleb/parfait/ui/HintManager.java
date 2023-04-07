@@ -220,12 +220,12 @@ class HintManager {
 
     private static class BalloonBorder
             extends FlatEmptyBorder {
-        private static int ARC = 8;
-        private static int ARROW_XY = 16;
-        private static int ARROW_SIZE = 8;
-        private static int SHADOW_SIZE = 6;
-        private static int SHADOW_TOP_SIZE = 3;
-        private static int SHADOW_SIZE2 = SHADOW_SIZE + 2;
+        private static final int ARC = 8;
+        private static final int ARROW_XY = 16;
+        private static final int ARROW_SIZE = 8;
+        private static final int SHADOW_SIZE = 6;
+        private static final int SHADOW_TOP_SIZE = 3;
+        private static final int SHADOW_SIZE2 = SHADOW_SIZE + 2;
 
         private final int direction;
         private final Color borderColor;

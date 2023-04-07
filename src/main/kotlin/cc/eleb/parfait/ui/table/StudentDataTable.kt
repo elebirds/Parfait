@@ -23,14 +23,27 @@ class StudentDataTable : JTable(StudentTableModel()) {
         }
         for (i in 0 until m.columnCount) {
             val newColumn = TableColumn(i)
-            if(i==2){
+            if (i == 2) {
                 newColumn.cellEditor =
-                    DefaultCellEditor(JComboBox(DefaultComboBoxModel(
-                        arrayOf("global-unknown".trs(),"global-sex-m".trs(), "global-sex-f".trs())
-                    )))
-            }else if(i==3){
+                    DefaultCellEditor(
+                        JComboBox(
+                            DefaultComboBoxModel(
+                                arrayOf("global-unknown".trs(), "global-sex-m".trs(), "global-sex-f".trs())
+                            )
+                        )
+                    )
+            } else if (i == 3) {
                 newColumn.cellEditor =
-                    DefaultCellEditor(JComboBox(DefaultComboBoxModel(arrayOf("global-status-in".trs(), "global-status-out".trs()))))
+                    DefaultCellEditor(
+                        JComboBox(
+                            DefaultComboBoxModel(
+                                arrayOf(
+                                    "global-status-in".trs(),
+                                    "global-status-out".trs()
+                                )
+                            )
+                        )
+                    )
             }
             this.addColumn(newColumn)
         }

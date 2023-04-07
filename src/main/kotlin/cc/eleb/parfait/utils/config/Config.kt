@@ -181,7 +181,7 @@ class Config {
                 val b = line.split("=".toRegex()).toTypedArray()
                 val k = b[0]
                 val v = b[1].trim { it <= ' ' }
-                val vLower = v.toLowerCase()
+                val vLower = v.lowercase(Locale.getDefault())
                 if (this.data.containsKey(k)) {
                     //MainLogger.getLogger().debug("[Config] Repeated property " + k + " on file " + this.file.toString())
                     //todo log

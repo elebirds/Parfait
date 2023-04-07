@@ -36,7 +36,7 @@ object ThemeUtils {
         rightToLeftChanged(ParfaitFrame.instance, rtlNow)
     }
 
-    fun reloadTranslation(){
+    fun reloadTranslation() {
         themeMenu.text = "frame-menu-theme".trs()
         rtl.text = "frame-menu-theme-rtl".trs()
     }

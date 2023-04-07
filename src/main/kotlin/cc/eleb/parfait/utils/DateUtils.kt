@@ -24,7 +24,7 @@ fun Date.format(): String {
 
 object DateUtils {
     init {
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT+8:00"));
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT+8:00"))
     }
 
     fun getCurrentFormattedDate(): String {

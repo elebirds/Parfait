@@ -14,7 +14,7 @@ import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableColumnModel
 
 class GPAPanel : JPanel() {
-    fun reloadTranslation(){
+    fun reloadTranslation() {
         button2.text = "global-save".trs()
         button3.text = "global-reload".trs()
         (table1.model as GPATableModel).reloadTranslation()

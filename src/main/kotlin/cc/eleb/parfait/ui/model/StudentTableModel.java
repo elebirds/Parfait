@@ -4,6 +4,7 @@ import cc.eleb.parfait.entity.Student;
 import cc.eleb.parfait.i18n.Language;
 
 import javax.swing.table.AbstractTableModel;
+
 public class StudentTableModel extends AbstractTableModel {
     static final boolean[] editable = new boolean[]{false, true, true, true, true, true, true, true, false, false, false};
     static final Class<?>[] columnTypes = new Class<?>[]{Integer.class, String.class, String.class, String.class, Integer.class, String.class, String.class, String.class, Double.class, Double.class, Double.class};
@@ -14,7 +15,7 @@ public class StudentTableModel extends AbstractTableModel {
             Language.trs("student-table-column9"), Language.trs("student-table-column10"),
             Language.trs("student-table-column11")};
 
-    public void reloadTranslation(){
+    public void reloadTranslation() {
         columnNames = new String[]{Language.trs("student-table-column1"), Language.trs("student-table-column2"),
                 Language.trs("student-table-column3"), Language.trs("student-table-column4"),
                 Language.trs("student-table-column5"), Language.trs("student-table-column6"),

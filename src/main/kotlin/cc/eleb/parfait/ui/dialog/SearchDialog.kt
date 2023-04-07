@@ -3,13 +3,10 @@ package cc.eleb.parfait.ui.dialog
 import cc.eleb.parfait.config.ParConfig
 import cc.eleb.parfait.filter.StringRowFilter
 import cc.eleb.parfait.i18n.trs
-import cc.eleb.parfait.ui.model.StudentTableModel
 import cc.eleb.parfait.ui.panel.StudentDataPanel
-import cc.eleb.parfait.ui.table.StudentDataTable
 import net.miginfocom.swing.MigLayout
 import java.awt.BorderLayout
 import java.awt.Dimension
-import java.awt.Window
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
@@ -50,29 +47,38 @@ class SearchDialog : JDialog() {
 
     private var comboBox1 = JComboBox<String>().apply {
         this.minimumSize = Dimension(40, 35)
-        this.model = DefaultComboBoxModel(arrayOf("student-table-column2".trs(),//姓名
-            "student-table-column1".trs(),//学号
-            "student-table-column6".trs(),//学院
-            "student-table-column7".trs(),//专业
-            "student-table-column8".trs()))//班级
+        this.model = DefaultComboBoxModel(
+            arrayOf(
+                "student-table-column2".trs(),//姓名
+                "student-table-column1".trs(),//学号
+                "student-table-column6".trs(),//学院
+                "student-table-column7".trs(),//专业
+                "student-table-column8".trs()
+            )
+        )//班级
     }
     private var textField = JTextField().apply {
         this.minimumSize = Dimension(300, 40)
     }
     private var buttonBar = JPanel().apply {
-        this.layout = MigLayout("insets dialog,alignx right", "[button,fill][button,fill]",null)
+        this.layout = MigLayout("insets dialog,alignx right", "[button,fill][button,fill]", null)
     }
     private var okButton = JButton().apply {
         this.text = "global-yes".trs()
-        this.addMouseListener(object : MouseAdapter(){
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 if (e.button != MouseEvent.BUTTON1) return
                 if (!ParConfig.checkInited()) return
-                if(textField.text.isEmpty()){
-                    JOptionPane.showMessageDialog(null,"isfs-error-1".trs(),"global-error".trs(),JOptionPane.ERROR_MESSAGE)
+                if (textField.text.isEmpty()) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "isfs-error-1".trs(),
+                        "global-error".trs(),
+                        JOptionPane.ERROR_MESSAGE
+                    )
                     return
                 }
-                if(comboBox1.selectedItem=="student-table-column1".trs()){
+                if (comboBox1.selectedItem == "student-table-column1".trs()) {
                     try {
                         textField.text.toInt()
                     } catch (e: Exception) {
@@ -87,24 +93,31 @@ class SearchDialog : JDialog() {
                 }
                 StudentDataPanel.instance.sorter.rowFilter = StringRowFilter(
                     textField.text,
-                    StudentDataPanel.instance.table1.convertColumnIndexToModel(when(comboBox1.selectedItem){
-                        "student-table-column1".trs()->{//学号
-                            0
+                    StudentDataPanel.instance.table1.convertColumnIndexToModel(
+                        when (comboBox1.selectedItem) {
+                            "student-table-column1".trs() -> {//学号
+                                0
+                            }
+
+                            "student-table-column2".trs() -> {//姓名
+                                1
+                            }
+
+                            "student-table-column6".trs() -> {//学院
+                                5
+                            }
+
+                            "student-table-column7".trs() -> {//专业
+                                6
+                            }
+
+                            "student-table-column8".trs() -> {//班级
+                                7
+                            }
+
+                            else -> 0
                         }
-                        "student-table-column2".trs()->{//姓名
-                            1
-                        }
-                        "student-table-column6".trs()->{//学院
-                            5
-                        }
-                        "student-table-column7".trs()->{//专业
-                            6
-                        }
-                        "student-table-column8".trs()->{//班级
-                            7
-                        }
-                        else -> 0
-                    }),
+                    ),
                     fullEqual
                 )
                 this@SearchDialog.dispose()
@@ -113,7 +126,7 @@ class SearchDialog : JDialog() {
     }
     private var cancelButton = JButton().apply {
         this.text = "global-cancel".trs()
-        this.addMouseListener(object : MouseAdapter(){
+        this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 this@SearchDialog.dispose()
             }

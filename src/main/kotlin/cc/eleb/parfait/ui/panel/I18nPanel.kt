@@ -18,7 +18,7 @@ class I18nPanel : JPanel() {
         this.reloadModel()
     }
 
-    fun reloadTranslation(){
+    fun reloadTranslation() {
         label1.text = "i18n-panel-label1".trs()
         label2.text = "i18n-panel-label2".trs()
         button2.text = "global-save".trs()

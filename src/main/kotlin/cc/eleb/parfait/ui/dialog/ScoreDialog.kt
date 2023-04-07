@@ -7,7 +7,6 @@ import net.miginfocom.swing.MigLayout
 import java.awt.BorderLayout
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
-import java.awt.event.WindowListener
 import javax.swing.JDialog
 import javax.swing.JPanel
 

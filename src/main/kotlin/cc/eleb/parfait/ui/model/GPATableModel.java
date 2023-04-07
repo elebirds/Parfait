@@ -8,7 +8,7 @@ public class GPATableModel extends DefaultTableModel {
     static final Class<?>[] columnTypes = new Class<?>[]{Integer.class, Double.class};
     static String[] columnNames = new String[]{Language.trs("gpa-table-column1"), Language.trs("gpa-table-column2")};
 
-    public void reloadTranslation(){
+    public void reloadTranslation() {
         columnNames = new String[]{Language.trs("gpa-table-column1"), Language.trs("gpa-table-column2")};
     }
 

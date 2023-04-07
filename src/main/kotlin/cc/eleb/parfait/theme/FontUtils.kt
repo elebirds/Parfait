@@ -22,7 +22,7 @@ object FontUtils {
     val incrFontMenuItem = JMenuItem()
     val decrFontMenuItem = JMenuItem()
 
-    fun reloadTranslation(){
+    fun reloadTranslation() {
         fontMenu.text = "frame-menu-font".trs()
         restoreFontMenuItem.text = "frame-menu-font-1".trs()
         incrFontMenuItem.text = "frame-menu-font-2".trs()

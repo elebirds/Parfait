@@ -19,7 +19,6 @@ import com.formdev.flatlaf.FlatClientProperties
 import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.extras.FlatDesktop
 import com.formdev.flatlaf.extras.FlatSVGIcon
-import com.formdev.flatlaf.extras.FlatSVGUtils
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
 import com.formdev.flatlaf.extras.components.FlatButton
 import com.formdev.flatlaf.ui.JBRCustomDecorations
@@ -47,13 +46,13 @@ class ParfaitFrame : JFrame() {
         FlatUIDefaultsInspector.hide()
     }
 
-    private fun switchTabbed(flag:Boolean){
-        if(flag){
-            tabbedPane.setEnabledAt(1,true)
-            tabbedPane.setEnabledAt(2,true)
-            tabbedPane.setEnabledAt(3,true)
+    private fun switchTabbed(flag: Boolean) {
+        if (flag) {
+            tabbedPane.setEnabledAt(1, true)
+            tabbedPane.setEnabledAt(2, true)
+            tabbedPane.setEnabledAt(3, true)
             tabbedPane.selectedIndex = 1
-        }else {
+        } else {
             tabbedPane.setEnabledAt(1, false)
             tabbedPane.setEnabledAt(2, false)
             tabbedPane.setEnabledAt(3, false)
@@ -293,7 +292,7 @@ class ParfaitFrame : JFrame() {
         showHints(false)
     }
 
-    fun reloadTranslation(flag: Boolean = false){
+    fun reloadTranslation(flag: Boolean = false) {
         fileMenu.text = "frame-menu-file".trs()
         newMenuItem.text = "frame-menu-file-new".trs()
         openMenuItem.text = "frame-menu-file-open".trs()
@@ -322,11 +321,11 @@ class ParfaitFrame : JFrame() {
         panel1.reloadTranslation()
         panel2.reloadTranslation()
         studentDataPanel.reloadTranslation()
-        if(flag){
-            tabbedPane.setTitleAt(0,"frame-pane-1".trs())
-            tabbedPane.setTitleAt(1,"frame-pane-2".trs())
-            tabbedPane.setTitleAt(2,"frame-pane-3".trs())
-            tabbedPane.setTitleAt(3,"frame-pane-4".trs())
+        if (flag) {
+            tabbedPane.setTitleAt(0, "frame-pane-1".trs())
+            tabbedPane.setTitleAt(1, "frame-pane-2".trs())
+            tabbedPane.setTitleAt(2, "frame-pane-3".trs())
+            tabbedPane.setTitleAt(3, "frame-pane-4".trs())
         }
         this.repaint()
     }
@@ -495,7 +494,7 @@ class ParfaitFrame : JFrame() {
         this.icon = FlatSVGIcon("cc/eleb/parfait/icons/search.svg")
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                if(!ParConfig.checkInited())return
+                if (!ParConfig.checkInited()) return
                 SearchDialog().isVisible = true
             }
         })
@@ -513,8 +512,14 @@ class ParfaitFrame : JFrame() {
         this.icon = FlatSVGIcon("cc/eleb/parfait/icons/refresh.svg")
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                if(!ParConfig.checkInited())return
-                if(JOptionPane.showConfirmDialog(null,"refresh-message-1","global-refresh".trs(),JOptionPane.YES_NO_OPTION)!=JOptionPane.YES_OPTION)return
+                if (!ParConfig.checkInited()) return
+                if (JOptionPane.showConfirmDialog(
+                        null,
+                        "refresh-message-1",
+                        "global-refresh".trs(),
+                        JOptionPane.YES_NO_OPTION
+                    ) != JOptionPane.YES_OPTION
+                ) return
                 ParConfig(ParConfig.instance!!.file)
                 reloadAllFrame()
                 switchTabbed(true)
@@ -525,7 +530,7 @@ class ParfaitFrame : JFrame() {
         this.icon = FlatSVGIcon("cc/eleb/parfait/icons/diff.svg")
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                if(!ParConfig.checkInited())return
+                if (!ParConfig.checkInited()) return
                 reloadAllFrame()
             }
         })

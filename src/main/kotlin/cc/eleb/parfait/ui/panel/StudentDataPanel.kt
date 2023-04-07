@@ -26,7 +26,7 @@ import javax.swing.filechooser.FileFilter
 import javax.swing.table.TableRowSorter
 
 class StudentDataPanel : JPanel() {
-    fun reloadTranslation(){
+    fun reloadTranslation() {
         button2.text = "student-panel-button-1".trs()
         button3.text = "student-panel-button-2".trs()
         button4.text = "student-panel-button-3".trs()
@@ -39,7 +39,7 @@ class StudentDataPanel : JPanel() {
         this.table1.model.fireTableStructureChanged()
     }
 
-    private fun expoToExcelMouseClicked(e: MouseEvent){
+    private fun expoToExcelMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         if (!ParConfig.checkInited()) return
         if (table1.selectedRows.isEmpty()) {
@@ -64,7 +64,8 @@ class StudentDataPanel : JPanel() {
         }
         val res: Int = fd.showSaveDialog(this)
         if (res == JFileChooser.APPROVE_OPTION) {
-            val sf = if(fd.selectedFile.absolutePath.endsWith(".xlsx"))fd.selectedFile else File(fd.selectedFile.absolutePath+".xlsx")
+            val sf =
+                if (fd.selectedFile.absolutePath.endsWith(".xlsx")) fd.selectedFile else File(fd.selectedFile.absolutePath + ".xlsx")
             CoroutineScope(Dispatchers.IO).launch {
                 val al = arrayListOf<SimpleWriteStudent>().apply {
                     Student.students.forEach { (t, u) ->
@@ -205,7 +206,8 @@ class StudentDataPanel : JPanel() {
             }
             val res: Int = fd.showSaveDialog(this)
             if (res == JFileChooser.APPROVE_OPTION) {
-                val sf = if(fd.selectedFile.absolutePath.endsWith(".docx"))fd.selectedFile else File(fd.selectedFile.absolutePath+".docx")
+                val sf =
+                    if (fd.selectedFile.absolutePath.endsWith(".docx")) fd.selectedFile else File(fd.selectedFile.absolutePath + ".docx")
                 CoroutineScope(Dispatchers.IO).launch {
                     for (selectedRow: Int in table1.selectedRows) {
                         val student =
@@ -233,7 +235,8 @@ class StudentDataPanel : JPanel() {
             if (res == JFileChooser.APPROVE_OPTION) {
                 CoroutineScope(Dispatchers.IO).launch {
                     for (selectedRow: Int in table1.selectedRows) {
-                        val student = Student.students[table1.model.getValueAt(table1.convertRowIndexToModel(selectedRow), 0)]!!
+                        val student =
+                            Student.students[table1.model.getValueAt(table1.convertRowIndexToModel(selectedRow), 0)]!!
                         Certificate.generate(
                             File(fd.selectedFile.absolutePath + "/${student.id}-${student.name}.docx"),
                             student
@@ -279,7 +282,7 @@ class StudentDataPanel : JPanel() {
                 .replace("%gpa", Certificate.nf.format(st.gpa))
             res += "\n"
         }
-        res.substring(0,res.length-3)
+        res.substring(0, res.length - 3)
         if (JOptionPane.showConfirmDialog(
                 this, res, "global-clipboard".trs(), JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.INFORMATION_MESSAGE

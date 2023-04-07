@@ -1,6 +1,5 @@
 package cc.eleb.parfait.ui.dialog
 
-import cc.eleb.parfait.filter.AlwaysRowFilter
 import cc.eleb.parfait.filter.AndFilter
 import cc.eleb.parfait.filter.StringRowFilter
 import cc.eleb.parfait.i18n.trs
@@ -35,11 +34,19 @@ class FilterDialog : JDialog() {
         contentPanel.add(textField2, "cell 2 2")
         label3.text = "student-add-label3".trs()
         contentPanel.add(label3, "cell 0 3")
-        comboBox1.model = DefaultComboBoxModel(arrayOf("global-any".trs(), "global-unknown".trs(), "global-sex-m".trs(), "global-sex-f".trs()))
+        comboBox1.model = DefaultComboBoxModel(
+            arrayOf(
+                "global-any".trs(),
+                "global-unknown".trs(),
+                "global-sex-m".trs(),
+                "global-sex-f".trs()
+            )
+        )
         contentPanel.add(comboBox1, "cell 1 3")
         label4.text = "student-add-label4".trs()
         contentPanel.add(label4, "cell 0 4")
-        comboBox2.model = DefaultComboBoxModel(arrayOf("global-any".trs(), "global-status-in".trs(), "global-status-out".trs()))
+        comboBox2.model =
+            DefaultComboBoxModel(arrayOf("global-any".trs(), "global-status-in".trs(), "global-status-out".trs()))
         contentPanel.add(comboBox2, "cell 1 4")
         label5.text = "student-add-label5".trs()
         contentPanel.add(label5, "cell 0 5")
@@ -69,18 +76,18 @@ class FilterDialog : JDialog() {
         contentPanel.add(label11, "cell 0 11")
         contentPanel.add(fullEqual9, "cell 1 11")
         contentPanel.add(textField9, "cell 2 11")
-        dialogPane.add(JLabel("空置为不设置此条件",JLabel.CENTER), BorderLayout.NORTH)
+        dialogPane.add(JLabel("空置为不设置此条件", JLabel.CENTER), BorderLayout.NORTH)
         dialogPane.add(contentPanel, BorderLayout.CENTER)
         buttonBar.layout = MigLayout("insets dialog,alignx right", "[button,fill][button,fill]", null)
         okButton.text = "global-yes".trs()
         okButton.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 if (e.button != MouseEvent.BUTTON1) return
-                val filter: ArrayList<RowFilter<in StudentTableModel,Int>> = arrayListOf()
-                if(textField1.text.isNotEmpty()){
+                val filter: ArrayList<RowFilter<in StudentTableModel, Int>> = arrayListOf()
+                if (textField1.text.isNotEmpty()) {
                     try {
                         textField1.text.toInt()
-                    }catch (e:Exception){
+                    } catch (e: Exception) {
                         JOptionPane.showMessageDialog(
                             null,
                             "student-add-error-label1".trs(),
@@ -89,37 +96,45 @@ class FilterDialog : JDialog() {
                         )
                         return
                     }
-                    filter.add(StringRowFilter(
-                        textField1.text,
-                        StudentDataPanel.instance.table1.convertColumnIndexToModel(0),
-                        fullEqual1.selectedIndex==1
-                    ))
+                    filter.add(
+                        StringRowFilter(
+                            textField1.text,
+                            StudentDataPanel.instance.table1.convertColumnIndexToModel(0),
+                            fullEqual1.selectedIndex == 1
+                        )
+                    )
                 }
-                if(textField2.text.isNotEmpty()){
-                    filter.add(StringRowFilter(
-                        textField2.text,
-                        StudentDataPanel.instance.table1.convertColumnIndexToModel(1),
-                        fullEqual2.selectedIndex==1
-                    ))
+                if (textField2.text.isNotEmpty()) {
+                    filter.add(
+                        StringRowFilter(
+                            textField2.text,
+                            StudentDataPanel.instance.table1.convertColumnIndexToModel(1),
+                            fullEqual2.selectedIndex == 1
+                        )
+                    )
                 }
-                if(comboBox1.selectedIndex!=0){
-                    filter.add(StringRowFilter(
-                        comboBox1.selectedItem!!.toString(),
-                        StudentDataPanel.instance.table1.convertColumnIndexToModel(2),
-                        true
-                    ))
+                if (comboBox1.selectedIndex != 0) {
+                    filter.add(
+                        StringRowFilter(
+                            comboBox1.selectedItem!!.toString(),
+                            StudentDataPanel.instance.table1.convertColumnIndexToModel(2),
+                            true
+                        )
+                    )
                 }
-                if(comboBox2.selectedIndex!=0){
-                    filter.add(StringRowFilter(
-                        comboBox2.selectedItem!!.toString(),
-                        StudentDataPanel.instance.table1.convertColumnIndexToModel(3),
-                        true
-                    ))
+                if (comboBox2.selectedIndex != 0) {
+                    filter.add(
+                        StringRowFilter(
+                            comboBox2.selectedItem!!.toString(),
+                            StudentDataPanel.instance.table1.convertColumnIndexToModel(3),
+                            true
+                        )
+                    )
                 }
-                if(textField3.text.isNotEmpty()){
+                if (textField3.text.isNotEmpty()) {
                     try {
                         textField3.text.toInt()
-                    }catch (e:Exception){
+                    } catch (e: Exception) {
                         JOptionPane.showMessageDialog(
                             null,
                             "student-add-error-label5".trs(),
@@ -128,42 +143,50 @@ class FilterDialog : JDialog() {
                         )
                         return
                     }
-                    filter.add(RowFilter.numberFilter(
-                        when(fullEqual3.selectedIndex){
-                            0->RowFilter.ComparisonType.AFTER
-                            1->RowFilter.ComparisonType.BEFORE
-                            2->RowFilter.ComparisonType.NOT_EQUAL
-                            else->RowFilter.ComparisonType.EQUAL
-                        },
-                        textField3.text.toInt(),
-                        StudentDataPanel.instance.table1.convertColumnIndexToModel(4)
-                    ))
+                    filter.add(
+                        RowFilter.numberFilter(
+                            when (fullEqual3.selectedIndex) {
+                                0 -> RowFilter.ComparisonType.AFTER
+                                1 -> RowFilter.ComparisonType.BEFORE
+                                2 -> RowFilter.ComparisonType.NOT_EQUAL
+                                else -> RowFilter.ComparisonType.EQUAL
+                            },
+                            textField3.text.toInt(),
+                            StudentDataPanel.instance.table1.convertColumnIndexToModel(4)
+                        )
+                    )
                 }
-                if(textField4.text.isNotEmpty()){
-                    filter.add(StringRowFilter(
-                        textField4.text,
-                        StudentDataPanel.instance.table1.convertColumnIndexToModel(5),
-                        fullEqual4.selectedIndex==1
-                    ))
+                if (textField4.text.isNotEmpty()) {
+                    filter.add(
+                        StringRowFilter(
+                            textField4.text,
+                            StudentDataPanel.instance.table1.convertColumnIndexToModel(5),
+                            fullEqual4.selectedIndex == 1
+                        )
+                    )
                 }
-                if(textField5.text.isNotEmpty()){
-                    filter.add(StringRowFilter(
-                        textField5.text,
-                        StudentDataPanel.instance.table1.convertColumnIndexToModel(6),
-                        fullEqual5.selectedIndex==1
-                    ))
+                if (textField5.text.isNotEmpty()) {
+                    filter.add(
+                        StringRowFilter(
+                            textField5.text,
+                            StudentDataPanel.instance.table1.convertColumnIndexToModel(6),
+                            fullEqual5.selectedIndex == 1
+                        )
+                    )
                 }
-                if(textField6.text.isNotEmpty()){
-                    filter.add(StringRowFilter(
-                        textField6.text,
-                        StudentDataPanel.instance.table1.convertColumnIndexToModel(7),
-                        fullEqual6.selectedIndex==1
-                    ))
+                if (textField6.text.isNotEmpty()) {
+                    filter.add(
+                        StringRowFilter(
+                            textField6.text,
+                            StudentDataPanel.instance.table1.convertColumnIndexToModel(7),
+                            fullEqual6.selectedIndex == 1
+                        )
+                    )
                 }
-                if(textField7.text.isNotEmpty()){
+                if (textField7.text.isNotEmpty()) {
                     try {
                         textField7.text.toDouble()
-                    }catch (e:Exception){
+                    } catch (e: Exception) {
                         JOptionPane.showMessageDialog(
                             null,
                             "filter-error-1".trs(),
@@ -172,24 +195,26 @@ class FilterDialog : JDialog() {
                         )
                         return
                     }
-                    filter.add(RowFilter.numberFilter(
-                        when(fullEqual7.selectedIndex){
-                            0,2->RowFilter.ComparisonType.AFTER
-                            1,3->RowFilter.ComparisonType.BEFORE
-                            else->RowFilter.ComparisonType.EQUAL
-                        },
-                        when(fullEqual7.selectedIndex){
-                            2->textField7.text.toDouble()-0.000000001
-                            3->textField7.text.toDouble()+0.000000001
-                            else->textField7.text.toDouble()
-                        },
-                        StudentDataPanel.instance.table1.convertColumnIndexToModel(8)
-                    ))
+                    filter.add(
+                        RowFilter.numberFilter(
+                            when (fullEqual7.selectedIndex) {
+                                0, 2 -> RowFilter.ComparisonType.AFTER
+                                1, 3 -> RowFilter.ComparisonType.BEFORE
+                                else -> RowFilter.ComparisonType.EQUAL
+                            },
+                            when (fullEqual7.selectedIndex) {
+                                2 -> textField7.text.toDouble() - 0.000000001
+                                3 -> textField7.text.toDouble() + 0.000000001
+                                else -> textField7.text.toDouble()
+                            },
+                            StudentDataPanel.instance.table1.convertColumnIndexToModel(8)
+                        )
+                    )
                 }
-                if(textField8.text.isNotEmpty()){
+                if (textField8.text.isNotEmpty()) {
                     try {
                         textField8.text.toDouble()
-                    }catch (e:Exception){
+                    } catch (e: Exception) {
                         JOptionPane.showMessageDialog(
                             null,
                             "filter-error-2".trs(),
@@ -198,24 +223,26 @@ class FilterDialog : JDialog() {
                         )
                         return
                     }
-                    filter.add(RowFilter.numberFilter(
-                        when(fullEqual8.selectedIndex){
-                            0,2->RowFilter.ComparisonType.AFTER
-                            1,3->RowFilter.ComparisonType.BEFORE
-                            else->RowFilter.ComparisonType.EQUAL
-                        },
-                        when(fullEqual8.selectedIndex){
-                            2->textField8.text.toDouble()-0.000000001
-                            3->textField8.text.toDouble()+0.000000001
-                            else->textField8.text.toDouble()
-                        },
-                        StudentDataPanel.instance.table1.convertColumnIndexToModel(9)
-                    ))
+                    filter.add(
+                        RowFilter.numberFilter(
+                            when (fullEqual8.selectedIndex) {
+                                0, 2 -> RowFilter.ComparisonType.AFTER
+                                1, 3 -> RowFilter.ComparisonType.BEFORE
+                                else -> RowFilter.ComparisonType.EQUAL
+                            },
+                            when (fullEqual8.selectedIndex) {
+                                2 -> textField8.text.toDouble() - 0.000000001
+                                3 -> textField8.text.toDouble() + 0.000000001
+                                else -> textField8.text.toDouble()
+                            },
+                            StudentDataPanel.instance.table1.convertColumnIndexToModel(9)
+                        )
+                    )
                 }
-                if(textField9.text.isNotEmpty()){
+                if (textField9.text.isNotEmpty()) {
                     try {
                         textField9.text.toDouble()
-                    }catch (e:Exception){
+                    } catch (e: Exception) {
                         JOptionPane.showMessageDialog(
                             null,
                             "filter-error-3".trs(),
@@ -224,19 +251,21 @@ class FilterDialog : JDialog() {
                         )
                         return
                     }
-                    filter.add(RowFilter.numberFilter(
-                        when(fullEqual9.selectedIndex){
-                            0,2->RowFilter.ComparisonType.AFTER
-                            1,3->RowFilter.ComparisonType.BEFORE
-                            else->RowFilter.ComparisonType.EQUAL
-                        },
-                        when(fullEqual9.selectedIndex){
-                            2->textField9.text.toDouble()-0.000000001
-                            3->textField9.text.toDouble()+0.000000001
-                            else->textField9.text.toDouble()
-                        },
-                        StudentDataPanel.instance.table1.convertColumnIndexToModel(10)
-                    ))
+                    filter.add(
+                        RowFilter.numberFilter(
+                            when (fullEqual9.selectedIndex) {
+                                0, 2 -> RowFilter.ComparisonType.AFTER
+                                1, 3 -> RowFilter.ComparisonType.BEFORE
+                                else -> RowFilter.ComparisonType.EQUAL
+                            },
+                            when (fullEqual9.selectedIndex) {
+                                2 -> textField9.text.toDouble() - 0.000000001
+                                3 -> textField9.text.toDouble() + 0.000000001
+                                else -> textField9.text.toDouble()
+                            },
+                            StudentDataPanel.instance.table1.convertColumnIndexToModel(10)
+                        )
+                    )
                 }
                 val s = AndFilter(filter)
 
@@ -288,32 +317,32 @@ class FilterDialog : JDialog() {
     private val buttonBar = JPanel()
     private val okButton = JButton()
     private val cancelButton = JButton()
-    private var fullEqual1 = JComboBox<String>().apply{
-        this.model = DefaultComboBoxModel(arrayOf("部分匹配","完全匹配"))
+    private var fullEqual1 = JComboBox<String>().apply {
+        this.model = DefaultComboBoxModel(arrayOf("部分匹配", "完全匹配"))
     }
-    private var fullEqual2 = JComboBox<String>().apply{
-        this.model = DefaultComboBoxModel(arrayOf("部分匹配","完全匹配"))
+    private var fullEqual2 = JComboBox<String>().apply {
+        this.model = DefaultComboBoxModel(arrayOf("部分匹配", "完全匹配"))
     }
-    private var fullEqual3 = JComboBox<String>().apply{
-        this.model = DefaultComboBoxModel(arrayOf("大于","小于","不等于","等于"))
+    private var fullEqual3 = JComboBox<String>().apply {
+        this.model = DefaultComboBoxModel(arrayOf("大于", "小于", "不等于", "等于"))
     }
-    private var fullEqual4 = JComboBox<String>().apply{
-        this.model = DefaultComboBoxModel(arrayOf("部分匹配","完全匹配"))
+    private var fullEqual4 = JComboBox<String>().apply {
+        this.model = DefaultComboBoxModel(arrayOf("部分匹配", "完全匹配"))
     }
-    private var fullEqual5 = JComboBox<String>().apply{
-        this.model = DefaultComboBoxModel(arrayOf("部分匹配","完全匹配"))
+    private var fullEqual5 = JComboBox<String>().apply {
+        this.model = DefaultComboBoxModel(arrayOf("部分匹配", "完全匹配"))
     }
-    private var fullEqual6 = JComboBox<String>().apply{
-        this.model = DefaultComboBoxModel(arrayOf("部分匹配","完全匹配"))
+    private var fullEqual6 = JComboBox<String>().apply {
+        this.model = DefaultComboBoxModel(arrayOf("部分匹配", "完全匹配"))
     }
-    private var fullEqual7 = JComboBox<String>().apply{
-        this.model = DefaultComboBoxModel(arrayOf("大于","小于","大于等于","小于等于","等于"))
+    private var fullEqual7 = JComboBox<String>().apply {
+        this.model = DefaultComboBoxModel(arrayOf("大于", "小于", "大于等于", "小于等于", "等于"))
     }
-    private var fullEqual8 = JComboBox<String>().apply{
-        this.model = DefaultComboBoxModel(arrayOf("大于","小于","大于等于","小于等于","等于"))
+    private var fullEqual8 = JComboBox<String>().apply {
+        this.model = DefaultComboBoxModel(arrayOf("大于", "小于", "大于等于", "小于等于", "等于"))
     }
-    private var fullEqual9 = JComboBox<String>().apply{
-        this.model = DefaultComboBoxModel(arrayOf("大于","小于","大于等于","小于等于","等于"))
+    private var fullEqual9 = JComboBox<String>().apply {
+        this.model = DefaultComboBoxModel(arrayOf("大于", "小于", "大于等于", "小于等于", "等于"))
     }
 
     init {

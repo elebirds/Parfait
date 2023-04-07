@@ -10,11 +10,11 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 
-class ImpoStudentFromStringDialog : JDialog()  {
+class ImpoStudentFromStringDialog : JDialog() {
     private fun initComponents() {
         title = "isfs-title".trs()
-        this.preferredSize = Dimension(800,600)
-        this.minimumSize = Dimension(800,600)
+        this.preferredSize = Dimension(800, 600)
+        this.minimumSize = Dimension(800, 600)
         contentPane.layout = BorderLayout()
         dialogPane.layout = BorderLayout()
         contentPanel.layout = MigLayout("insets dialog,hidemode 3", "[fill]", "[][][][][]")
@@ -26,17 +26,22 @@ class ImpoStudentFromStringDialog : JDialog()  {
         contentPanel.add(label2, "cell 0 1")
         contentPanel.add(label3, "cell 0 2")
         contentPanel.add(label4, "cell 0 3")
-        textArea1.preferredSize = Dimension(750,570)
+        textArea1.preferredSize = Dimension(750, 570)
         scrollPane1.setViewportView(textArea1)
         contentPanel.add(scrollPane1, "cell 0 4")
         dialogPane.add(contentPanel, BorderLayout.CENTER)
         buttonBar.layout = MigLayout("insets dialog,alignx right", "[button,fill][button,fill]", "[]")
         okButton.text = "global-yes".trs()
-        okButton.addMouseListener(object : MouseAdapter(){
+        okButton.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 val ipd = textArea1.text
-                if(ipd==null||ipd=="") {
-                    JOptionPane.showMessageDialog(null,"isfs-error-1".trs(),"global-error".trs(),JOptionPane.ERROR_MESSAGE)
+                if (ipd == null || ipd == "") {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "isfs-error-1".trs(),
+                        "global-error".trs(),
+                        JOptionPane.ERROR_MESSAGE
+                    )
                     return
                 }
                 val a = ipd.split("\n")
@@ -44,19 +49,36 @@ class ImpoStudentFromStringDialog : JDialog()  {
                 a.forEach {
                     i++
                     val b = it.split(".")
-                    if(b.size != 6 && b.size != 8) {
-                        JOptionPane.showMessageDialog(null,"isfs-error-2".trs().replace("%line",i.toString())+"isfs-error-3".trs(),"global-error".trs(),JOptionPane.ERROR_MESSAGE)
+                    if (b.size != 6 && b.size != 8) {
+                        JOptionPane.showMessageDialog(
+                            null,
+                            "isfs-error-2".trs().replace("%line", i.toString()) + "isfs-error-3".trs(),
+                            "global-error".trs(),
+                            JOptionPane.ERROR_MESSAGE
+                        )
                         return
                     }
-                    try{b[0].toInt()}catch (e:Exception){
-                        JOptionPane.showMessageDialog(null,"isfs-error-2".trs().replace("%line",i.toString())+"student-add-error-label1".trs(),"global-error".trs(),JOptionPane.ERROR_MESSAGE)
+                    try {
+                        b[0].toInt()
+                    } catch (e: Exception) {
+                        JOptionPane.showMessageDialog(
+                            null,
+                            "isfs-error-2".trs().replace("%line", i.toString()) + "student-add-error-label1".trs(),
+                            "global-error".trs(),
+                            JOptionPane.ERROR_MESSAGE
+                        )
                         return
                     }
-                    if(Student.students.containsKey(b[0].toInt())){
-                        JOptionPane.showMessageDialog(null,"isfs-error-2".trs().replace("%line",i.toString())+"student-add-error-label4".trs(),"global-error".trs(),JOptionPane.ERROR_MESSAGE)
+                    if (Student.students.containsKey(b[0].toInt())) {
+                        JOptionPane.showMessageDialog(
+                            null,
+                            "isfs-error-2".trs().replace("%line", i.toString()) + "student-add-error-label4".trs(),
+                            "global-error".trs(),
+                            JOptionPane.ERROR_MESSAGE
+                        )
                         return
                     }
-                    if(!arrayListOf("男","女","未知").contains(b[2])) {
+                    if (!arrayListOf("男", "女", "未知").contains(b[2])) {
                         JOptionPane.showMessageDialog(
                             null,
                             "isfs-error-2".trs().replace("%line", i.toString()) + "isfs-error-4".trs(),
@@ -65,7 +87,7 @@ class ImpoStudentFromStringDialog : JDialog()  {
                         )
                         return
                     }
-                    if(!arrayListOf("在籍","毕业").contains(b[3])) {
+                    if (!arrayListOf("在籍", "毕业").contains(b[3])) {
                         JOptionPane.showMessageDialog(
                             null,
                             "isfs-error-2".trs().replace("%line", i.toString()) + "isfs-error-5".trs(),
@@ -79,8 +101,8 @@ class ImpoStudentFromStringDialog : JDialog()  {
                         val grade = clazz.substring(0, 4).toInt()
                         val profession = clazz.replace(Regex("本科\\d班\$"), "").replace(Regex("^\\d{4}级"), "")
                             .replace(Regex("^\\d{4}"), "")
-                        if(profession=="")throw Exception()
-                    }catch (e:Exception){
+                        if (profession == "") throw Exception()
+                    } catch (e: Exception) {
                         JOptionPane.showMessageDialog(
                             null,
                             "isfs-error-2".trs().replace("%line", i.toString()) + "isfs-error-6".trs(),
@@ -113,7 +135,7 @@ class ImpoStudentFromStringDialog : JDialog()  {
                         )
                         Student.students[b[0].toInt()] = st
                     }
-                }catch (e:Exception){
+                } catch (e: Exception) {
                     JOptionPane.showMessageDialog(
                         null,
                         "isfs-error-2".trs().replace("%line", i.toString()) + e.stackTraceToString(),
@@ -121,14 +143,19 @@ class ImpoStudentFromStringDialog : JDialog()  {
                         JOptionPane.ERROR_MESSAGE
                     )
                 }
-                JOptionPane.showMessageDialog(null,"isfs-success".trs().replace("%i",i.toString()),"global-success".trs(),JOptionPane.INFORMATION_MESSAGE)
+                JOptionPane.showMessageDialog(
+                    null,
+                    "isfs-success".trs().replace("%i", i.toString()),
+                    "global-success".trs(),
+                    JOptionPane.INFORMATION_MESSAGE
+                )
                 StudentDataPanel.instance.table1.model.fireTableDataChanged()
                 dispose()
             }
         })
         buttonBar.add(okButton, "cell 0 0")
         cancelButton.text = "global-cancel".trs()
-        cancelButton.addMouseListener(object : MouseAdapter(){
+        cancelButton.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 dispose()
             }
@@ -140,7 +167,7 @@ class ImpoStudentFromStringDialog : JDialog()  {
         setLocationRelativeTo(owner)
         this.isModal = true
     }
-    
+
     private val dialogPane = JPanel()
     private val contentPanel = JPanel()
     private val label1 = JLabel()

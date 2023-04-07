@@ -11,7 +11,7 @@ class GenLanguage(val name: String, val data: LinkedHashMap<String, String> = li
 
         var nowGenLanguage: String = "英语-English"
 
-        fun tst(s:String) = s.translateTo()
+        fun tst(s: String) = s.translateTo()
     }
 }
 

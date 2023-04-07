@@ -24,7 +24,7 @@ const val KEY_TAB = "tab"
 const val PARFAIT_FULL_NAME = "Parfait"
 
 fun main() {
-    try{
+    try {
         if (SystemInfo.isMacOS) {
             System.setProperty("apple.laf.useScreenMenuBar", "true")
             System.setProperty("apple.awt.application.name", PARFAIT_FULL_NAME)
@@ -51,9 +51,9 @@ fun main() {
             frame.setLocationRelativeTo(null)
             frame.isVisible = true
         }
-    }catch (e:Exception){
+    } catch (e: Exception) {
         JOptionPane.showMessageDialog(
-            null, e.stackTraceToString() , "global-error".trs(),
+            null, e.stackTraceToString(), "global-error".trs(),
             JOptionPane.ERROR_MESSAGE
         )
     }

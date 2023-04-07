@@ -1,6 +1,8 @@
 package cc.eleb.parfait.ui.panel
 
-import cc.eleb.parfait.entity.*
+import cc.eleb.parfait.entity.Score
+import cc.eleb.parfait.entity.SimpleWriteScore
+import cc.eleb.parfait.entity.Student
 import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.model.ScoreTableModel
 import cc.eleb.parfait.ui.table.ScoreDataTable
@@ -10,13 +12,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.miginfocom.swing.MigLayout
-import org.apache.xmlbeans.StringEnumAbstractBase.Table
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.io.File
 import javax.swing.*
 import javax.swing.filechooser.FileFilter
-import javax.swing.table.TableRowSorter
 
 class ScoreDataPanel(private val student: Student) : JPanel() {
     private fun addScoreMouseClicked(e: MouseEvent) {
@@ -47,7 +47,7 @@ class ScoreDataPanel(private val student: Student) : JPanel() {
         }
     }
 
-    private fun expoScoreMouseClicked(e:MouseEvent){
+    private fun expoScoreMouseClicked(e: MouseEvent) {
         if (e.button != MouseEvent.BUTTON1) return
         val fd = JFileChooser().apply {
             this.isMultiSelectionEnabled = false
@@ -64,7 +64,8 @@ class ScoreDataPanel(private val student: Student) : JPanel() {
         }
         val res: Int = fd.showSaveDialog(this)
         if (res == JFileChooser.APPROVE_OPTION) {
-            val sf = if(fd.selectedFile.absolutePath.endsWith(".xlsx"))fd.selectedFile else File(fd.selectedFile.absolutePath+".xlsx")
+            val sf =
+                if (fd.selectedFile.absolutePath.endsWith(".xlsx")) fd.selectedFile else File(fd.selectedFile.absolutePath + ".xlsx")
             CoroutineScope(Dispatchers.IO).launch {
                 val al = arrayListOf<SimpleWriteScore>().apply {
                     student.scores.forEach { u ->
@@ -74,7 +75,7 @@ class ScoreDataPanel(private val student: Student) : JPanel() {
                             it.aType = u.aType
                             it.credit = u.credit
                             it.score = u.score
-                            it.gpa = if(u.gpa)"是" else "否"
+                            it.gpa = if (u.gpa) "是" else "否"
                         })
                     }
                 }

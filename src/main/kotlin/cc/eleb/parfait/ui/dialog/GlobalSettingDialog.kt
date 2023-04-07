@@ -88,7 +88,7 @@ class GlobalSettingDialog : JDialog() {
                     if (GlobalSettings.LANGUAGE != languageComboBox.selectedIndex) {
                         GlobalSettings.LANGUAGE = languageComboBox.selectedIndex
                         ParfaitFrame.instance.reloadTranslation(true)
-                    }else{
+                    } else {
                         GlobalSettings.LANGUAGE = languageComboBox.selectedIndex
                     }
                     GlobalSettings.OUTPUT_STRING = outputStringField.text

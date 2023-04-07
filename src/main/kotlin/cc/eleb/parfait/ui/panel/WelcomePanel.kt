@@ -6,7 +6,7 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 class WelcomePanel : JPanel() {
-    fun reloadTranslation(){
+    fun reloadTranslation() {
         label1.text = "welcome-panel-1".trs()
         label2.text = "welcome-panel-2".trs()
     }

@@ -25,7 +25,7 @@ object ColorUtils {
     private var accentColorLabel = JLabel()
     private var accentColor: Color? = null
 
-    fun reloadTranslation(){
+    fun reloadTranslation() {
         accentColorLabel.text = "frame-accent".trs()
     }
 
@@ -40,9 +40,9 @@ object ColorUtils {
             val jtb = JToggleButton(AccentColorIcon(accentColorKeys[i]))
             jtb.toolTipText = accentColorNames[i]
             jtb.addActionListener { accentColorChanged() }
-            accentColorButtons.add(jtb);
+            accentColorButtons.add(jtb)
             ParfaitFrame.instance.toolBar.add(jtb)
-            group.add(jtb);
+            group.add(jtb)
         }
         accentColorButtons[0].isSelected = true
         FlatLaf.setSystemColorGetter { name: String -> if (name == "accent") accentColor else null }
