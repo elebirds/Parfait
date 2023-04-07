@@ -20,7 +20,7 @@ data class Student(
 ) {
     val weightedMean: Double
         get() {
-            if (scores.isEmpty()) return -1.0
+            if (scores.isEmpty()) return 0.0
             var a = 0.0
             var b = 0.0
             scores.forEach { u ->
@@ -65,7 +65,7 @@ data class Student(
 
     val simpleMean: Double
         get() {
-            if (scores.isEmpty()) return -1.0
+            if (scores.isEmpty()) return 0.0
             var a = 0.0
             var b = 0
             scores.forEach { u ->
@@ -77,7 +77,7 @@ data class Student(
 
     val gpa: Double
         get() {
-            if (scores.isEmpty()) return -1.0
+            if (scores.isEmpty()) return 0.0
             var a = 0.0
             var b = 0.0
             scores.forEach { u ->
@@ -92,7 +92,7 @@ data class Student(
     fun clearScores() = scores.clear()
 
     fun addScoresFromFile(f: File) {
-        EasyExcel.read(f, Score::class.java, PageReadListener<Score> {
+        EasyExcel.read(f, Score::class.java, PageReadListener {
             it.forEach(scores::add)
         }).sheet().doRead()
     }

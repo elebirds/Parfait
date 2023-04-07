@@ -64,9 +64,13 @@ class ParfaitFrame : JFrame() {
     private fun showHints(flag: Boolean) {
         if (flag && ParfaitPrefs.state.getBoolean("InitHitss", false)) return
         ParfaitPrefs.state.putBoolean("InitHitss", true)
+        val searchHint: HintManager.Hint = HintManager.Hint(
+            "hit-5".trs(), searchButton,
+            SwingConstants.BOTTOM, "hint.search", null
+        )
         val optionsMenuHint: HintManager.Hint = HintManager.Hint(
             "hit-4".trs(), optionsMenu,
-            SwingConstants.BOTTOM, "hint.optionsMenu", null
+            SwingConstants.BOTTOM, "hint.optionsMenu", searchHint
         )
         val fontMenuHint: HintManager.Hint = HintManager.Hint(
             "hit-3".trs(),

@@ -1,5 +1,6 @@
 package cc.eleb.parfait.ui;
 
+import cc.eleb.parfait.i18n.Language;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import com.formdev.flatlaf.ui.FlatEmptyBorder;
@@ -206,7 +207,7 @@ class HintManager {
             add(hintLabel, "cell 0 0");
 
             //---- gotItButton ----
-            gotItButton.setText("明白啦！");
+            gotItButton.setText(Language.trs("got-it"));
             gotItButton.setFocusable(false);
             gotItButton.addActionListener(e -> gotIt());
             add(gotItButton, "cell 0 1,alignx right,growx 0");

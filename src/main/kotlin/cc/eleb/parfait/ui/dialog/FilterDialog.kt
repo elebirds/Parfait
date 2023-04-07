@@ -95,7 +95,7 @@ class FilterDialog : JDialog() {
                         fullEqual1.selectedIndex==1
                     ))
                 }
-                if(textField2.toString().isNotEmpty()){
+                if(textField2.text.isNotEmpty()){
                     filter.add(StringRowFilter(
                         textField2.text,
                         StudentDataPanel.instance.table1.convertColumnIndexToModel(1),
@@ -116,7 +116,7 @@ class FilterDialog : JDialog() {
                         true
                     ))
                 }
-                if(textField3.toString().isNotEmpty()){
+                if(textField3.text.isNotEmpty()){
                     try {
                         textField3.text.toInt()
                     }catch (e:Exception){
@@ -139,25 +139,103 @@ class FilterDialog : JDialog() {
                         StudentDataPanel.instance.table1.convertColumnIndexToModel(4)
                     ))
                 }
-                if(textField4.toString().isNotEmpty()){
+                if(textField4.text.isNotEmpty()){
                     filter.add(StringRowFilter(
                         textField4.text,
                         StudentDataPanel.instance.table1.convertColumnIndexToModel(5),
                         fullEqual4.selectedIndex==1
                     ))
                 }
-                if(textField5.toString().isNotEmpty()){
+                if(textField5.text.isNotEmpty()){
                     filter.add(StringRowFilter(
                         textField5.text,
                         StudentDataPanel.instance.table1.convertColumnIndexToModel(6),
                         fullEqual5.selectedIndex==1
                     ))
                 }
-                if(textField6.toString().isNotEmpty()){
+                if(textField6.text.isNotEmpty()){
                     filter.add(StringRowFilter(
                         textField6.text,
                         StudentDataPanel.instance.table1.convertColumnIndexToModel(7),
                         fullEqual6.selectedIndex==1
+                    ))
+                }
+                if(textField7.text.isNotEmpty()){
+                    try {
+                        textField7.text.toDouble()
+                    }catch (e:Exception){
+                        JOptionPane.showMessageDialog(
+                            null,
+                            "filter-error-1".trs(),
+                            "global-error".trs(),
+                            JOptionPane.ERROR_MESSAGE
+                        )
+                        return
+                    }
+                    filter.add(RowFilter.numberFilter(
+                        when(fullEqual7.selectedIndex){
+                            0,2->RowFilter.ComparisonType.AFTER
+                            1,3->RowFilter.ComparisonType.BEFORE
+                            else->RowFilter.ComparisonType.EQUAL
+                        },
+                        when(fullEqual7.selectedIndex){
+                            2->textField7.text.toDouble()-0.000000001
+                            3->textField7.text.toDouble()+0.000000001
+                            else->textField7.text.toDouble()
+                        },
+                        StudentDataPanel.instance.table1.convertColumnIndexToModel(8)
+                    ))
+                }
+                if(textField8.text.isNotEmpty()){
+                    try {
+                        textField8.text.toDouble()
+                    }catch (e:Exception){
+                        JOptionPane.showMessageDialog(
+                            null,
+                            "filter-error-2".trs(),
+                            "global-error".trs(),
+                            JOptionPane.ERROR_MESSAGE
+                        )
+                        return
+                    }
+                    filter.add(RowFilter.numberFilter(
+                        when(fullEqual8.selectedIndex){
+                            0,2->RowFilter.ComparisonType.AFTER
+                            1,3->RowFilter.ComparisonType.BEFORE
+                            else->RowFilter.ComparisonType.EQUAL
+                        },
+                        when(fullEqual8.selectedIndex){
+                            2->textField8.text.toDouble()-0.000000001
+                            3->textField8.text.toDouble()+0.000000001
+                            else->textField8.text.toDouble()
+                        },
+                        StudentDataPanel.instance.table1.convertColumnIndexToModel(9)
+                    ))
+                }
+                if(textField9.text.isNotEmpty()){
+                    try {
+                        textField9.text.toDouble()
+                    }catch (e:Exception){
+                        JOptionPane.showMessageDialog(
+                            null,
+                            "filter-error-3".trs(),
+                            "global-error".trs(),
+                            JOptionPane.ERROR_MESSAGE
+                        )
+                        return
+                    }
+                    filter.add(RowFilter.numberFilter(
+                        when(fullEqual9.selectedIndex){
+                            0,2->RowFilter.ComparisonType.AFTER
+                            1,3->RowFilter.ComparisonType.BEFORE
+                            else->RowFilter.ComparisonType.EQUAL
+                        },
+                        when(fullEqual9.selectedIndex){
+                            2->textField9.text.toDouble()-0.000000001
+                            3->textField9.text.toDouble()+0.000000001
+                            else->textField9.text.toDouble()
+                        },
+                        StudentDataPanel.instance.table1.convertColumnIndexToModel(10)
                     ))
                 }
                 val s = AndFilter(filter)
