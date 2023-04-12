@@ -125,10 +125,10 @@ data class Student(
 
         fun addStudentsFromFile(f: File) {
             EasyExcel.read(f, SimpleReadStudent::class.java, PageReadListener<SimpleReadStudent> {
-                var f = 0
+                var a = 0
                 it.forEach { t ->
                     t.clazz = t.clazz.replace("(", "（").replace(")", "）")
-                    if(students.containsKey(t.id))f++
+                    if(students.containsKey(t.id))a++
                     students[t.id] = Student(
                         id = t.id,
                         name = t.name,
@@ -147,9 +147,9 @@ data class Student(
                         profession = t.clazz.replace(Regex("本科\\d班\$"), "").replace(Regex("^\\d{4}级"), "")
                             .replace(Regex("^\\d{4}"), "")
                     )
-                    println(students[t.id]!!.profession.translateTo())
+                    //println(students[t.id]!!.profession.translateTo())
                 }
-                JOptionPane.showConfirmDialog(null,"impo-file-result".trs().replace("%i",f.toString()),"global-success".trs(),JOptionPane.WARNING_MESSAGE)
+                JOptionPane.showMessageDialog(null,"impo-file-result".trs().replace("%i",a.toString()),"global-success".trs(),JOptionPane.INFORMATION_MESSAGE)
             }).sheet().doRead()
         }
     }

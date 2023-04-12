@@ -3,6 +3,8 @@ package cc.eleb.parfait.config
 import cc.eleb.parfait.entity.Certificate
 import cc.eleb.parfait.entity.Student
 import cc.eleb.parfait.i18n.GenLanguage
+import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.ui.ParfaitFrame
 import cc.eleb.parfait.ui.panel.StudentDataPanel
 import cc.eleb.parfait.utils.file.ZipUtils
 import java.io.File
@@ -58,6 +60,13 @@ class ParConfig(var file: File?) {
                 "certificate" to certificateConfig.toString()
             )
         )
+        ParfaitFrame.instance.title = if (inited) {
+            if (newed) {
+                "${"global-new-file".trs()} - Parfait"
+            } else {
+                file.name + " - Parfait"
+            }
+        } else "Parfait"
     }
 
     fun close() {

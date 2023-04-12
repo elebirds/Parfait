@@ -15,8 +15,10 @@ import javax.swing.table.TableColumnModel
 
 class GPAPanel : JPanel() {
     fun reloadTranslation() {
-        button2.text = "global-save".trs()
-        button3.text = "global-reload".trs()
+        button1.text = "gpa-panel-new".trs()
+        button2.text = "gpa-panel-remove".trs()
+        button3.text = "global-save".trs()
+        button4.text = "global-reload".trs()
         (table1.model as GPATableModel).reloadTranslation()
         (table1.model as GPATableModel).fireTableStructureChanged()
     }
@@ -43,9 +45,11 @@ class GPAPanel : JPanel() {
         table1.preferredScrollableViewportSize = Dimension(700, 400)
         scrollPane1.setViewportView(table1)
         add(scrollPane1, "cell 1 0")
-        panel1.layout = MigLayout("hidemode 3", "[fill][fill][fill]", "[][][]")
-        panel1.add(button2, "cell 1 0")
-        panel1.add(button3, "cell 1 1")
+        panel1.layout = MigLayout("hidemode 3", "[fill][fill][fill]", "[][][][]")
+        panel1.add(button1, "cell 1 0")
+        panel1.add(button2, "cell 1 1")
+        panel1.add(button3, "cell 1 2")
+        panel1.add(button4, "cell 1 3")
         add(panel1, "cell 2 0")
     }
 
@@ -55,18 +59,44 @@ class GPAPanel : JPanel() {
         this.model = GPATableModel()
     }
     private var panel1 = JPanel()
+    private var button1 = JButton().apply {
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if (!ParConfig.checkInited()) return
+                (table1.model as DefaultTableModel).dataVector.add(Vector<Any>().apply {
+                    this.add(-1)
+                    this.add(0.0)
+                })
+                (table1.model as DefaultTableModel).fireTableDataChanged()
+            }
+        })
+    }
     private var button2 = JButton().apply {
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 if (!ParConfig.checkInited()) return
+                table1.selectedRows.forEach { _ ->
+                    (table1.model as DefaultTableModel).dataVector.removeAt(table1.convertRowIndexToModel(table1.selectedRow))
+                }
+                (table1.model as DefaultTableModel).fireTableDataChanged()
+            }
+        })
+    }
+    private var button3 = JButton().apply {
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if (!ParConfig.checkInited()) return
                 GPAConfig.ranks.clear()
+                (table1.model as DefaultTableModel).dataVector.sortByDescending {
+                    it[0].toString().toInt()
+                }
                 (table1.model as DefaultTableModel).dataVector.forEach {
                     GPAConfig.ranks[it[0].toString().toInt()] = it[1].toString().toDouble()
                 }
             }
         })
     }
-    private var button3 = JButton().apply {
+    private var button4 = JButton().apply {
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 if (!ParConfig.checkInited()) return

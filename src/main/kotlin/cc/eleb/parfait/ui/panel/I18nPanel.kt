@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.*
+import javax.swing.table.DefaultTableModel
 
 class I18nPanel : JPanel() {
     fun reload() {
@@ -21,8 +22,10 @@ class I18nPanel : JPanel() {
     fun reloadTranslation() {
         label1.text = "i18n-panel-label1".trs()
         label2.text = "i18n-panel-label2".trs()
-        button2.text = "global-save".trs()
-        button3.text = "global-reload".trs()
+        button1.text = "i18n-panel-new".trs()
+        button2.text = "i18n-panel-remove".trs()
+        button3.text = "global-save".trs()
+        button4.text = "global-reload".trs()
         (table1.model as TranslateTableModel).reloadTranslation()
         (table1.model as TranslateTableModel).fireTableStructureChanged()
     }
@@ -54,9 +57,11 @@ class I18nPanel : JPanel() {
         this.add(label2, "cell 0 1")
         scrollPane1.setViewportView(table1)
         this.add(scrollPane1, "cell 1 1,align center center,grow 0 0")
-        panel1.layout = MigLayout("hidemode 3", "[fill][fill][fill]", "[][][]")
-        panel1.add(button2, "cell 1 0")
-        panel1.add(button3, "cell 1 1")
+        panel1.layout = MigLayout("hidemode 3", "[fill][fill][fill]", "[][][][]")
+        panel1.add(button1, "cell 1 0")
+        panel1.add(button2, "cell 1 1")
+        panel1.add(button3, "cell 1 2")
+        panel1.add(button4, "cell 1 3")
         this.add(panel1, "cell 1 1")
     }
 
@@ -69,7 +74,30 @@ class I18nPanel : JPanel() {
         this.preferredScrollableViewportSize = Dimension(600, 400)
     }
     private val panel1 = JPanel()
+    private val button1 = JButton().apply {
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if (!ParConfig.checkInited()) return
+                (table1.model as DefaultTableModel).dataVector.add(Vector<Any>().apply {
+                    this.add("新建翻译")
+                    this.add("新建翻译")
+                })
+                (table1.model as DefaultTableModel).fireTableDataChanged()
+            }
+        })
+    }
     private val button2 = JButton().apply {
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if (!ParConfig.checkInited()) return
+                table1.selectedRows.forEach { _ ->
+                    (table1.model as DefaultTableModel).dataVector.removeAt(table1.convertRowIndexToModel(table1.selectedRow))
+                }
+                (table1.model as DefaultTableModel).fireTableDataChanged()
+            }
+        })
+    }
+    private val button3 = JButton().apply {
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 if (!ParConfig.checkInited()) return
@@ -82,7 +110,7 @@ class I18nPanel : JPanel() {
             }
         })
     }
-    private val button3 = JButton().apply {
+    private val button4 = JButton().apply {
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 if (!ParConfig.checkInited()) return

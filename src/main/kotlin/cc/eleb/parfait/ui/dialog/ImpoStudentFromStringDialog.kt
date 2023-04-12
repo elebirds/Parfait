@@ -96,20 +96,34 @@ class ImpoStudentFromStringDialog : JDialog() {
                         )
                         return
                     }
-                    val clazz = b[5]
-                    try {
-                        val grade = clazz.substring(0, 4).toInt()
-                        val profession = clazz.replace(Regex("本科\\d班\$"), "").replace(Regex("^\\d{4}级"), "")
-                            .replace(Regex("^\\d{4}"), "")
-                        if (profession == "") throw Exception()
-                    } catch (e: Exception) {
-                        JOptionPane.showMessageDialog(
-                            null,
-                            "isfs-error-2".trs().replace("%line", i.toString()) + "isfs-error-6".trs(),
-                            "global-error".trs(),
-                            JOptionPane.ERROR_MESSAGE
-                        )
-                        return
+                    if(b.size == 8){
+                        try {
+                            b[6].toInt()
+                        } catch (e: Exception) {
+                            JOptionPane.showMessageDialog(
+                                null,
+                                "isfs-error-2".trs().replace("%line", i.toString()) + "student-add-error-label5".trs(),
+                                "global-error".trs(),
+                                JOptionPane.ERROR_MESSAGE
+                            )
+                            return
+                        }
+                    }else{
+                        val clazz = b[5]
+                        try {
+                            val grade = clazz.substring(0, 4).toInt()
+                            val profession = clazz.replace(Regex("本科\\d班\$"), "").replace(Regex("^\\d{4}级"), "")
+                                .replace(Regex("^\\d{4}"), "")
+                            if (profession == "") throw Exception()
+                        } catch (e: Exception) {
+                            JOptionPane.showMessageDialog(
+                                null,
+                                "isfs-error-2".trs().replace("%line", i.toString()) + "isfs-error-6".trs(),
+                                "global-error".trs(),
+                                JOptionPane.ERROR_MESSAGE
+                            )
+                            return
+                        }
                     }
                 }
                 try {
@@ -128,10 +142,10 @@ class ImpoStudentFromStringDialog : JDialog() {
                             status = if (b[3] == "在籍") 0 else 1,
                             clazz = b[5],
                             scores = arrayListOf(),
-                            grade = b[5].substring(0, 4).toInt(),
+                            grade = if(b.size==6)b[5].substring(0, 4).toInt() else b[6].toInt(),
                             school = b[4],
-                            profession = b[5].replace(Regex("本科\\d班\$"), "").replace(Regex("^\\d{4}级"), "")
-                                .replace(Regex("^\\d{4}"), "")
+                            profession = if(b.size==6)b[5].replace(Regex("本科\\d班\$"), "").replace(Regex("^\\d{4}级"), "")
+                                .replace(Regex("^\\d{4}"), "") else b[7]
                         )
                         Student.students[b[0].toInt()] = st
                     }
