@@ -253,7 +253,8 @@ class ParfaitFrame : JFrame() {
         JOptionPane.showMessageDialog(
             this, arrayOf<Any>(
                 titleLabel, "frame-about".trs(), " ",
-                "Copyright 2023-" + Year.now() + " Elebird(Grow Zheng).", "All rights reserved.", linkLabel
+                "Copyright 2023-" + Year.now() + " Elebird(Grow Zheng).", "All rights reserved.", linkLabel,
+                "Running in Java™ SE Runtime Environment (build ${System.getProperty("java.version")}) on ${System.getProperty("os.name")}",
             ), "frame-about-title".trs(),
             JOptionPane.PLAIN_MESSAGE
         )
