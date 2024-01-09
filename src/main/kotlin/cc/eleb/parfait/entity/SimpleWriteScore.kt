@@ -16,7 +16,7 @@ class SimpleWriteScore {
     var credit: Double = 0.0
 
     @ExcelProperty("成绩")
-    var score: Int = 0
+    var score: Double = 0.0
 
     @ExcelProperty("学位课")
     var gpa: String = "是"

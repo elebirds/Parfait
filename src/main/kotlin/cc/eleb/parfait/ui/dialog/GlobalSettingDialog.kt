@@ -29,8 +29,6 @@ class GlobalSettingDialog : JDialog() {
         contentPanel.add(outputStringIntroduce2, "cell 1 2")
         contentPanel.add(outputStringIntroduce3, "cell 1 3")
         contentPanel.add(outputStringField, "cell 1 4")
-        contentPanel.add(scoreTypeLabel, "cell 0 5")
-        contentPanel.add(scoreTypeComboBox, "cell 1 5")
         dialogPane.add(contentPanel, BorderLayout.CENTER)
         buttonBar.layout = MigLayout("insets dialog,alignx right", "[button,fill][button,fill]", null)
         buttonBar.add(okButton, "cell 0 0")
@@ -67,15 +65,6 @@ class GlobalSettingDialog : JDialog() {
         this.preferredSize = Dimension(400, 30)
         this.text = GlobalSettings.OUTPUT_STRING
     }
-    private val scoreTypeLabel = JLabel().apply {
-        this.text = "global-setting-scoreType".trs()
-    }
-    private val scoreTypeComboBox = JComboBox<String>().apply {
-        this.model =
-            DefaultComboBoxModel(arrayOf("global-setting-weightedScore".trs(), "global-setting-simpleScore".trs()))
-        this.model.selectedItem =
-            arrayOf("global-setting-weightedScore".trs(), "global-setting-simpleScore".trs())[GlobalSettings.SCORE_TYPE]
-    }
 
 
     private val buttonBar = JPanel()
@@ -92,10 +81,8 @@ class GlobalSettingDialog : JDialog() {
                         GlobalSettings.LANGUAGE = languageComboBox.selectedIndex
                     }
                     GlobalSettings.OUTPUT_STRING = outputStringField.text
-                    GlobalSettings.SCORE_TYPE = scoreTypeComboBox.selectedIndex
                     ParfaitPrefs.state.putInt("gloSetting.language", languageComboBox.selectedIndex)
                     ParfaitPrefs.state.put("gloSetting.outputString", outputStringField.text)
-                    ParfaitPrefs.state.putInt("gloSetting.scoreType", scoreTypeComboBox.selectedIndex)
                     dispose()
                 } catch (e: Exception) {
                     JOptionPane.showMessageDialog(

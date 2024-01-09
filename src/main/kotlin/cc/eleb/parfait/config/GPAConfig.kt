@@ -47,7 +47,7 @@ class GPAConfig {
             0 to 0.0
         )//大于等于此
 
-        fun getGPA(score: Int): Double {
+        fun getGPA(score: Double): Double {
             ranks.forEach { (t, u) ->
                 if (score >= t) return u
             }

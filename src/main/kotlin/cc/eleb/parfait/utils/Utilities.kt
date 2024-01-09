@@ -1,5 +1,8 @@
 package cc.eleb.parfait.utils
 
+import java.math.BigDecimal
+import java.math.RoundingMode
+
 /**
  * Project FoundHi-Apollo
  *
@@ -9,3 +12,5 @@ package cc.eleb.parfait.utils
 
 @Suppress("UNCHECKED_CAST")
 fun <T> Any?.cast(): T = this as T
+
+fun Double.castTo(scale: Int) = BigDecimal(this).setScale(scale, RoundingMode.HALF_EVEN).toDouble()

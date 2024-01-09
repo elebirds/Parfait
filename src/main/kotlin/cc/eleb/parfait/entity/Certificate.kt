@@ -12,7 +12,7 @@ import java.io.File
 import java.text.NumberFormat
 
 class Certificate(val lang: String, val name: String, val data: HashMap<String, String>) {
-    fun replaceAndGenerate(outFile: File, st: Student) {
+    fun replaceAndGenerate(outFile: File, st: Student,weighted:Boolean) {
         ZipUtils.strings2Zip(outFile, linkedMapOf<String, String>().apply {
             CertificateConfig.wordReadFiles.forEach { ef ->
                 if (ef != REPLACE_FILE && ef != CORE_FILE) this[ef.substring(1)] = data[ef]!!
@@ -30,9 +30,9 @@ class Certificate(val lang: String, val name: String, val data: HashMap<String, 
                 .replace("\${school_for}", st.school.translateTo())
                 .replace("\${prof}", st.profession)
                 .replace("\${prof_for}", st.profession.translateTo())
-                .replace("\${stype}", if (GlobalSettings.SCORE_TYPE == 1) "算数" else "加权")
-                .replace("\${stype_for}", (if (GlobalSettings.SCORE_TYPE == 1) "算数" else "加权").translateTo())
-                .replace("\${score}", nf.format(if (GlobalSettings.SCORE_TYPE == 1) st.simpleMean else st.weightedMean))
+                .replace("\${stype}", if (!weighted) "算数" else "加权")
+                .replace("\${stype_for}", (if (!weighted) "算数" else "加权").translateTo())
+                .replace("\${score}", nf.format(if (!weighted) st.simpleMean else st.weightedMean))
                 .replace("\${date}", DateUtils.getCurrentFormattedDate2())
                 .replace("\${date_for}", DateUtils.getCurrentFormattedDateEnglish())
                 .replace("\${gpa}", nf.format(st.gpa))
@@ -54,11 +54,11 @@ class Certificate(val lang: String, val name: String, val data: HashMap<String, 
 
         const val CORE_FILE = "/docProps/core.xml"
 
-        fun generate(outFile: File, student: Student) {
+        fun generate(outFile: File, student: Student,weighted:Boolean) {
             val cer =
                 if (ces.containsKey("certificate${if (student.status == 0) "A" else "B"}-${GenLanguage.nowGenLanguage}")) ces["certificate${if (student.status == 0) "A" else "B"}-${GenLanguage.nowGenLanguage}"]!!
                 else ces["certificate${if (student.status == 0) "A" else "B"}-英语-English"]!!
-            cer.replaceAndGenerate(outFile, student)
+            cer.replaceAndGenerate(outFile, student,weighted)
         }
     }
 }

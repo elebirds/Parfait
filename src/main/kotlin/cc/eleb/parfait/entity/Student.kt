@@ -3,9 +3,12 @@ package cc.eleb.parfait.entity
 import cc.eleb.parfait.config.GPAConfig
 import cc.eleb.parfait.i18n.translateTo
 import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.utils.castTo
 import com.alibaba.excel.EasyExcel
 import com.alibaba.excel.read.listener.PageReadListener
 import java.io.File
+import java.math.BigDecimal
+import java.math.RoundingMode
 import javax.swing.JOptionPane
 
 data class Student(
@@ -25,10 +28,10 @@ data class Student(
             var a = 0.0
             var b = 0.0
             scores.forEach { u ->
-                a += u.score * u.credit
-                b += u.credit
+                a += (u.score * u.credit)
+                b += (u.credit)
             }
-            return a / b
+            return a.castTo(2)/b.castTo(2)
         }
 
     val genderT: String
@@ -73,7 +76,7 @@ data class Student(
                 a += u.score
                 b += 1
             }
-            return a / b
+            return a.castTo(2)/b
         }
 
     val gpa: Double
@@ -87,13 +90,16 @@ data class Student(
                     b += u.credit
                 }
             }
-            return a / b
+            return a.castTo(2)/b.castTo(2)
         }
 
     fun clearScores() = scores.clear()
 
     fun addScoresFromFile(f: File) {
         EasyExcel.read(f, Score::class.java, PageReadListener {
+            it.forEach { i: Score ->
+                i.gpa = i.gpaString == "是"
+            }
             it.forEach(scores::add)
         }).sheet().doRead()
     }
@@ -109,7 +115,7 @@ data class Student(
             "class" to clazz,
             "scores" to linkedMapOf<String, Any>().apply {
                 scores.forEach {
-                    this[it.name] = it.toMap()
+                    this[it.id.toString()] = it.toMap()
                 }
             }
         )

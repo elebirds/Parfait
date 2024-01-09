@@ -6,6 +6,8 @@ import cc.eleb.parfait.utils.cast
 import cc.eleb.parfait.utils.config.Config
 import cc.eleb.parfait.utils.config.ConfigData
 import cc.eleb.parfait.utils.config.ConfigType
+import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class StudentConfig {
     lateinit var config: Config
@@ -27,11 +29,12 @@ class StudentConfig {
                     (d["scores"] as Map<*, *>).forEach { (sid, sd) ->
                         val sf = sd as Map<*, *>
                         this.add(Score().apply {
-                            name = sid.cast()
-                            cType = sf["ct"].cast()
-                            aType = sf["at"].cast()
-                            credit = sf["credit"].cast()
-                            score = sf["score"].cast()
+                            this.id = UUID.fromString(sid.cast())
+                            this.name = sf["name"].cast()
+                            this.cType = sf["ct"].cast()
+                            this.aType = sf["at"].cast()
+                            this.credit = sf["credit"].cast()
+                            this.score = sf["score"].cast()
                         })
                     }
                 }

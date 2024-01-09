@@ -1,8 +1,11 @@
 package cc.eleb.parfait.entity
 
 import com.alibaba.excel.annotation.ExcelProperty
+import java.util.UUID
 
 class Score {
+    var id: UUID = UUID.randomUUID()
+
     @ExcelProperty("课程名称")
     var name: String = ""
 
@@ -16,12 +19,16 @@ class Score {
     var credit: Double = 0.0
 
     @ExcelProperty("成绩")
-    var score: Int = 0
+    var score: Double = 0.0
 
     var gpa: Boolean = true
 
+    @ExcelProperty("学位课")
+    var gpaString: String = "是"
+
     fun toMap(): LinkedHashMap<String, Any> {
         return linkedMapOf(
+            "name" to name,
             "ct" to cType,
             "at" to aType,
             "credit" to credit,

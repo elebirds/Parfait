@@ -48,11 +48,13 @@ class ParfaitFrame : JFrame() {
 
     private fun switchTabbed(flag: Boolean) {
         if (flag) {
+            tabbedPane.setEnabledAt(0, false)
             tabbedPane.setEnabledAt(1, true)
             tabbedPane.setEnabledAt(2, true)
             tabbedPane.setEnabledAt(3, true)
             tabbedPane.selectedIndex = 1
         } else {
+            tabbedPane.setEnabledAt(0, true)
             tabbedPane.setEnabledAt(1, false)
             tabbedPane.setEnabledAt(2, false)
             tabbedPane.setEnabledAt(3, false)
@@ -184,6 +186,28 @@ class ParfaitFrame : JFrame() {
         switchTabbed(false)
     }
 
+    fun openFile(f:File){
+        try {
+            if (f.name.endsWith(".par")) {
+                ParConfig(f)
+                this.reloadAllFrame()
+                switchTabbed(true)
+            } else JOptionPane.showMessageDialog(
+                this,
+                "frame-open-error-1".trs(),
+                "global-error".trs(),
+                JOptionPane.ERROR_MESSAGE
+            )
+        } catch (e: Exception) {
+            JOptionPane.showMessageDialog(
+                this,
+                "${"global-error-unknown".trs()}\n${e.stackTraceToString()}",
+                "global-error".trs(),
+                JOptionPane.ERROR_MESSAGE
+            )
+        }
+    }
+
     private fun openActionPerformed() {
         checkToSave()
         val fd = JFileChooser()
@@ -198,27 +222,8 @@ class ParfaitFrame : JFrame() {
         }
         fd.isMultiSelectionEnabled = false
         fd.fileSelectionMode = JFileChooser.FILES_ONLY
-        if (fd.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            try {
-                if (fd.selectedFile.name.endsWith(".par")) {
-                    ParConfig(fd.selectedFile)
-                    this.reloadAllFrame()
-                    switchTabbed(true)
-                } else JOptionPane.showMessageDialog(
-                    this,
-                    "frame-open-error-1".trs(),
-                    "global-error".trs(),
-                    JOptionPane.ERROR_MESSAGE
-                )
-            } catch (e: Exception) {
-                JOptionPane.showMessageDialog(
-                    this,
-                    "${"global-error-unknown".trs()}\n${e.stackTraceToString()}",
-                    "global-error".trs(),
-                    JOptionPane.ERROR_MESSAGE
-                )
-            }
-        }
+        if (fd.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return
+        openFile(fd.selectedFile)
     }
 
     private fun saveAsActionPerformed() {

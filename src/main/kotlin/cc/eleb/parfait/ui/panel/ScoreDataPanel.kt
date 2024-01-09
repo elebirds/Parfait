@@ -25,7 +25,7 @@ class ScoreDataPanel(private val student: Student) : JPanel() {
             this.name = "score-panel-new".trs()
             this.aType = "考试"
             this.cType = "专业基础课程"
-            this.score = 0
+            this.score = 0.0
             this.credit = 1.0
         })
         (table1.model as ScoreTableModel).fireTableDataChanged()
@@ -40,11 +40,12 @@ class ScoreDataPanel(private val student: Student) : JPanel() {
             )
             return
         }
+        val ar = ArrayList<Score>()
         for (selectedRow: Int in table1.selectedRows) {
-            val slt = table1.selectedRow
-            student.scores.removeAt(slt)
-            (table1.model as ScoreTableModel).fireTableDataChanged()
+            ar.add(student.scores[selectedRow])
         }
+        student.scores.removeAll(ar.toSet())
+        (table1.model as ScoreTableModel).fireTableDataChanged()
     }
 
     private fun expoScoreMouseClicked(e: MouseEvent) {

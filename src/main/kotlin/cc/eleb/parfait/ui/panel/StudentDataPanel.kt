@@ -34,6 +34,7 @@ class StudentDataPanel : JPanel() {
         button6.text = "student-panel-button-5".trs()
         button7.text = "student-panel-button-6".trs()
         button1.text = "student-panel-button-7".trs()
+        button0.text = "student-panel-button-9".trs()
         button5.text = "student-panel-button-8".trs()
         this.table1.model.reloadTranslation()
         this.table1.model.fireTableStructureChanged()
@@ -189,7 +190,7 @@ class StudentDataPanel : JPanel() {
         }
     }
 
-    private fun generateWordMouseClicked(e: MouseEvent) {
+    private fun generateWordMouseClicked(e: MouseEvent,weighted:Boolean) {
         if (e.button != MouseEvent.BUTTON1) return
         if (!ParConfig.checkInited()) return
         if (table1.selectedRows.isEmpty()) {
@@ -212,7 +213,7 @@ class StudentDataPanel : JPanel() {
                     for (selectedRow: Int in table1.selectedRows) {
                         val student =
                             Student.students[table1.model.getValueAt(table1.convertRowIndexToModel(selectedRow), 0)]!!
-                        Certificate.generate(sf, student)
+                        Certificate.generate(sf, student,weighted)
                     }
                 }
             }
@@ -239,7 +240,8 @@ class StudentDataPanel : JPanel() {
                             Student.students[table1.model.getValueAt(table1.convertRowIndexToModel(selectedRow), 0)]!!
                         Certificate.generate(
                             File(fd.selectedFile.absolutePath + "/${student.id}-${student.name}.docx"),
-                            student
+                            student,
+                            weighted
                         )
                     }
                 }
@@ -310,6 +312,7 @@ class StudentDataPanel : JPanel() {
         panel1.add(button7, "cell 0 5")
         panel1.add(button5, "cell 0 6")
         panel1.add(button1, "cell 0 7")
+        panel1.add(button0, "cell 0 8")
         this.add(panel1, "cell 1 0")
     }
 
@@ -318,7 +321,7 @@ class StudentDataPanel : JPanel() {
     val table1 = StudentDataTable()
     val sorter = TableRowSorter(table1.model)
     private val panel1 = JPanel().apply {
-        this.layout = MigLayout("hidemode 3", "[fill]", "[][][][][][][][][][][][]")
+        this.layout = MigLayout("hidemode 3", "[fill]", "[][][][][][][][][][][][][]")
     }
     private val button2 = JButton().apply {
         this.addMouseListener(object : MouseAdapter() {
@@ -372,7 +375,14 @@ class StudentDataPanel : JPanel() {
     private val button1 = JButton().apply {
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                generateWordMouseClicked(e)
+                generateWordMouseClicked(e,true)
+            }
+        })
+    }
+    private val button0 = JButton().apply {
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                generateWordMouseClicked(e,false)
             }
         })
     }
