@@ -213,7 +213,7 @@ class StudentDataPanel : JPanel() {
                     for (selectedRow: Int in table1.selectedRows) {
                         val student =
                             Student.students[table1.model.getValueAt(table1.convertRowIndexToModel(selectedRow), 0)]!!
-                        Certificate.generate(sf, student,weighted)
+                        Certificate.ces["默认模板：中英双语-在校生-加权平均分"]!!.generate(sf, student)
                     }
                 }
             }
@@ -238,10 +238,9 @@ class StudentDataPanel : JPanel() {
                     for (selectedRow: Int in table1.selectedRows) {
                         val student =
                             Student.students[table1.model.getValueAt(table1.convertRowIndexToModel(selectedRow), 0)]!!
-                        Certificate.generate(
+                        Certificate.ces["默认模板：中英双语-在校生-加权平均分"]!!.generate(
                             File(fd.selectedFile.absolutePath + "/${student.id}-${student.name}.docx"),
-                            student,
-                            weighted
+                            student
                         )
                     }
                 }

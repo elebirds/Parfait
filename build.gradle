@@ -64,6 +64,7 @@ dependencies {
 
     implementation("com.belerweb:pinyin4j:2.5.1")//拼音英文转换
     implementation("com.alibaba:easyexcel:3.2.1")//excel操作
+    implementation('com.deepoove:poi-tl:1.12.2')
 }
 
 jar {
