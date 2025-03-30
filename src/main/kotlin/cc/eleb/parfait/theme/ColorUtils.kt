@@ -1,6 +1,6 @@
 package cc.eleb.parfait.theme
 
-import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.infra.i18n.trs
 import cc.eleb.parfait.ui.ParfaitFrame
 import com.formdev.flatlaf.*
 import com.formdev.flatlaf.icons.FlatAbstractIcon

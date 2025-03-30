@@ -1,4 +1,4 @@
-package cc.eleb.parfait.i18n
+package cc.eleb.parfait.infra.i18n
 
 import cc.eleb.parfait.utils.Charset
 import cc.eleb.parfait.utils.GlobalSettings

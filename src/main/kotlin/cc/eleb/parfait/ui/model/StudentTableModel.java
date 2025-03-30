@@ -1,7 +1,7 @@
 package cc.eleb.parfait.ui.model;
 
 import cc.eleb.parfait.entity.Student;
-import cc.eleb.parfait.i18n.Language;
+import cc.eleb.parfait.infra.i18n.Language;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -47,31 +47,20 @@ public class StudentTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int row, int column) {
         Student student = (Student) Student.getStudents().values().toArray()[row];
-        switch (column) {
-            case 0:
-                return student.getId();
-            case 1:
-                return student.getName();
-            case 2:
-                return student.getGenderS();
-            case 3:
-                return student.getStatusS();
-            case 4:
-                return student.getGrade();
-            case 5:
-                return student.getSchool();
-            case 6:
-                return student.getProfession();
-            case 7:
-                return student.getClazz();
-            case 8:
-                return student.getWeightedMean();
-            case 9:
-                return student.getSimpleMean();
-            case 10:
-                return student.getGpa();
-        }
-        return null;
+        return switch (column) {
+            case 0 -> student.getId();
+            case 1 -> student.getName();
+            case 2 -> student.getGenderS();
+            case 3 -> student.getStatusS();
+            case 4 -> student.getGrade();
+            case 5 -> student.getSchool();
+            case 6 -> student.getProfession();
+            case 7 -> student.getClazz();
+            case 8 -> student.getWeightedMean();
+            case 9 -> student.getSimpleMean();
+            case 10 -> student.getGpa();
+            default -> null;
+        };
     }
 
     @Override

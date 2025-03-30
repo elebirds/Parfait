@@ -1,6 +1,6 @@
 package cc.eleb.parfait.theme
 
-import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.infra.i18n.trs
 import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange
 import com.formdev.flatlaf.util.FontUtils

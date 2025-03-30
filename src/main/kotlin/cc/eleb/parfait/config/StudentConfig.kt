@@ -7,7 +7,6 @@ import cc.eleb.parfait.utils.config.Config
 import cc.eleb.parfait.utils.config.ConfigData
 import cc.eleb.parfait.utils.config.ConfigType
 import java.util.*
-import kotlin.collections.LinkedHashMap
 
 class StudentConfig {
     lateinit var config: Config

@@ -1,6 +1,6 @@
 package cc.eleb.parfait.ui.table
 
-import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.infra.i18n.trs
 import cc.eleb.parfait.ui.model.StudentTableModel
 import java.awt.Dimension
 import javax.swing.DefaultCellEditor

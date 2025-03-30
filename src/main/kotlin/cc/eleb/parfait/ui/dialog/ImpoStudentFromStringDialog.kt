@@ -1,7 +1,7 @@
 package cc.eleb.parfait.ui.dialog
 
 import cc.eleb.parfait.entity.Student
-import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.infra.i18n.trs
 import cc.eleb.parfait.ui.panel.StudentDataPanel
 import net.miginfocom.swing.MigLayout
 import java.awt.BorderLayout
@@ -96,7 +96,7 @@ class ImpoStudentFromStringDialog : JDialog() {
                         )
                         return
                     }
-                    if(b.size == 8){
+                    if (b.size == 8) {
                         try {
                             b[6].toInt()
                         } catch (e: Exception) {
@@ -108,7 +108,7 @@ class ImpoStudentFromStringDialog : JDialog() {
                             )
                             return
                         }
-                    }else{
+                    } else {
                         val clazz = b[5]
                         try {
                             val grade = clazz.substring(0, 4).toInt()
@@ -142,9 +142,10 @@ class ImpoStudentFromStringDialog : JDialog() {
                             status = if (b[3] == "在籍") 0 else 1,
                             clazz = b[5],
                             scores = arrayListOf(),
-                            grade = if(b.size==6)b[5].substring(0, 4).toInt() else b[6].toInt(),
+                            grade = if (b.size == 6) b[5].substring(0, 4).toInt() else b[6].toInt(),
                             school = b[4],
-                            profession = if(b.size==6)b[5].replace(Regex("本科\\d班\$"), "").replace(Regex("^\\d{4}级"), "")
+                            profession = if (b.size == 6) b[5].replace(Regex("本科\\d班\$"), "")
+                                .replace(Regex("^\\d{4}级"), "")
                                 .replace(Regex("^\\d{4}"), "") else b[7]
                         )
                         Student.students[b[0].toInt()] = st

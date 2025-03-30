@@ -2,7 +2,7 @@ package cc.eleb.parfait.ui.panel
 
 import cc.eleb.parfait.config.GPAConfig
 import cc.eleb.parfait.config.ParConfig
-import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.infra.i18n.trs
 import cc.eleb.parfait.ui.model.GPATableModel
 import net.miginfocom.swing.MigLayout
 import java.awt.Dimension

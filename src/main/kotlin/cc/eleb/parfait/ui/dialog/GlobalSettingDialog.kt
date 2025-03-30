@@ -1,6 +1,6 @@
 package cc.eleb.parfait.ui.dialog
 
-import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.infra.i18n.trs
 import cc.eleb.parfait.ui.ParfaitFrame
 import cc.eleb.parfait.utils.GlobalSettings
 import cc.eleb.parfait.utils.ParfaitPrefs

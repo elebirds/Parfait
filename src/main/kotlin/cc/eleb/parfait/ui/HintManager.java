@@ -1,6 +1,6 @@
 package cc.eleb.parfait.ui;
 
-import cc.eleb.parfait.i18n.Language;
+import cc.eleb.parfait.infra.i18n.Language;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 import com.formdev.flatlaf.ui.FlatEmptyBorder;

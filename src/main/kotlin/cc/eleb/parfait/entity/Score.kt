@@ -1,7 +1,7 @@
 package cc.eleb.parfait.entity
 
 import com.alibaba.excel.annotation.ExcelProperty
-import java.util.UUID
+import java.util.*
 
 class Score {
     var id: UUID = UUID.randomUUID()

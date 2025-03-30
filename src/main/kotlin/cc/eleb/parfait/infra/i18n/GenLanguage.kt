@@ -1,4 +1,4 @@
-package cc.eleb.parfait.i18n
+package cc.eleb.parfait.infra.i18n
 
 class GenLanguage(val name: String, val data: LinkedHashMap<String, String> = linkedMapOf()) {
     fun get(chinese: String): String {

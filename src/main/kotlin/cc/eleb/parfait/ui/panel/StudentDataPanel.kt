@@ -4,7 +4,7 @@ import cc.eleb.parfait.config.ParConfig
 import cc.eleb.parfait.entity.Certificate
 import cc.eleb.parfait.entity.SimpleWriteStudent
 import cc.eleb.parfait.entity.Student
-import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.infra.i18n.trs
 import cc.eleb.parfait.ui.dialog.ImpoStudentFromStringDialog
 import cc.eleb.parfait.ui.dialog.ScoreDialog
 import cc.eleb.parfait.ui.dialog.StudentAddDialog
@@ -190,7 +190,7 @@ class StudentDataPanel : JPanel() {
         }
     }
 
-    private fun generateWordMouseClicked(e: MouseEvent,weighted:Boolean) {
+    private fun generateWordMouseClicked(e: MouseEvent, weighted: Boolean) {
         if (e.button != MouseEvent.BUTTON1) return
         if (!ParConfig.checkInited()) return
         if (table1.selectedRows.isEmpty()) {
@@ -374,14 +374,14 @@ class StudentDataPanel : JPanel() {
     private val button1 = JButton().apply {
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                generateWordMouseClicked(e,true)
+                generateWordMouseClicked(e, true)
             }
         })
     }
     private val button0 = JButton().apply {
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                generateWordMouseClicked(e,false)
+                generateWordMouseClicked(e, false)
             }
         })
     }

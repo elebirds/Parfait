@@ -1,14 +1,11 @@
 package cc.eleb.parfait.entity
 
 import cc.eleb.parfait.config.GPAConfig
-import cc.eleb.parfait.i18n.translateTo
-import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.infra.i18n.trs
 import cc.eleb.parfait.utils.castTo
 import com.alibaba.excel.EasyExcel
 import com.alibaba.excel.read.listener.PageReadListener
 import java.io.File
-import java.math.BigDecimal
-import java.math.RoundingMode
 import javax.swing.JOptionPane
 
 data class Student(
@@ -31,7 +28,7 @@ data class Student(
                 a += (u.score * u.credit)
                 b += (u.credit)
             }
-            return a.castTo(2)/b.castTo(2)
+            return a.castTo(2) / b.castTo(2)
         }
 
     val genderT: String
@@ -76,7 +73,7 @@ data class Student(
                 a += u.score
                 b += 1
             }
-            return a.castTo(2)/b
+            return a.castTo(2) / b
         }
 
     val gpa: Double
@@ -90,7 +87,7 @@ data class Student(
                     b += u.credit
                 }
             }
-            return a.castTo(2)/b.castTo(2)
+            return a.castTo(2) / b.castTo(2)
         }
 
     fun clearScores() = scores.clear()
@@ -134,7 +131,7 @@ data class Student(
                 var a = 0
                 it.forEach { t ->
                     t.clazz = t.clazz.replace("(", "（").replace(")", "）")
-                    if(students.containsKey(t.id))a++
+                    if (students.containsKey(t.id)) a++
                     students[t.id] = Student(
                         id = t.id,
                         name = t.name,
@@ -155,7 +152,12 @@ data class Student(
                     )
                     //println(students[t.id]!!.profession.translateTo())
                 }
-                JOptionPane.showMessageDialog(null,"impo-file-result".trs().replace("%i",a.toString()),"global-success".trs(),JOptionPane.INFORMATION_MESSAGE)
+                JOptionPane.showMessageDialog(
+                    null,
+                    "impo-file-result".trs().replace("%i", a.toString()),
+                    "global-success".trs(),
+                    JOptionPane.INFORMATION_MESSAGE
+                )
             }).sheet().doRead()
         }
     }

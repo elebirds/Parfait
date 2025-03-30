@@ -2,8 +2,8 @@ package cc.eleb.parfait.ui
 
 import cc.eleb.parfait.KEY_TAB
 import cc.eleb.parfait.config.ParConfig
-import cc.eleb.parfait.i18n.GenLanguage
-import cc.eleb.parfait.i18n.trs
+import cc.eleb.parfait.infra.i18n.GenLanguage
+import cc.eleb.parfait.infra.i18n.trs
 import cc.eleb.parfait.theme.ColorUtils
 import cc.eleb.parfait.theme.FontUtils
 import cc.eleb.parfait.theme.ThemeUtils
@@ -186,7 +186,7 @@ class ParfaitFrame : JFrame() {
         switchTabbed(false)
     }
 
-    fun openFile(f:File){
+    fun openFile(f: File) {
         try {
             if (f.name.endsWith(".par")) {
                 ParConfig(f)
@@ -259,7 +259,11 @@ class ParfaitFrame : JFrame() {
             this, arrayOf<Any>(
                 titleLabel, "frame-about".trs(), " ",
                 "Copyright 2023-" + Year.now() + " Elebird(Grow Zheng).", "All rights reserved.", linkLabel,
-                "Running in Java™ SE Runtime Environment (build ${System.getProperty("java.version")}) on ${System.getProperty("os.name")}",
+                "Running in Java™ SE Runtime Environment (build ${System.getProperty("java.version")}) on ${
+                    System.getProperty(
+                        "os.name"
+                    )
+                }",
             ), "frame-about-title".trs(),
             JOptionPane.PLAIN_MESSAGE
         )

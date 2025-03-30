@@ -1,6 +1,6 @@
 package cc.eleb.parfait.ui.model;
 
-import cc.eleb.parfait.i18n.Language;
+import cc.eleb.parfait.infra.i18n.Language;
 
 import javax.swing.table.DefaultTableModel;
 
