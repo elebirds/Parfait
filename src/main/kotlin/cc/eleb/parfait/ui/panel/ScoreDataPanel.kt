@@ -3,7 +3,7 @@ package cc.eleb.parfait.ui.panel
 import cc.eleb.parfait.entity.Score
 import cc.eleb.parfait.entity.SimpleWriteScore
 import cc.eleb.parfait.entity.Student
-import cc.eleb.parfait.infra.i18n.trs
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.model.ScoreTableModel
 import cc.eleb.parfait.ui.table.ScoreDataTable
 import com.alibaba.excel.EasyExcel

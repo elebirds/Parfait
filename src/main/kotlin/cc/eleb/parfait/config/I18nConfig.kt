@@ -1,6 +1,6 @@
 package cc.eleb.parfait.config
 
-import cc.eleb.parfait.infra.i18n.GenLanguage
+import cc.eleb.parfait.i18n.GenLanguage
 import cc.eleb.parfait.utils.config.Config
 import cc.eleb.parfait.utils.config.ConfigData
 import cc.eleb.parfait.utils.config.ConfigType

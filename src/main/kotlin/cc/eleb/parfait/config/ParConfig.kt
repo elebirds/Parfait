@@ -2,8 +2,8 @@ package cc.eleb.parfait.config
 
 import cc.eleb.parfait.entity.Certificate
 import cc.eleb.parfait.entity.Student
-import cc.eleb.parfait.infra.i18n.GenLanguage
-import cc.eleb.parfait.infra.i18n.trs
+import cc.eleb.parfait.i18n.GenLanguage
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.ParfaitFrame
 import cc.eleb.parfait.ui.panel.StudentDataPanel
 import cc.eleb.parfait.utils.file.ZipUtils

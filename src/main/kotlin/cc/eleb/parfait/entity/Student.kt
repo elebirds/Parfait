@@ -1,7 +1,7 @@
 package cc.eleb.parfait.entity
 
 import cc.eleb.parfait.config.GPAConfig
-import cc.eleb.parfait.infra.i18n.trs
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.utils.castTo
 import com.alibaba.excel.EasyExcel
 import com.alibaba.excel.read.listener.PageReadListener

@@ -52,11 +52,10 @@ dependencies {
     // 数据库驱动
     implementation("org.xerial:sqlite-jdbc:3.42.0.0")
     implementation("com.mysql:mysql-connector-j:8.0.33")
-
-    //Koin 依赖注入框架
+    // Koin 依赖注入框架
     implementation("io.insert-koin:koin-core:4.0.3")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")//协程
+    // 协程
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.1")
 
     implementation('com.formdev:flatlaf:3.0')

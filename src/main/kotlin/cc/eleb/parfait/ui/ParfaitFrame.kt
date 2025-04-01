@@ -2,8 +2,8 @@ package cc.eleb.parfait.ui
 
 import cc.eleb.parfait.KEY_TAB
 import cc.eleb.parfait.config.ParConfig
-import cc.eleb.parfait.infra.i18n.GenLanguage
-import cc.eleb.parfait.infra.i18n.trs
+import cc.eleb.parfait.i18n.GenLanguage
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.theme.ColorUtils
 import cc.eleb.parfait.theme.FontUtils
 import cc.eleb.parfait.theme.ThemeUtils

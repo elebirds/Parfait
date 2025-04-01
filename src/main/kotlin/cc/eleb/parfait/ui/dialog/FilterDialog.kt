@@ -2,7 +2,7 @@ package cc.eleb.parfait.ui.dialog
 
 import cc.eleb.parfait.filter.AndFilter
 import cc.eleb.parfait.filter.StringRowFilter
-import cc.eleb.parfait.infra.i18n.trs
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.model.StudentTableModel
 import cc.eleb.parfait.ui.panel.StudentDataPanel
 import net.miginfocom.swing.MigLayout

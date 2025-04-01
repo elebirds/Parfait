@@ -1,16 +1,7 @@
 package cc.eleb.parfait
 
-import cc.eleb.parfait.app.service.GradeCalculationService
-import cc.eleb.parfait.app.service.StudentService
-import cc.eleb.parfait.app.service.impl.GradeCalculationServiceImpl
-import cc.eleb.parfait.app.service.impl.StudentServiceImpl
-import cc.eleb.parfait.domain.repository.GpaRepository
-import cc.eleb.parfait.domain.repository.StudentRepository
-import cc.eleb.parfait.infra.db.DatabaseFactory
-import cc.eleb.parfait.infra.i18n.Language
-import cc.eleb.parfait.infra.i18n.trs
-import cc.eleb.parfait.infra.repository.GpaRepositoryImpl
-import cc.eleb.parfait.infra.repository.StudentRepositoryImpl
+import cc.eleb.parfait.i18n.Language
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.ParfaitFrame
 import cc.eleb.parfait.utils.GlobalSettings
 import cc.eleb.parfait.utils.ParfaitPrefs.init
@@ -34,18 +25,7 @@ const val KEY_TAB = "tab"
 
 const val PARFAIT_FULL_NAME = "Parfait"
 
-val appModule = module {
-    single<StudentRepository> { StudentRepositoryImpl() }
-    single<GpaRepository> { GpaRepositoryImpl() }
-    single<StudentService> { StudentServiceImpl(get()) }
-    single<GradeCalculationService> { GradeCalculationServiceImpl(get()) }
-}
-
 fun main() {
-    DatabaseFactory.init()
-    startKoin {
-        modules(appModule)
-    }
     try {
         if (SystemInfo.isMacOS) {
             System.setProperty("apple.laf.useScreenMenuBar", "true")

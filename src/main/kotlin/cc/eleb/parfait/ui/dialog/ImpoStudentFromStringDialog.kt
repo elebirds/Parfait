@@ -1,7 +1,7 @@
 package cc.eleb.parfait.ui.dialog
 
 import cc.eleb.parfait.entity.Student
-import cc.eleb.parfait.infra.i18n.trs
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.panel.StudentDataPanel
 import net.miginfocom.swing.MigLayout
 import java.awt.BorderLayout

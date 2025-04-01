@@ -1,6 +1,6 @@
 package cc.eleb.parfait.entity
 
-import cc.eleb.parfait.infra.i18n.translateTo
+import cc.eleb.parfait.i18n.translateTo
 import cc.eleb.parfait.utils.DateUtils
 import cc.eleb.parfait.utils.HanziUtils
 import com.deepoove.poi.XWPFTemplate

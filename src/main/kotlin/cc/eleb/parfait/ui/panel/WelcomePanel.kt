@@ -1,6 +1,6 @@
 package cc.eleb.parfait.ui.panel
 
-import cc.eleb.parfait.infra.i18n.trs
+import cc.eleb.parfait.i18n.trs
 import cc.eleb.parfait.ui.ParfaitFrame
 import cc.eleb.parfait.utils.cast
 import net.miginfocom.swing.MigLayout
