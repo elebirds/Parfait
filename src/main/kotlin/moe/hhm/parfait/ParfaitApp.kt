@@ -1,4 +1,10 @@
-package moe.eleb.parafit
+/*
+ * Project Parfait
+ * Copyright (c) elebird 2025.
+ * All rights reserved.
+ */
+
+package moe.hhm.parfait
 
 import javafx.application.Application
 import javafx.application.Application.launch
@@ -6,9 +12,22 @@ import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import javafx.stage.Stage
+import moe.hhm.parfait.di.appModule
+import moe.hhm.parfait.di.domainModule
+import moe.hhm.parfait.di.infrastructureModule
+import moe.hhm.parfait.di.presentationModule
+import moe.hhm.parfait.infra.db.DatabaseFactory
+import org.koin.core.context.startKoin
 import org.slf4j.LoggerFactory
 
 fun main(args: Array<String>) {
+    DatabaseFactory.init()
+    startKoin {
+        appModule
+        domainModule
+        infrastructureModule
+        presentationModule
+    }
     launch(ParfaitApp::class.java, *args)
 }
 
