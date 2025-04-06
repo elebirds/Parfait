@@ -1,0 +1,39 @@
+/*
+ * Project Parfait
+ * Copyright (c) elebird 2025.
+ * All rights reserved.
+ */
+
+package moe.hhm.parfait.app.service.impl
+
+import moe.hhm.parfait.app.service.StudentService
+import moe.hhm.parfait.domain.model.student.Student
+import moe.hhm.parfait.domain.repository.StudentRepository
+import moe.hhm.parfait.dto.ScoreDTO
+import moe.hhm.parfait.dto.StudentDTO
+import java.util.UUID
+
+class StudentServiceImpl(private val rep: StudentRepository) : StudentService {
+    override suspend fun getAllStudents(): List<Student> {
+        return rep.findAll()
+    }
+
+    override suspend fun getStudentsPage(page: Int, size: Int): List<Student> {
+        return rep.findPage(page, size)
+    }
+
+    override suspend fun getStudentById(studentID: String): Student? {
+        return rep.findById(studentID)
+    }
+
+    override suspend fun addStudent(student: StudentDTO) = rep.addStudent(student)
+
+    override suspend fun addScore(student: StudentDTO, scoreDTO: ScoreDTO) {
+        student.scores += scoreDTO
+        rep.updateScore(student)
+    }
+
+    override suspend fun save(student: StudentDTO) {
+        rep.save(student)
+    }
+}

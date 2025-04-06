@@ -6,6 +6,8 @@
 
 package moe.hhm.parfait.infra.db
 
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
 
@@ -18,6 +20,7 @@ object DatabaseUtils {
     fun <T> dbQuery(block: () -> T): T {
         return try {
             transaction {
+                addLogger(StdOutSqlLogger)
                 block()
             }
         } catch (e: Exception) {

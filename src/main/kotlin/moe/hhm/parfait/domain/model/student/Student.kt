@@ -6,6 +6,8 @@
 
 package moe.hhm.parfait.domain.model.student
 
+import moe.hhm.parfait.dto.ScoreDTO
+import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.infra.db.student.Students
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -26,4 +28,16 @@ class Student(id: EntityID<UUID>) : UUIDEntity(id) {
     var createdAt by Students.createdAt
     var updatedAt by Students.updatedAt
     var scores by Students.scores
+
+    fun into() = StudentDTO(
+        studentId = studentId,
+        name = name,
+        gender = StudentDTO.Gender.entries[gender],
+        status = StudentDTO.Status.entries[status],
+        department = department,
+        major = major,
+        grade = grade,
+        classGroup = classGroup,
+        scores = scores.split("|").map { it.trim() }.filter { it.isNotBlank() }.map { ScoreDTO.fromString(it) },
+    )
 }

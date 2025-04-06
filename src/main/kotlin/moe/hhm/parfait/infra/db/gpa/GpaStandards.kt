@@ -28,7 +28,7 @@ object GpaStandards : UUIDTable("gpa_standards") {
                 Triple("B", 80..85, 3.0),
                 Triple("C+", 75..80, 2.5),
                 Triple("C", 70..75, 2.0),
-                Triple("D+", 75..80, 1.5),
+                Triple("D+", 65..70, 1.5),
                 Triple("D", 60..65, 1.0),
                 Triple("F", 0..60, 0.0)
             )
