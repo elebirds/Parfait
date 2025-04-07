@@ -30,6 +30,7 @@ class Student(id: EntityID<UUID>) : UUIDEntity(id) {
     var scores by Students.scores
 
     fun into() = StudentDTO(
+        uuid = id.value,
         studentId = studentId,
         name = name,
         gender = StudentDTO.Gender.entries[gender],

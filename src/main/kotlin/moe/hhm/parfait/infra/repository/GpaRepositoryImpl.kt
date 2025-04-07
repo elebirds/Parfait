@@ -23,10 +23,14 @@ class GpaRepositoryImpl : GpaRepository {
         private var GPA_STANDARD : GpaStandard? = null
         private var GRADE_POINT_MAPPING : List<GradePointMapping>? = null
     }
+
     override fun getGpaStandard(): GpaStandard {
         return GPA_STANDARD ?: loadGpaStandard()
     }
 
+    override fun getGradePointMappings(): List<GradePointMapping> {
+        return GRADE_POINT_MAPPING ?: loadGradePointMappings(getGpaStandard().id.value)
+    }
 
     override fun loadGpaStandard(): GpaStandard {
         return DatabaseUtils.dbQuery {
@@ -43,9 +47,5 @@ class GpaRepositoryImpl : GpaRepository {
             }
         GRADE_POINT_MAPPING = res
         res
-    }
-
-    override fun getGradePointMappings(): List<GradePointMapping> {
-        return GRADE_POINT_MAPPING ?: loadGradePointMappings(getGpaStandard().id.value)
     }
 }

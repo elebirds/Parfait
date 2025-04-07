@@ -37,6 +37,10 @@ dependencies {
     // 日志
     implementation("org.slf4j:slf4j-api:2.0.7")
     implementation("ch.qos.logback:logback-classic:1.4.12")
+    // 文档生成
+    implementation("com.deepoove:poi-tl:1.12.2")
+    // 拼音英文转换
+    implementation("com.belerweb:pinyin4j:2.5.1")
     // 测试
     testImplementation(kotlin("test"))
 }
@@ -66,7 +70,7 @@ javafx {
 runtime {
     imageZip.set(project.file("${project.buildDir}/image-zip/parfait-image.zip"))
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
-    modules.set(listOf("java.desktop", "java.naming"))
+    modules.set(listOf("java.desktop", "java.naming", "java.sql"))
 
     jpackage {
         imageName = "Parfait"
