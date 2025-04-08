@@ -6,6 +6,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.0.13"
     id("org.beryx.runtime") version "1.13.1"
     application
+    "flatlaf-toolchain"
 }
 
 group = "moe.hhm.parfait"
@@ -21,6 +22,7 @@ dependencies {
     // Kotlin
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
+
     // Exposed (Kotlin SQL框架)
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
@@ -29,14 +31,30 @@ dependencies {
     // 数据库驱动
     implementation("org.xerial:sqlite-jdbc:3.42.0.0")
     implementation("com.mysql:mysql-connector-j:8.2.0")
+
     // 协程
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.1")
+
     // Koin 依赖注入框架
     implementation("io.insert-koin:koin-core:4.0.3")
+
     // 日志
-    implementation("org.slf4j:slf4j-api:2.0.7")
-    implementation("ch.qos.logback:logback-classic:1.4.12")
+    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("ch.qos.logback:logback-classic:1.5.18")
+
+    // FlatLaf UI库
+    implementation("com.formdev:flatlaf:3.5.4")
+    implementation("com.formdev:flatlaf-extras:3.5.4")
+    implementation("com.formdev:flatlaf-fonts-inter:4.1")
+    implementation("com.formdev:flatlaf-intellij-themes:3.5.4")
+    implementation("com.formdev:flatlaf-fonts-jetbrains-mono:2.304")
+    implementation("com.formdev:flatlaf-fonts-roboto:2.137")
+    implementation("com.formdev:flatlaf-fonts-roboto-mono:3.000")
+    // MigLayout 布局管理器
+    implementation("com.miglayout:miglayout-swing:11.4.2")
+
     // 文档生成
     implementation("com.deepoove:poi-tl:1.12.2")
     // 拼音英文转换

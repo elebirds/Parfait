@@ -14,12 +14,12 @@ import moe.hhm.parfait.dto.StudentDTO
 import java.util.UUID
 
 class StudentServiceImpl(private val rep: StudentRepository) : StudentService {
-    override suspend fun getAllStudents(): List<Student> {
-        return rep.findAll()
+    override suspend fun getAllStudents(): List<StudentDTO> {
+        return rep.findAll().map { it.toDTO() }
     }
 
-    override suspend fun getStudentsPage(page: Int, size: Int): List<Student> {
-        return rep.findPage(page, size)
+    override suspend fun getStudentsPage(page: Int, size: Int): List<StudentDTO> {
+        return rep.findPage(page, size).map { it.toDTO() }
     }
 
     override suspend fun getStudentById(studentID: String): Student? {
@@ -28,12 +28,12 @@ class StudentServiceImpl(private val rep: StudentRepository) : StudentService {
 
     override suspend fun addStudent(student: StudentDTO) = rep.addStudent(student)
 
+    override suspend fun deleteStudent(studentID: String): Boolean = rep.delete(studentID)
+
     override suspend fun addScore(student: StudentDTO, scoreDTO: ScoreDTO) {
         student.scores += scoreDTO
         rep.updateScore(student)
     }
 
-    override suspend fun save(student: StudentDTO) {
-        rep.save(student)
-    }
+    override suspend fun updateInfo(student: StudentDTO) = rep.updateInfo(student)
 }

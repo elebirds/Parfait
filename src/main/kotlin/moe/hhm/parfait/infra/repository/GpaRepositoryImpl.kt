@@ -33,14 +33,14 @@ class GpaRepositoryImpl : GpaRepository {
     }
 
     override fun loadGpaStandard(): GpaStandard {
-        return DatabaseUtils.dbQuery {
+        return DatabaseUtils.dbQuerySync {
             val res = GpaStandard.Companion.find { GpaStandards.isDefault eq true }.firstOrNull()
             GPA_STANDARD = res
             res
         } ?: throw BusinessException("缺失默认绩点标准")
     }
 
-    override fun loadGradePointMappings(standardID: UUID): List<GradePointMapping> = DatabaseUtils.dbQuery {
+    override fun loadGradePointMappings(standardID: UUID): List<GradePointMapping> = DatabaseUtils.dbQuerySync {
         val res = GradePointMapping.Companion.find { GradePointMappings.standardId eq standardID }.toList()
             .sortedByDescending {
                 it.gradePoint

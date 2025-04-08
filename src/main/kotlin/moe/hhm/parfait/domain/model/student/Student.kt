@@ -12,8 +12,13 @@ import moe.hhm.parfait.infra.db.student.Students
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import java.time.LocalDateTime
 import java.util.*
+import kotlin.collections.joinToString
 
+/**
+ * 学生聚合根
+ */
 class Student(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<Student>(Students)
 
@@ -27,9 +32,21 @@ class Student(id: EntityID<UUID>) : UUIDEntity(id) {
     var status by Students.status
     var createdAt by Students.createdAt
     var updatedAt by Students.updatedAt
-    var scores by Students.scores
+    var scoreString by Students.scores
 
-    fun into() = StudentDTO(
+    var scores: List<ScoreDTO>
+        get() = scoreString.split("|")
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+            .map { ScoreDTO.fromString(it) }
+        set(value) {
+            scoreString = value.joinToString("|") { it.toString() }
+        }
+
+    /**
+     * 转换为DTO
+     */
+    fun toDTO() = StudentDTO(
         uuid = id.value,
         studentId = studentId,
         name = name,
@@ -39,6 +56,28 @@ class Student(id: EntityID<UUID>) : UUIDEntity(id) {
         major = major,
         grade = grade,
         classGroup = classGroup,
-        scores = scores.split("|").map { it.trim() }.filter { it.isNotBlank() }.map { ScoreDTO.fromString(it) },
+        scores = scores
     )
+
+    /**
+     * 更新学生信息
+     */
+    fun updateInfo(
+        name: String? = null,
+        gender: Int? = null,
+        department: String? = null,
+        major: String? = null,
+        grade: Int? = null,
+        classGroup: String? = null,
+        status: Int? = null
+    ) {
+        name?.let { this.name = it }
+        gender?.let { this.gender = it }
+        department?.let { this.department = it }
+        major?.let { this.major = it }
+        grade?.let { this.grade = it }
+        classGroup?.let { this.classGroup = it }
+        status?.let { this.status = it }
+        this.updatedAt = LocalDateTime.now()
+    }
 }

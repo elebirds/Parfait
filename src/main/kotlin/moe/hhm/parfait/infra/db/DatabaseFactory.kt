@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory
 
 object DatabaseFactory {
     private val logger = LoggerFactory.getLogger(this::class.java)
+    private var connection: Database? = null
     fun init() {
         // 连接数据库
         connect(isServerMode = false)
@@ -37,13 +38,18 @@ object DatabaseFactory {
             // TODO: MySQL实现
             throw NotImplementedError("C/S模式尚未实现")
         } else {
-            Database.connect(
+            connection = Database.connect(
                 driver = "org.sqlite.JDBC",
                 url = "jdbc:sqlite:parfait.db",
                 user = "",
                 password = ""
             )
         }
+    }
+
+    fun close() {
+        connection = null
+        logger.info("关闭数据库连接")
     }
 
     private fun createTables() {

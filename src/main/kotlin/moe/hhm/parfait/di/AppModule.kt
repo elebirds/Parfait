@@ -12,7 +12,14 @@ import moe.hhm.parfait.app.service.impl.GradeCalculationServiceImpl
 import moe.hhm.parfait.app.service.impl.StudentServiceImpl
 import org.koin.dsl.module
 
+/**
+ * 应用依赖注入模块
+ */
 val appModule = module {
+    // 领域服务
     single<GradeCalculationService> { GradeCalculationServiceImpl(get()) }
+
+    // 仓储实现
     single<StudentService> { StudentServiceImpl(get()) }
+
 }

@@ -6,58 +6,60 @@
 
 package moe.hhm.parfait
 
-import javafx.application.Application
-import javafx.application.Application.launch
-import javafx.scene.Scene
-import javafx.scene.control.Label
-import javafx.scene.layout.StackPane
-import javafx.stage.Stage
+import com.formdev.flatlaf.extras.FlatInspector
+import com.formdev.flatlaf.extras.FlatUIDefaultsInspector
+import com.formdev.flatlaf.fonts.jetbrains_mono.FlatJetBrainsMonoFont
+import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont
+import com.formdev.flatlaf.themes.FlatMacDarkLaf
+import javax.swing.SwingUtilities;
 import moe.hhm.parfait.di.appModule
 import moe.hhm.parfait.di.domainModule
 import moe.hhm.parfait.di.infrastructureModule
 import moe.hhm.parfait.di.presentationModule
 import moe.hhm.parfait.infra.db.DatabaseFactory
+import moe.hhm.parfait.ui.lib.FlatLafUtils
+import moe.hhm.parfait.view.MainFrame
 import org.koin.core.context.startKoin
 import org.slf4j.LoggerFactory
+import java.awt.Font
+import javax.swing.UIManager
 
+private val logger = LoggerFactory.getLogger(ParfaitApp::class.java)
+const val PARFAIT_FULL_NAME = "Parfait"
+
+/**
+ * Parfait 应用程序入口
+ *
+ * @author elebird
+ */
 fun main(args: Array<String>) {
-    DatabaseFactory.init()
-    startKoin {
-        appModule
-        domainModule
-        infrastructureModule
-        presentationModule
+    try {
+        DatabaseFactory.init()
+        startKoin {
+            appModule
+            domainModule
+            infrastructureModule
+            presentationModule
+        }
+        logger.info("Koin依赖注入初始化完成")
+        ParfaitApp().start()
+    }catch (e: Exception) {
+        logger.error("应用程序启动失败", e)
+        return
     }
-    launch(ParfaitApp::class.java, *args)
 }
 
-class ParfaitApp : Application() {
-    private val logger = LoggerFactory.getLogger(ParfaitApp::class.java)
-
-    override fun start(stage: Stage) {
-        try {
-            logger.info("启动学生成绩管理系统")
-            println("学生成绩管理系统初始化成功！")
-
-            // 显示简单窗口以验证JavaFX运行正常
-            stage.title = "学生成绩管理系统"
-            stage.width = 800.0
-            stage.height = 600.0
-
-            // 创建一个简单的根节点
-            val root = StackPane()
-            val label = Label("学生成绩管理系统初始化成功！")
-            label.style = "-fx-font-size: 20px;"
-            root.children.add(label)
-
-            // 设置场景
-            val scene = Scene(root)
-            stage.scene = scene
-            stage.show()
-
-        } catch (e: Exception) {
-            logger.error("系统启动失败", e)
-            println("启动失败: ${e.message}")
+class ParfaitApp {
+    fun start() {
+        FlatLafUtils.specialSystemConfigure()
+        SwingUtilities.invokeLater {
+            FlatLafUtils.preferenceInit()
+            FlatLafUtils.fontInit()
+            FlatLafUtils.setLookAndFeel()
+            FlatLafUtils.installInspector()
+            val mainFrame = MainFrame()
+            mainFrame.setLocationRelativeTo(null)
+            mainFrame.isVisible = true
         }
     }
 }

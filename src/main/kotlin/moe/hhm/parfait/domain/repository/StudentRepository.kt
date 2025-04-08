@@ -6,18 +6,57 @@
 
 package moe.hhm.parfait.domain.repository
 
-import moe.hhm.parfait.domain.model.student.Student as StudentModel
+import moe.hhm.parfait.domain.model.student.Student
 import moe.hhm.parfait.dto.StudentDTO
 import org.jetbrains.exposed.dao.id.EntityID
 import java.util.*
 
+/**
+ * 学生仓储接口
+ */
 interface StudentRepository {
-    suspend fun findAll(): List<StudentModel>
-    suspend fun findPage(page: Int, size: Int): List<StudentModel>
-    suspend fun findByUUID(id: UUID): StudentModel?
-    suspend fun findById(studentID: String): StudentModel?
+    /**
+     * 查找所有学生
+     */
+    suspend fun findAll(): List<Student>
+
+    /**
+     * 分页查找学生
+     */
+    suspend fun findPage(page: Int, size: Int): List<Student>
+
+    /**
+     * 根据UUID查找学生
+     */
+    suspend fun findByUUID(id: UUID): Student?
+
+    /**
+     * 根据学号查找学生
+     */
+    suspend fun findById(studentID: String): Student?
+
+    /**
+     * 查询指定学号的学生是否存在
+     */
+    suspend fun isExistById(studentID: String): Boolean
+
+    /**
+     * 添加学生
+     */
     suspend fun addStudent(student: StudentDTO): EntityID<UUID>
+
+    /**
+     * 更新学生成绩
+     */
     suspend fun updateScore(student: StudentDTO): Boolean
-    suspend fun save(student: StudentDTO): Boolean
+
+    /**
+     * 更新学生信息
+     */
+    suspend fun updateInfo(student: StudentDTO): Boolean
+
+    /**
+     * 删除学生
+     */
     suspend fun delete(studentID: String): Boolean
 }
