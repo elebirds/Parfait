@@ -9,13 +9,13 @@ package moe.hhm.parfait.infra.db
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.Slf4jSqlDebugLogger
-import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
 
 object DatabaseUtils {
     private val logger = LoggerFactory.getLogger(this::class.java)
+
     /**
      * 执行数据库事务并处理异常
      */

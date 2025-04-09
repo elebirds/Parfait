@@ -10,6 +10,7 @@ import moe.hhm.parfait.di.appModule
 import moe.hhm.parfait.di.domainModule
 import moe.hhm.parfait.di.infrastructureModule
 import moe.hhm.parfait.di.presentationModule
+import moe.hhm.parfait.infra.db.DatabaseConnectionConfig
 import moe.hhm.parfait.infra.db.DatabaseFactory
 import moe.hhm.parfait.ui.view.StudentListView
 import org.koin.core.context.startKoin
@@ -22,19 +23,19 @@ import javax.swing.UIManager
  */
 fun main() {
     val logger = LoggerFactory.getLogger("ParfaitSwingApp")
-    
+
     try {
         // 初始化数据库
-        DatabaseFactory.init()
-        
+        DatabaseFactory.connect(DatabaseConnectionConfig.standalone("parfait.db"))
+
         // 初始化Koin依赖注入
         startKoin {
             modules(listOf(appModule, domainModule, infrastructureModule, presentationModule))
         }
-        
+
         // 设置跨平台外观
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-        
+
         // 在EDT中启动UI
         SwingUtilities.invokeLater {
             try {

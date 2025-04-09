@@ -7,7 +7,6 @@
 package moe.hhm.parfait.domain.model.certificate
 
 import moe.hhm.parfait.infra.db.certificate.CertificateDatas
-import moe.hhm.parfait.infra.db.certificate.CertificateRecords
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

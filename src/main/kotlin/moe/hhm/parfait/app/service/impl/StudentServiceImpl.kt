@@ -11,7 +11,6 @@ import moe.hhm.parfait.domain.model.student.Student
 import moe.hhm.parfait.domain.repository.StudentRepository
 import moe.hhm.parfait.dto.ScoreDTO
 import moe.hhm.parfait.dto.StudentDTO
-import java.util.UUID
 
 class StudentServiceImpl(private val rep: StudentRepository) : StudentService {
     override suspend fun getAllStudents(): List<StudentDTO> {

@@ -14,14 +14,11 @@ import moe.hhm.parfait.infra.db.DatabaseUtils
 import moe.hhm.parfait.infra.db.gpa.GpaStandards
 import moe.hhm.parfait.infra.db.gpa.GradePointMappings
 import java.util.*
-import kotlin.collections.firstOrNull
-import kotlin.collections.sortedByDescending
-import kotlin.collections.toList
 
 class GpaRepositoryImpl : GpaRepository {
     companion object {
-        private var GPA_STANDARD : GpaStandard? = null
-        private var GRADE_POINT_MAPPING : List<GradePointMapping>? = null
+        private var GPA_STANDARD: GpaStandard? = null
+        private var GRADE_POINT_MAPPING: List<GradePointMapping>? = null
     }
 
     override fun getGpaStandard(): GpaStandard {

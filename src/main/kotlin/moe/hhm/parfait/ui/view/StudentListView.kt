@@ -19,16 +19,16 @@ import javax.swing.table.DefaultTableModel
 class StudentListView : JFrame(), KoinComponent {
     private val viewModel: StudentListViewModel by inject()
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    
+
     private val tableModel = object : DefaultTableModel(
         arrayOf("学号", "姓名", "性别", "院系", "专业", "年级", "班级", "状态"),
         0
-    ){
+    ) {
         override fun isCellEditable(row: Int, column: Int): Boolean {
             return false // 禁止编辑
         }
     }
-    
+
     private val table = JTable(tableModel).apply {
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
         fillsViewportHeight = true
@@ -69,7 +69,7 @@ class StudentListView : JFrame(), KoinComponent {
         refreshButton.addActionListener {
             viewModel.refresh()
         }
-        
+
         deleteButton.addActionListener {
             val selectedRow = table.selectedRow
             if (selectedRow >= 0) {
@@ -106,11 +106,11 @@ class StudentListView : JFrame(), KoinComponent {
 
         contentPane.add(mainPanel)
     }
-    
+
     private fun showAddStudentDialog() {
         val dialog = AddStudentDialog(this)
         dialog.isVisible = true
-        
+
         val student = dialog.getStudent()
         if (student != null) {
             viewModel.addStudent(student)
@@ -124,34 +124,38 @@ class StudentListView : JFrame(), KoinComponent {
                     when (state) {
                         is StudentListUiState.Loading -> {
                             // 显示加载中
-                            tableModel.setRowCount(0)
+                            tableModel.rowCount = 0
                             tableModel.addRow(arrayOf("加载中...", "", "", "", "", "", "", ""))
                         }
+
                         is StudentListUiState.Success -> {
                             // 更新表格数据
-                            tableModel.setRowCount(0)
+                            tableModel.rowCount = 0
                             state.students.forEach { student ->
-                                tableModel.addRow(arrayOf(
-                                    student.studentId,
-                                    student.name,
-                                    when(student.gender) {
-                                        StudentDTO.Gender.MALE -> "男"
-                                        StudentDTO.Gender.FEMALE -> "女"
-                                        else -> "未知"
-                                    },
-                                    student.department,
-                                    student.major,
-                                    student.grade.toString(),
-                                    student.classGroup,
-                                    when(student.status) {
-                                        StudentDTO.Status.ENROLLED -> "在读"
-                                        StudentDTO.Status.SUSPENDED -> "休学"
-                                        StudentDTO.Status.GRADUATED -> "毕业"
-                                        StudentDTO.Status.ABNORMAL -> "异常"
-                                    }
-                                ))
+                                tableModel.addRow(
+                                    arrayOf(
+                                        student.studentId,
+                                        student.name,
+                                        when (student.gender) {
+                                            StudentDTO.Gender.MALE -> "男"
+                                            StudentDTO.Gender.FEMALE -> "女"
+                                            else -> "未知"
+                                        },
+                                        student.department,
+                                        student.major,
+                                        student.grade.toString(),
+                                        student.classGroup,
+                                        when (student.status) {
+                                            StudentDTO.Status.ENROLLED -> "在读"
+                                            StudentDTO.Status.SUSPENDED -> "休学"
+                                            StudentDTO.Status.GRADUATED -> "毕业"
+                                            StudentDTO.Status.ABNORMAL -> "异常"
+                                        }
+                                    )
+                                )
                             }
                         }
+
                         is StudentListUiState.Error -> {
                             // 显示错误信息
                             JOptionPane.showMessageDialog(

@@ -6,6 +6,9 @@
 
 package moe.hhm.parfait.infra.db
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import moe.hhm.parfait.infra.db.certificate.CertificateDatas
 import moe.hhm.parfait.infra.db.certificate.CertificateRecords
 import moe.hhm.parfait.infra.db.certificate.CertificateTemplates
@@ -17,12 +20,62 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
 
+enum class DatabaseFactoryMode {
+    ONLINE,
+    STANDALONE,
+}
+
+data class DatabaseConnectionConfig(
+    val mode: DatabaseFactoryMode,
+    val host: String,
+    val port: Int,
+    val user: String,
+    val password: String
+) {
+    companion object {
+        fun standalone(filePath: String): DatabaseConnectionConfig {
+            return DatabaseConnectionConfig(
+                mode = DatabaseFactoryMode.STANDALONE,
+                host = filePath,
+                port = 0,
+                user = "",
+                password = ""
+            )
+        }
+
+        fun online(host: String, port: Int, user: String, password: String): DatabaseConnectionConfig {
+            return DatabaseConnectionConfig(
+                mode = DatabaseFactoryMode.ONLINE,
+                host = host,
+                port = port,
+                user = user,
+                password = password
+            )
+        }
+    }
+
+    fun checkValid(): Boolean {
+        return when (mode) {
+            DatabaseFactoryMode.STANDALONE -> host.isNotEmpty()
+            DatabaseFactoryMode.ONLINE -> host.isNotEmpty() && port > 0 && user.isNotEmpty() && password.isNotEmpty()
+        }
+    }
+}
+
+sealed class DatabaseConnectionState {
+    class Connected(config: DatabaseConnectionConfig) : DatabaseConnectionState()
+    class Disconnected : DatabaseConnectionState()
+    class Connecting(config: DatabaseConnectionConfig) : DatabaseConnectionState()
+}
+
+const val STANDALONE_DB_SUFFIX = ".pardb"
+
 object DatabaseFactory {
     private val logger = LoggerFactory.getLogger(this::class.java)
     private var connection: Database? = null
-    fun init() {
-        // 连接数据库
-        connect(isServerMode = false)
+    private val _connectionState = MutableStateFlow<DatabaseConnectionState>(DatabaseConnectionState.Disconnected())
+    val connectionState: StateFlow<DatabaseConnectionState> = _connectionState.asStateFlow()
+    private fun init() {
         // 创建表
         transaction {
             createTables()
@@ -33,21 +86,43 @@ object DatabaseFactory {
         }
     }
 
-    fun connect(isServerMode: Boolean) {
-        if (isServerMode) {
-            // TODO: MySQL实现
-            throw NotImplementedError("C/S模式尚未实现")
-        } else {
-            connection = Database.connect(
-                driver = "org.sqlite.JDBC",
-                url = "jdbc:sqlite:parfait.db",
-                user = "",
-                password = ""
-            )
+    fun connect(config: DatabaseConnectionConfig) {
+        logger.info("尝试连接数据库：$config")
+        if (!config.checkValid()) {
+            logger.error("数据库连接配置无效")
+            throw IllegalArgumentException("数据库连接配置无效")
+        }
+        if (_connectionState.value is DatabaseConnectionState.Connecting) {
+            logger.warn("数据库连接正在进行中，请稍后再试")
+            return
+        }
+        if (connection != null || _connectionState.value is DatabaseConnectionState.Connected) {
+            logger.warn("数据库连接已存在，请先断开连接")
+            return
+        }
+        try {
+            _connectionState.value = DatabaseConnectionState.Connecting(config)
+            when (config.mode) {
+                DatabaseFactoryMode.ONLINE -> throw NotImplementedError("C/S模式尚未实现")
+                DatabaseFactoryMode.STANDALONE -> connection = Database.connect(
+                    driver = "org.sqlite.JDBC",
+                    url = "jdbc:sqlite:${config.host}",
+                    user = config.user,
+                    password = config.password
+                )
+            }
+            init()
+            _connectionState.value = DatabaseConnectionState.Connected(config)
+            logger.info("数据库连接成功")
+        } catch (e: Throwable) {
+            logger.error("数据库连接失败", e)
+            _connectionState.value = DatabaseConnectionState.Disconnected()
+            throw e
         }
     }
 
-    fun close() {
+    fun disconnect() {
+        _connectionState.value = DatabaseConnectionState.Disconnected()
         connection = null
         logger.info("关闭数据库连接")
     }

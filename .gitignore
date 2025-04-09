@@ -9,6 +9,8 @@ log/
 !**/src/main/**
 !**/src/test/**
 
+*.pardb
+
 ### SQLite ###
 *.db
 *.db-journal

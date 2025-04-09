@@ -10,7 +10,7 @@ import moe.hhm.parfait.infra.db.gpa.GpaStandards
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import java.util.UUID
+import java.util.*
 
 class GpaStandard(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<GpaStandard>(GpaStandards)

@@ -15,10 +15,8 @@ import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont
 import com.formdev.flatlaf.fonts.roboto_mono.FlatRobotoMonoFont
 import com.formdev.flatlaf.util.SystemInfo
 import moe.hhm.parfait.PARFAIT_FULL_NAME
-import java.awt.Font
 import javax.swing.JDialog
 import javax.swing.JFrame
-import javax.swing.UIManager
 
 object FlatLafUtils {
     fun specialSystemConfigure() {
@@ -63,7 +61,7 @@ object FlatLafUtils {
     }
 
     fun installInspector() {
-        FlatInspector.install( "ctrl shift alt X" );
-        FlatUIDefaultsInspector.install( "ctrl shift alt Y" );
+        FlatInspector.install("ctrl shift alt X");
+        FlatUIDefaultsInspector.install("ctrl shift alt Y");
     }
 }

@@ -32,7 +32,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.util.prefs.Preferences
 import javax.swing.*
-import kotlin.math.log
 import kotlin.system.exitProcess
 
 /**
@@ -69,13 +68,16 @@ object FlatLafPrefs {
                 ThemeLaf::class.java.getName() -> {
                     val theme = state.get(KEY_LAF_THEME, "")
                     if (theme.startsWith(FILE_PREFIX)) {
-                        FlatLaf.setup(IntelliJTheme.createLaf(
-                            FileInputStream(theme.substring(FILE_PREFIX.length))
-                        ))
+                        FlatLaf.setup(
+                            IntelliJTheme.createLaf(
+                                FileInputStream(theme.substring(FILE_PREFIX.length))
+                            )
+                        )
                         logger.debug("设置主题为IntelliJTheme：$theme")
                     } else fallbackToDefaultLookAndFeel("IntelliJTheme")
                     if (!theme.isEmpty()) UIManager.getLookAndFeelDefaults().put(THEME_UI_KEY, theme)
                 }
+
                 FlatPropertiesLaf::class.java.getName() -> {
                     if (theme.startsWith(FILE_PREFIX)) {
                         val themeFile = File(theme.substring(FILE_PREFIX.length))
@@ -85,6 +87,7 @@ object FlatLafPrefs {
                     } else fallbackToDefaultLookAndFeel("FlatPropertiesLaf")
                     if (!theme.isEmpty()) UIManager.getLookAndFeelDefaults().put(THEME_UI_KEY, theme)
                 }
+
                 else -> {
                     UIManager.setLookAndFeel(lafClassName)
                     logger.debug("设置主题为：$lafClassName")

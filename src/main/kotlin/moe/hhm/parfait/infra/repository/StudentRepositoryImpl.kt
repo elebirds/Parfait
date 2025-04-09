@@ -61,9 +61,9 @@ class StudentRepositoryImpl : StudentRepository {
     }
 
     override suspend fun updateInfo(student: StudentDTO): Boolean {
-        if(!isExistById(student.studentId)) throw BusinessException("学生不存在") // TODO: 国际化
+        if (!isExistById(student.studentId)) throw BusinessException("学生不存在") // TODO: 国际化
         return DatabaseUtils.dbQuery {
-            Students.update({studentId eq student.studentId}) {
+            Students.update({ studentId eq student.studentId }) {
                 student.into(it)
                 it[updatedAt] = LocalDateTime.now()
             }
@@ -71,16 +71,16 @@ class StudentRepositoryImpl : StudentRepository {
     }
 
     override suspend fun delete(studentId: String): Boolean {
-        if(!isExistById(studentId)) throw BusinessException("学生不存在") // TODO: 国际化
+        if (!isExistById(studentId)) throw BusinessException("学生不存在") // TODO: 国际化
         return DatabaseUtils.dbQuery {
             Students.deleteWhere { Op.build { Students.studentId eq studentId } }
         } > 0
     }
 
     override suspend fun updateScore(student: StudentDTO): Boolean {
-        if(!isExistById(student.studentId)) throw BusinessException("学生不存在") // TODO: 国际化
+        if (!isExistById(student.studentId)) throw BusinessException("学生不存在") // TODO: 国际化
         return DatabaseUtils.dbQuery {
-            Students.update({studentId eq student.studentId}) {
+            Students.update({ studentId eq student.studentId }) {
                 it[scores] = student.scores.toScoreString()
                 it[updatedAt] = LocalDateTime.now()
             }

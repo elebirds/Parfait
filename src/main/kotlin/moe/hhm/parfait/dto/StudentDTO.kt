@@ -8,7 +8,7 @@ package moe.hhm.parfait.dto
 
 import moe.hhm.parfait.infra.db.student.Students
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import java.util.UUID
+import java.util.*
 
 data class StudentDTO(
     val uuid: UUID? = null,
@@ -25,7 +25,7 @@ data class StudentDTO(
     enum class Gender { UNKNOWN, MALE, FEMALE }
     enum class Status { ENROLLED, SUSPENDED, GRADUATED, ABNORMAL }
 
-    fun <T: Any> into(it : UpdateBuilder<T>) {
+    fun <T : Any> into(it: UpdateBuilder<T>) {
         it[Students.studentId] = studentId
         it[Students.name] = name
         it[Students.gender] = gender.ordinal
