@@ -11,7 +11,7 @@ import moe.hhm.parfait.di.domainModule
 import moe.hhm.parfait.di.infrastructureModule
 import moe.hhm.parfait.di.presentationModule
 import moe.hhm.parfait.ui.lib.FlatLafUtils
-import moe.hhm.parfait.view.MainFrame
+import moe.hhm.parfait.view.ParfaitFrame
 import org.koin.core.context.startKoin
 import org.slf4j.LoggerFactory
 import javax.swing.SwingUtilities
@@ -48,7 +48,7 @@ class ParfaitApp {
             FlatLafUtils.fontInit()
             FlatLafUtils.setLookAndFeel()
             FlatLafUtils.installInspector()
-            MainFrame().isVisible = true
+            ParfaitFrame().isVisible = true
         }
     }
 }

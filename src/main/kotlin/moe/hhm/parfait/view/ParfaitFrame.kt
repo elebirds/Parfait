@@ -14,23 +14,21 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.swing.Swing
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
-import moe.hhm.parfait.view.component.LoadingPanel
-import moe.hhm.parfait.view.component.WelcomePanel
+import moe.hhm.parfait.view.panel.LoadingPanel
+import moe.hhm.parfait.view.panel.MainPanel
+import moe.hhm.parfait.view.panel.WelcomePanel
 import moe.hhm.parfait.view.component.menu.MainMenuBar
 import net.miginfocom.swing.MigLayout
 import java.awt.Dimension
 import javax.swing.JFrame
-import javax.swing.JLabel
 import javax.swing.JPanel
 
-class MainFrame : JFrame() {
+class ParfaitFrame : JFrame() {
     private val menuBar = MainMenuBar()
     private var contentPane = JPanel(MigLayout("al center center"))
     private val welcomePanel = WelcomePanel()
     private val loadingPanel = LoadingPanel()
-    private val mainPanel = JPanel().apply {
-        add(JLabel("Main Panel"))
-    }
+    private val mainPanel = MainPanel()
     private val coroutineScope = CoroutineScope(Dispatchers.Swing + SupervisorJob())
 
     init {

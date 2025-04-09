@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-package moe.hhm.parfait.view.component
+package moe.hhm.parfait.view.panel
 
 import com.formdev.flatlaf.FlatClientProperties
 import com.formdev.flatlaf.extras.FlatSVGIcon
