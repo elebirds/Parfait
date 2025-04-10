@@ -28,11 +28,17 @@ class StudentDataPaginationPanel : JPanel(), KoinComponent, CoroutineComponent b
     // 通过Koin获取ViewModel
     private val viewModel: StudentDataViewModel by inject()
 
+    private val buttonFirstPage: JButton = createButton("page.first").apply {
+        addActionListener { viewModel.firstPage() }
+    }
     private val buttonPrevPage: JButton = createButton("page.previous").apply {
         addActionListener { viewModel.previousPage() }
     }
     private val buttonNextPage: JButton = createButton("page.next").apply {
         addActionListener { viewModel.nextPage() }
+    }
+    private val buttonLastPage: JButton = createButton("page.last").apply {
+        addActionListener { viewModel.lastPage() }
     }
     private val labelCurrentPage: JLabel = JLabel("1")
     private val labelTotalPages: JLabel = JLabel("/ 1")
@@ -50,13 +56,15 @@ class StudentDataPaginationPanel : JPanel(), KoinComponent, CoroutineComponent b
     }
 
     init {
-        this.layout = MigLayout("insets 0", "[][][][][][]", "[]")
+        this.layout = MigLayout("insets 0", "[][][][][][][][]", "[]")
         this.add(labelPageSize, "cell 0 0")
         this.add(comboPageSize, "cell 1 0")
-        this.add(buttonPrevPage, "cell 2 0")
-        this.add(labelCurrentPage, "cell 3 0,alignx center")
-        this.add(labelTotalPages, "cell 4 0")
-        this.add(buttonNextPage, "cell 5 0")
+        this.add(buttonFirstPage, "cell 2 0")
+        this.add(buttonPrevPage, "cell 3 0")
+        this.add(labelCurrentPage, "cell 4 0,alignx center")
+        this.add(labelTotalPages, "cell 5 0")
+        this.add(buttonNextPage, "cell 6 0")
+        this.add(buttonLastPage, "cell 7 0")
         this.border = EmptyBorder(5, 0, 5, 0)
     }
 
@@ -76,8 +84,10 @@ class StudentDataPaginationPanel : JPanel(), KoinComponent, CoroutineComponent b
         val enabled = loadState == StudentDataLoadState.DONE
 
         // 设置分页按钮状态
+        buttonFirstPage.isEnabled = enabled && paginationState.currentPage > 1
         buttonPrevPage.isEnabled = enabled && paginationState.currentPage > 1
         buttonNextPage.isEnabled = enabled && paginationState.currentPage < paginationState.totalPages
+        buttonLastPage.isEnabled = enabled && paginationState.currentPage < paginationState.totalPages
         comboPageSize.isEnabled = enabled
 
         // 更新当前页码和总页码

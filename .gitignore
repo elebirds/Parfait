@@ -10,6 +10,7 @@ log/
 !**/src/test/**
 
 *.pardb
+*.csv
 
 ### SQLite ###
 *.db

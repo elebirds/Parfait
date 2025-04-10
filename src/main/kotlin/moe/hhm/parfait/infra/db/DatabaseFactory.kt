@@ -6,14 +6,12 @@
 
 package moe.hhm.parfait.infra.db
 
-import javafx.application.Application.launch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import moe.hhm.parfait.infra.db.certificate.CertificateDatas
 import moe.hhm.parfait.infra.db.certificate.CertificateRecords
 import moe.hhm.parfait.infra.db.certificate.CertificateTemplates
@@ -84,15 +82,13 @@ object DatabaseFactory {
     private val scope = CoroutineScope(Dispatchers.IO)
 
     private fun init() {
-        scope.launch {
-            // 创建表
-            transaction {
-                createTables()
-            }
-            // 初始化数据
-            transaction {
-                initializeDefaultData()
-            }
+        // 创建表
+        transaction {
+            createTables()
+        }
+        // 初始化数据
+        transaction {
+            initializeDefaultData()
         }
     }
 
@@ -110,24 +106,26 @@ object DatabaseFactory {
             logger.warn("数据库连接已存在，请先断开连接")
             return
         }
-        try {
-            _connectionState.value = DatabaseConnectionState.Connecting(config)
-            when (config.mode) {
-                DatabaseFactoryMode.ONLINE -> throw NotImplementedError("C/S模式尚未实现")
-                DatabaseFactoryMode.STANDALONE -> connection = Database.connect(
-                    driver = "org.sqlite.JDBC",
-                    url = "jdbc:sqlite:${config.host}",
-                    user = config.user,
-                    password = config.password
-                )
+        scope.launch {
+            try {
+                _connectionState.value = DatabaseConnectionState.Connecting(config)
+                when (config.mode) {
+                    DatabaseFactoryMode.ONLINE -> throw NotImplementedError("C/S模式尚未实现")
+                    DatabaseFactoryMode.STANDALONE -> connection = Database.connect(
+                        driver = "org.sqlite.JDBC",
+                        url = "jdbc:sqlite:${config.host}",
+                        user = config.user,
+                        password = config.password
+                    )
+                }
+                init()
+                _connectionState.value = DatabaseConnectionState.Connected(config)
+                logger.info("数据库连接成功")
+            } catch (e: Throwable) {
+                logger.error("数据库连接失败", e)
+                _connectionState.value = DatabaseConnectionState.Disconnected()
+                throw e
             }
-            init()
-            _connectionState.value = DatabaseConnectionState.Connected(config)
-            logger.info("数据库连接成功")
-        } catch (e: Throwable) {
-            logger.error("数据库连接失败", e)
-            _connectionState.value = DatabaseConnectionState.Disconnected()
-            throw e
         }
     }
 

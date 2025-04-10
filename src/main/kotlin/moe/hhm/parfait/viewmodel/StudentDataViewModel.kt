@@ -237,6 +237,20 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
     }
 
     /**
+     * 转到首页
+     */
+    fun firstPage() {
+        setCurrentPage(1)
+    }
+
+    /**
+     * 转到末页
+     */
+    fun lastPage() {
+        setCurrentPage(_paginationState.value.totalPages)
+    }
+
+    /**
      * 设置每页显示数量
      */
     fun setPageSize(size: Int) {
