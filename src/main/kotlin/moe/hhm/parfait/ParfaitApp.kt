@@ -10,9 +10,9 @@ import moe.hhm.parfait.di.appModule
 import moe.hhm.parfait.di.domainModule
 import moe.hhm.parfait.di.infrastructureModule
 import moe.hhm.parfait.di.presentationModule
-import moe.hhm.parfait.utils.i18n.I18nUtils
-import moe.hhm.parfait.view.ParfaitFrame
-import moe.hhm.parfait.view.lib.FlatLafUtils
+import moe.hhm.parfait.infra.i18n.I18nUtils
+import moe.hhm.parfait.ui.ParfaitFrame
+import moe.hhm.parfait.ui.lib.FlatLafUtils
 import org.koin.core.context.startKoin
 import org.slf4j.LoggerFactory
 import javax.swing.SwingUtilities
