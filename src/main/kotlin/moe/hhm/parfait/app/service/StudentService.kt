@@ -20,5 +20,5 @@ interface StudentService {
     suspend fun deleteStudent(studentID: String): Boolean
     suspend fun updateInfo(student: StudentDTO): Boolean
     suspend fun addScore(student: StudentDTO, scoreDTO: ScoreDTO)
-
+    suspend fun count(): Long
 }

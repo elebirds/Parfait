@@ -59,4 +59,9 @@ interface StudentRepository {
      * 删除学生
      */
     suspend fun delete(studentID: String): Boolean
+
+    /**
+     * 统计学生数量
+     */
+    suspend fun count(): Long
 }

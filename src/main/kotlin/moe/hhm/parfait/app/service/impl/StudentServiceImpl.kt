@@ -35,4 +35,6 @@ class StudentServiceImpl(private val rep: StudentRepository) : StudentService {
     }
 
     override suspend fun updateInfo(student: StudentDTO) = rep.updateInfo(student)
+
+    override suspend fun count(): Long = rep.count()
 }

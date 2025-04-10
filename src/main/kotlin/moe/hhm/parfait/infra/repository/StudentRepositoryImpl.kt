@@ -86,4 +86,8 @@ class StudentRepositoryImpl : StudentRepository {
             }
         } > 0
     }
+
+    override suspend fun count(): Long = DatabaseUtils.dbQuery {
+        Student.all().count()
+    }
 }

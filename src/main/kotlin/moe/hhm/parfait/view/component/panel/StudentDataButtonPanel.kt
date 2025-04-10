@@ -6,9 +6,13 @@
 
 package moe.hhm.parfait.view.component.panel
 
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import moe.hhm.parfait.utils.i18n.I18nUtils.createButton
-import moe.hhm.parfait.view.component.table.StudentDataTable
-import moe.hhm.parfait.viewmodel.StudentDataUiState
+import moe.hhm.parfait.view.base.CoroutineComponent
+import moe.hhm.parfait.view.base.DefaultCoroutineComponent
+import moe.hhm.parfait.view.state.StudentDataLoadState
 import moe.hhm.parfait.viewmodel.StudentDataViewModel
 import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent
@@ -16,16 +20,56 @@ import org.koin.core.component.inject
 import javax.swing.JButton
 import javax.swing.JPanel
 
-class StudentDataButtonPanel : JPanel(), KoinComponent {
+class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinComponent, CoroutineComponent by DefaultCoroutineComponent(parent) {
     // 通过Koin获取ViewModel
     private val viewModel: StudentDataViewModel by inject()
 
-    private val buttonAdd: JButton = createButton("student.add")
-    private val buttonDel: JButton = createButton("student.delete")
-    private val buttonEditScore: JButton = createButton("grades.edit")
-    private val buttonImport: JButton = createButton("button.import")
-    private val buttonExport: JButton = createButton("button.export")
-    private val buttonGenerateDocument: JButton = createButton("button.generate")
+    private val buttonAdd: JButton = createButton("student.add").apply {
+        addActionListener {
+            // 打开添加学生对话框
+            // TODO: 实现添加学生对话框
+        }
+    }
+    
+    private val buttonDel: JButton = createButton("student.delete").apply {
+        addActionListener {
+            val studentId = viewModel.selectedStudent.value?.studentId
+            if (studentId != null) {
+                viewModel.deleteStudent(studentId)
+            }
+        }
+    }
+    
+    private val buttonEditScore: JButton = createButton("grades.edit").apply {
+        addActionListener {
+            val student = viewModel.selectedStudent.value
+            if (student != null) {
+                // 打开编辑成绩对话框
+                // TODO: 实现编辑成绩对话框
+            }
+        }
+    }
+    
+    private val buttonImport: JButton = createButton("button.import").apply {
+        addActionListener {
+            // 打开导入对话框
+            // TODO: 实现导入功能
+        }
+    }
+    
+    private val buttonExport: JButton = createButton("button.export").apply {
+        addActionListener {
+            // 打开导出对话框
+            // TODO: 实现导出功能
+        }
+    }
+    
+    private val buttonGenerateDocument: JButton = createButton("button.generate").apply {
+        addActionListener {
+            // 打开生成文档对话框
+            // TODO: 实现生成文档功能
+        }
+    }
 
     init {
         this.layout = MigLayout("hidemode 3", "[fill]", "[][][][][][][][][][][][][]")
@@ -37,16 +81,29 @@ class StudentDataButtonPanel : JPanel(), KoinComponent {
         this.add(buttonGenerateDocument, "cell 0 5")
     }
 
-    fun updateState(state: StudentDataUiState, table: StudentDataTable) {
+    override fun observer() {
+        // 订阅ViewModel的加载状态和选中学生
+        scope.launch {
+            combine(viewModel.loadState, viewModel.selectedStudent) { loadState, student ->
+                loadState to (student != null)
+            }.collectLatest { (loadState, isSelected) ->
+                // 更新按钮状态
+                updateState(loadState, isSelected)
+            }
+        }
+    }
+
+    /**
+     * 更新按钮状态
+     */
+    fun updateState(state: StudentDataLoadState, selected: Boolean) {
         // 根据数据库连接状态和加载状态确定按钮启用状态
-        val dbConnected = state.databaseConnected
-        val enabled = dbConnected && !state.isLoading
-        val hasSelection = table.getSelectedStudent() != null
+        val enabled = state == StudentDataLoadState.DONE
 
         // 设置按钮启用状态
         buttonAdd.isEnabled = enabled
-        buttonDel.isEnabled = enabled && hasSelection
-        buttonEditScore.isEnabled = enabled && hasSelection
+        buttonDel.isEnabled = enabled && selected
+        buttonEditScore.isEnabled = enabled && selected
         buttonImport.isEnabled = enabled
         buttonExport.isEnabled = enabled
         buttonGenerateDocument.isEnabled = enabled

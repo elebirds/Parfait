@@ -6,14 +6,25 @@
 
 package moe.hhm.parfait.view.component.table
 
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import moe.hhm.parfait.dto.StudentDTO
+import moe.hhm.parfait.view.base.CoroutineComponent
+import moe.hhm.parfait.view.base.DefaultCoroutineComponent
+import moe.hhm.parfait.viewmodel.StudentDataViewModel
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.awt.Dimension
 import java.util.UUID
+import javax.swing.JPanel
 import javax.swing.JTable
 import javax.swing.ListSelectionModel
 import javax.swing.table.DefaultTableModel
+import kotlin.getValue
 
-class StudentDataTable : JTable() {
+class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent, CoroutineComponent by DefaultCoroutineComponent(parent) {
+    private val viewModel: StudentDataViewModel by inject()
+
     // 自定义表格模型，禁止直接编辑单元格
     private val tableModel = object : DefaultTableModel() {
         override fun isCellEditable(row: Int, column: Int): Boolean = false
@@ -37,6 +48,22 @@ class StudentDataTable : JTable() {
         
         // 初始化表格列
         initColumns()
+
+        // 表格行选择监听器
+        this.setRowSelectionListener { selectedStudent ->
+            viewModel.setSelectedStudent(selectedStudent)
+        }
+    }
+
+    override fun observer() {
+        // 监听表格数据更新（高频更新）
+        scope.launch {
+            viewModel.students.collectLatest { students ->
+                // 更新表格数据
+                this@StudentDataTable.updateData(students)
+            }
+        }
+        // TODO: 监听选中学生变化?
     }
     
     // 初始化表格列
@@ -73,7 +100,7 @@ class StudentDataTable : JTable() {
         studentList = students
         
         // 清空现有数据
-        tableModel.setRowCount(0)
+        tableModel.rowCount = 0
         
         // 添加新数据
         students.forEach { student ->

@@ -6,10 +6,14 @@
 
 package moe.hhm.parfait.view.component.panel
 
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import moe.hhm.parfait.utils.i18n.I18nUtils.createButton
 import moe.hhm.parfait.utils.i18n.I18nUtils.createLabel
-import moe.hhm.parfait.view.component.table.StudentDataTable
-import moe.hhm.parfait.viewmodel.StudentDataUiState
+import moe.hhm.parfait.view.base.CoroutineComponent
+import moe.hhm.parfait.view.base.DefaultCoroutineComponent
+import moe.hhm.parfait.view.state.StudentDataLoadState
+import moe.hhm.parfait.view.state.StudentDataPaginationState
 import moe.hhm.parfait.viewmodel.StudentDataViewModel
 import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent
@@ -19,9 +23,8 @@ import javax.swing.JComboBox
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.border.EmptyBorder
-import kotlin.getValue
 
-class StudentDataPaginationPanel : JPanel(), KoinComponent {
+class StudentDataPaginationPanel : JPanel(), KoinComponent, CoroutineComponent by DefaultCoroutineComponent() {
     // 通过Koin获取ViewModel
     private val viewModel: StudentDataViewModel by inject()
 
@@ -57,19 +60,29 @@ class StudentDataPaginationPanel : JPanel(), KoinComponent {
         this.border = EmptyBorder(5, 0, 5, 0)
     }
 
-    fun updateState(state: StudentDataUiState, table: StudentDataTable) {
-        // 根据数据库连接状态和加载状态确定按钮启用状态
-        val dbConnected = state.databaseConnected
-        val enabled = dbConnected && !state.isLoading
-        val hasSelection = table.getSelectedStudent() != null
+    override fun observer() {
+        scope.launch {
+            combine(viewModel.loadState, viewModel.paginationState) {
+                loadState, paginationState ->
+                Pair(loadState, paginationState)
+            }.collect { (loadState, paginationState) ->
+                // 更新按钮状态
+                updateState(loadState, paginationState)
+            }
+        }
+    }
+
+
+    fun updateState(loadState: StudentDataLoadState, paginationState: StudentDataPaginationState) {
+        val enabled = loadState == StudentDataLoadState.DONE
 
         // 设置分页按钮状态
-        buttonPrevPage.isEnabled = enabled && state.currentPage > 1
-        buttonNextPage.isEnabled = enabled && state.currentPage < state.totalPages
+        buttonPrevPage.isEnabled = enabled && paginationState.currentPage > 1
+        buttonNextPage.isEnabled = enabled && paginationState.currentPage < paginationState.totalPages
         comboPageSize.isEnabled = enabled
 
         // 更新当前页码和总页码
-        labelCurrentPage.text = state.currentPage.toString()
-        labelTotalPages.text = "/ ${state.totalPages}"
+        labelCurrentPage.text = paginationState.currentPage.toString()
+        labelTotalPages.text = "/ ${paginationState.totalPages}"
     }
 }
