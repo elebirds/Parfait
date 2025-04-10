@@ -20,7 +20,8 @@ import org.koin.core.component.inject
 import javax.swing.JButton
 import javax.swing.JPanel
 
-class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinComponent, CoroutineComponent by DefaultCoroutineComponent(parent) {
+class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinComponent,
+    CoroutineComponent by DefaultCoroutineComponent(parent) {
     // 通过Koin获取ViewModel
     private val viewModel: StudentDataViewModel by inject()
 
@@ -30,7 +31,7 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
             // TODO: 实现添加学生对话框
         }
     }
-    
+
     private val buttonDel: JButton = createButton("student.delete").apply {
         addActionListener {
             val studentId = viewModel.selectedStudent.value?.studentId
@@ -39,7 +40,7 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
             }
         }
     }
-    
+
     private val buttonEditScore: JButton = createButton("grades.edit").apply {
         addActionListener {
             val student = viewModel.selectedStudent.value
@@ -49,21 +50,21 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
             }
         }
     }
-    
+
     private val buttonImport: JButton = createButton("button.import").apply {
         addActionListener {
             // 打开导入对话框
             // TODO: 实现导入功能
         }
     }
-    
+
     private val buttonExport: JButton = createButton("button.export").apply {
         addActionListener {
             // 打开导出对话框
             // TODO: 实现导出功能
         }
     }
-    
+
     private val buttonGenerateDocument: JButton = createButton("button.generate").apply {
         addActionListener {
             // 打开生成文档对话框

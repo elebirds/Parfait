@@ -15,29 +15,28 @@ import moe.hhm.parfait.viewmodel.StudentDataViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.awt.Dimension
-import java.util.UUID
-import javax.swing.JPanel
+import java.util.*
 import javax.swing.JTable
 import javax.swing.ListSelectionModel
 import javax.swing.table.DefaultTableModel
-import kotlin.getValue
 
-class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent, CoroutineComponent by DefaultCoroutineComponent(parent) {
+class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
+    CoroutineComponent by DefaultCoroutineComponent(parent) {
     private val viewModel: StudentDataViewModel by inject()
 
     // 自定义表格模型，禁止直接编辑单元格
     private val tableModel = object : DefaultTableModel() {
         override fun isCellEditable(row: Int, column: Int): Boolean = false
     }
-    
+
     // 保存学生数据的列表，用于获取选中的学生信息
     private var studentList: List<StudentDTO> = emptyList()
-    
+
     // 表格列名称
     private val columnNames = arrayOf(
         "学号", "姓名", "性别", "学院", "专业", "年级", "班级", "状态"
     )
-    
+
     init {
         // 设置表格模型和基本属性
         model = tableModel
@@ -45,7 +44,7 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
         autoResizeMode = AUTO_RESIZE_SUBSEQUENT_COLUMNS
         selectionModel.selectionMode = ListSelectionModel.SINGLE_SELECTION
         rowHeight = 25
-        
+
         // 初始化表格列
         initColumns()
 
@@ -65,18 +64,18 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
         }
         // TODO: 监听选中学生变化?
     }
-    
+
     // 初始化表格列
     private fun initColumns() {
         tableModel.setColumnIdentifiers(columnNames)
     }
-    
+
     // 将学生DTO对象转换为表格行数据
     private fun studentToRow(student: StudentDTO): Array<Any?> {
         return arrayOf(
             student.studentId,
             student.name,
-            when(student.gender) {
+            when (student.gender) {
                 StudentDTO.Gender.MALE -> "男"
                 StudentDTO.Gender.FEMALE -> "女"
                 else -> "未知"
@@ -85,7 +84,7 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
             student.major,
             student.grade,
             student.classGroup,
-            when(student.status) {
+            when (student.status) {
                 StudentDTO.Status.ENROLLED -> "在籍"
                 StudentDTO.Status.SUSPENDED -> "休学"
                 StudentDTO.Status.GRADUATED -> "毕业"
@@ -93,21 +92,21 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
             }
         )
     }
-    
+
     // 更新表格数据
     fun updateData(students: List<StudentDTO>) {
         // 保存学生列表引用
         studentList = students
-        
+
         // 清空现有数据
         tableModel.rowCount = 0
-        
+
         // 添加新数据
         students.forEach { student ->
             tableModel.addRow(studentToRow(student))
         }
     }
-    
+
     // 获取当前选中的学生
     fun getSelectedStudent(): StudentDTO? {
         val selectedRow = selectedRow
@@ -117,17 +116,17 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
             null
         }
     }
-    
+
     // 获取当前选中的学生ID
     fun getSelectedStudentId(): String? {
         return getSelectedStudent()?.studentId
     }
-    
+
     // 获取当前选中的学生UUID
     fun getSelectedStudentUUID(): UUID? {
         return getSelectedStudent()?.uuid
     }
-    
+
     // 设置行选择监听器
     fun setRowSelectionListener(action: (StudentDTO?) -> Unit) {
         selectionModel.addListSelectionListener { event ->
@@ -136,14 +135,14 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
             }
         }
     }
-    
+
     // 选择指定学生的行
     fun selectStudent(student: StudentDTO?) {
         if (student == null) {
             clearSelection()
             return
         }
-        
+
         // 查找学生在列表中的索引
         val index = studentList.indexOfFirst { it.studentId == student.studentId }
         if (index >= 0) {
@@ -156,14 +155,14 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
             clearSelection()
         }
     }
-    
+
     // 根据学生ID选择行
     fun selectStudentById(studentId: String?) {
         if (studentId == null) {
             clearSelection()
             return
         }
-        
+
         // 查找学生在列表中的索引
         val index = studentList.indexOfFirst { it.studentId == studentId }
         if (index >= 0) {

@@ -19,41 +19,41 @@ import java.util.*
  */
 object I18nManager {
     private val logger = LoggerFactory.getLogger(I18nManager::class.java)
-    
+
     // 支持的语言
     enum class Language(val code: String, val displayName: String) {
         ENGLISH("en", "English"),
         CHINESE("zh", "中文")
     }
-    
+
     // 资源文件基础名
     private const val RESOURCE_BUNDLE_BASE_NAME = "i18n.messages"
-    
+
     // 当前语言
     private val _currentLanguage = MutableStateFlow(Language.ENGLISH)
     val currentLanguage: StateFlow<Language> = _currentLanguage.asStateFlow()
-    
+
     // 当前资源包
     private var resourceBundle: ResourceBundle = loadResourceBundle(Language.ENGLISH)
-    
+
     /**
      * 初始化语言管理器
-     * 
+     *
      * 尝试从系统默认语言加载适当的语言设置
      */
     fun init() {
         val systemLocale = Locale.getDefault()
-        
+
         // 根据系统语言设置初始语言
         val initialLanguage = when (systemLocale.language) {
             "zh" -> Language.CHINESE
             else -> Language.ENGLISH
         }
-        
+
         switchLanguage(initialLanguage)
         logger.info("初始化国际化管理器，当前语言: ${initialLanguage.displayName}")
     }
-    
+
     /**
      * 切换应用程序语言
      *
@@ -64,7 +64,7 @@ object I18nManager {
         _currentLanguage.value = language
         logger.info("切换语言到: ${language.displayName}")
     }
-    
+
     /**
      * 获取指定键的国际化文本
      *
@@ -80,10 +80,10 @@ object I18nManager {
             defaultValue
         }
     }
-    
+
     /**
      * 获取指定键的国际化文本，并进行参数替换
-     * 
+     *
      * @param key 文本键
      * @param args 替换参数
      * @return 格式化后的国际化文本
@@ -92,7 +92,7 @@ object I18nManager {
         val pattern = getMessage(key)
         return String.format(pattern, *args)
     }
-    
+
     /**
      * 加载指定语言的资源包
      *

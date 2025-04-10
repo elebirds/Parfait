@@ -6,9 +6,14 @@
 
 package moe.hhm.parfait.infra.db
 
+import javafx.application.Application.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import moe.hhm.parfait.infra.db.certificate.CertificateDatas
 import moe.hhm.parfait.infra.db.certificate.CertificateRecords
 import moe.hhm.parfait.infra.db.certificate.CertificateTemplates
@@ -75,14 +80,19 @@ object DatabaseFactory {
     private var connection: Database? = null
     private val _connectionState = MutableStateFlow<DatabaseConnectionState>(DatabaseConnectionState.Disconnected())
     val connectionState: StateFlow<DatabaseConnectionState> = _connectionState.asStateFlow()
+
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     private fun init() {
-        // 创建表
-        transaction {
-            createTables()
-        }
-        // 初始化数据
-        transaction {
-            initializeDefaultData()
+        scope.launch {
+            // 创建表
+            transaction {
+                createTables()
+            }
+            // 初始化数据
+            transaction {
+                initializeDefaultData()
+            }
         }
     }
 

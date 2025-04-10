@@ -10,9 +10,9 @@ import moe.hhm.parfait.di.appModule
 import moe.hhm.parfait.di.domainModule
 import moe.hhm.parfait.di.infrastructureModule
 import moe.hhm.parfait.di.presentationModule
-import moe.hhm.parfait.view.lib.FlatLafUtils
 import moe.hhm.parfait.utils.i18n.I18nUtils
 import moe.hhm.parfait.view.ParfaitFrame
+import moe.hhm.parfait.view.lib.FlatLafUtils
 import org.koin.core.context.startKoin
 import org.slf4j.LoggerFactory
 import javax.swing.SwingUtilities
@@ -29,19 +29,21 @@ fun main(args: Array<String>) {
     try {
         // 初始化依赖注入
         startKoin {
-            modules(listOf(
-                appModule,
-                domainModule,
-                infrastructureModule,
-                presentationModule
-            ))
+            modules(
+                listOf(
+                    appModule,
+                    domainModule,
+                    infrastructureModule,
+                    presentationModule
+                )
+            )
         }
         logger.info("Koin依赖注入初始化完成")
-        
+
         // 初始化国际化
         I18nUtils.init()
         logger.info("国际化支持初始化完成")
-        
+
         // 启动应用
         ParfaitApp().start()
     } catch (e: Exception) {
@@ -58,7 +60,7 @@ class ParfaitApp {
             FlatLafUtils.fontInit()
             FlatLafUtils.setLookAndFeel()
             FlatLafUtils.installInspector()
-            
+
             // 创建并显示主窗口
             val mainFrame = ParfaitFrame()
             mainFrame.isVisible = true

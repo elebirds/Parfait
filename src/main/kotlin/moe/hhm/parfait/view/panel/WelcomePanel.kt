@@ -9,6 +9,7 @@ package moe.hhm.parfait.view.panel
 import com.formdev.flatlaf.FlatClientProperties
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import moe.hhm.parfait.utils.i18n.I18nUtils
+import moe.hhm.parfait.utils.i18n.I18nUtils.bindText
 import moe.hhm.parfait.utils.i18n.I18nUtils.createButton
 import moe.hhm.parfait.utils.i18n.I18nUtils.createCheckBox
 import moe.hhm.parfait.utils.i18n.I18nUtils.createLabel
@@ -27,7 +28,15 @@ class WelcomePanel : JPanel() {
                 DatabaseAction.openStandaloneChooser()
             }
         }
-    private val cmdSignIn: JButton = createButton("button.signin", FlatSVGIcon("ui/nwicons/next.svg")).apply {
+    private val cmdSignIn: JButton = object : JButton() {
+        override fun isDefaultButton(): Boolean {
+            return true
+        }
+        init {
+            icon = FlatSVGIcon("ui/nwicons/next.svg")
+        }
+    }.apply {
+        bindText(this, "button.signin")
         this.putClientProperty(
             FlatClientProperties.STYLE,
             "foreground:#FFFFFF;" + "iconTextGap:10;"

@@ -62,8 +62,7 @@ class StudentDataPaginationPanel : JPanel(), KoinComponent, CoroutineComponent b
 
     override fun observer() {
         scope.launch {
-            combine(viewModel.loadState, viewModel.paginationState) {
-                loadState, paginationState ->
+            combine(viewModel.loadState, viewModel.paginationState) { loadState, paginationState ->
                 Pair(loadState, paginationState)
             }.collect { (loadState, paginationState) ->
                 // 更新按钮状态

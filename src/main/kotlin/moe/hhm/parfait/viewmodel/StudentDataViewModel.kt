@@ -6,14 +6,8 @@
 
 package moe.hhm.parfait.viewmodel
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import moe.hhm.parfait.app.service.StudentService
 import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
@@ -31,31 +25,31 @@ import kotlin.math.ceil
 class StudentDataViewModel : BaseViewModel(), KoinComponent {
     // 日志
     private val logger = LoggerFactory.getLogger(this::class.java)
-    
+
     // 通过Koin获取StudentService实例
     private val studentService: StudentService by inject()
-    
+
     // 学生列表数据状态
     private val _students = MutableStateFlow<List<StudentDTO>>(emptyList())
     val students: StateFlow<List<StudentDTO>> = _students.asStateFlow()
-    
+
     // 分页状态
     private val _paginationState = MutableStateFlow(StudentDataPaginationState())
     val paginationState: StateFlow<StudentDataPaginationState> = _paginationState.asStateFlow()
-    
+
     // 加载状态
     private val _loadState = MutableStateFlow(StudentDataLoadState.DISCONNECTED)
     val loadState: StateFlow<StudentDataLoadState> = _loadState.asStateFlow()
-    
+
     // 当前选中的学生
     private val _selectedStudent = MutableStateFlow<StudentDTO?>(null)
     val selectedStudent: StateFlow<StudentDTO?> = _selectedStudent.asStateFlow()
-    
+
     init {
         // 监听数据库连接状态
         observeDatabaseConnectionState()
     }
-    
+
     /**
      * 监听数据库连接状态
      */
@@ -68,6 +62,7 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                         _loadState.value = StudentDataLoadState.PRELOADING
                         loadData()
                     }
+
                     is DatabaseConnectionState.Disconnected -> {
                         logger.info("数据库已断开连接")
                         _loadState.value = StudentDataLoadState.DISCONNECTED
@@ -75,12 +70,13 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                         _paginationState.value = StudentDataPaginationState()
                         _selectedStudent.value = null
                     }
+
                     is DatabaseConnectionState.Connecting -> _loadState.value = StudentDataLoadState.CONNECTING
                 }
             }
         }
     }
-    
+
     /**
      * 加载学生数据
      */
@@ -90,39 +86,39 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
             logger.error("非法加载数据，当前状态：${_loadState.value.name}")
             return
         }
-        
+
         scope.launch {
             try {
                 // 设置加载状态
                 _loadState.value = StudentDataLoadState.LOADING
-                
+
                 // 保存当前选中的学生ID，用于后续恢复选中状态
                 val selectedStudentId = _selectedStudent.value?.studentId
-                
+
                 // 获取总学生数量（未分页）
                 // TODO: 每一次加载都查询总数，可能会影响性能？ 但是目前没有更好的方法
                 val totalStudents = studentService.count()
                 val totalPages = calculateTotalPages(totalStudents, _paginationState.value.pageSize)
 
                 // 更新分页状态
-                _paginationState.update { 
+                _paginationState.update {
                     it.copy(
                         // 如果当前页数大于总页数，重置为第一页
-                        currentPage = if(_paginationState.value.currentPage > totalPages) 1 else _paginationState.value.currentPage,
+                        currentPage = if (_paginationState.value.currentPage > totalPages) 1 else _paginationState.value.currentPage,
                         totalStudents = totalStudents,
                         totalPages = totalPages
                     )
                 }
-                
+
                 // 获取当前页的学生数据
                 val pageStudents = studentService.getStudentsPage(
-                    _paginationState.value.currentPage, 
+                    _paginationState.value.currentPage,
                     _paginationState.value.pageSize
                 )
-                
+
                 // 更新学生列表
                 _students.value = pageStudents
-                
+
                 // 尝试在新数据中找回之前选中的学生
                 if (selectedStudentId != null) {
                     val student = pageStudents.find { it.studentId == selectedStudentId }

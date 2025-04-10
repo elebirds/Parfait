@@ -6,11 +6,7 @@
 
 package moe.hhm.parfait.view.base
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 
 interface CoroutineComponent {
     val job: Job
@@ -18,8 +14,13 @@ interface CoroutineComponent {
     fun observer()
 }
 
-class DefaultCoroutineComponent(parent: Job? = null, dispatcher: CoroutineDispatcher = Dispatchers.Main) : CoroutineComponent {
-    constructor(parent: CoroutineComponent?, dispatcher: CoroutineDispatcher = Dispatchers.Main) : this(parent?.job, dispatcher)
+class DefaultCoroutineComponent(parent: Job? = null, dispatcher: CoroutineDispatcher = Dispatchers.Main) :
+    CoroutineComponent {
+    constructor(parent: CoroutineComponent?, dispatcher: CoroutineDispatcher = Dispatchers.Main) : this(
+        parent?.job,
+        dispatcher
+    )
+
     override val job = SupervisorJob(parent)
     override val scope = CoroutineScope(dispatcher + job)
 
