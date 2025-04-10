@@ -92,7 +92,7 @@ class WelcomePanel : JPanel() {
         }
         add(titleLabel, "gapy 8 8")
 
-        add(JLabel(I18nUtils.getText("welcome.message"), JLabel.CENTER))
+        add(createLabel("welcome.message", JLabel.CENTER))
 
         add(standaloneButton, "gapy 15 10")
 

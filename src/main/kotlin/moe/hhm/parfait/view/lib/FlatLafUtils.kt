@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-package moe.hhm.parfait.ui.lib
+package moe.hhm.parfait.view.lib
 
 import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.extras.FlatInspector

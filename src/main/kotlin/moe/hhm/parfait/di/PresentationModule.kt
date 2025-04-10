@@ -6,10 +6,10 @@
 
 package moe.hhm.parfait.di
 
-import moe.hhm.parfait.ui.viewmodel.StudentListViewModel
+import moe.hhm.parfait.viewmodel.StudentDataViewModel
 import org.koin.dsl.module
 
 val presentationModule = module {
     // ViewModel
-    single<StudentListViewModel> { StudentListViewModel(get()) }
+    single<StudentDataViewModel> { StudentDataViewModel() }
 }

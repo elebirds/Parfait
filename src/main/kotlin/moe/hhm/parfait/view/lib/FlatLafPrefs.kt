@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package moe.hhm.parfait.ui.lib
+package moe.hhm.parfait.view.lib
 
 import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.FlatPropertiesLaf

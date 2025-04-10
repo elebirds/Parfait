@@ -67,7 +67,6 @@ object I18nUtils {
     ) : I18nUpdater {
         override fun update() {
             component.get()?.let { comp ->
-                logger.trace("Updating component: ${comp.javaClass.simpleName} with key: $key => ${I18nManager.getMessage(key)}")
                 updater(comp, I18nManager.getMessage(key))
             }
         }

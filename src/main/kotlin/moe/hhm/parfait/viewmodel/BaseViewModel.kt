@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 abstract class BaseViewModel {
     private val viewModelJob = SupervisorJob()
     val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private val _error = MutableSharedFlow<Throwable>()
+    protected val _error = MutableSharedFlow<Throwable>()
     val error: SharedFlow<Throwable> = _error.asSharedFlow()
 
     open fun onCleared() {
