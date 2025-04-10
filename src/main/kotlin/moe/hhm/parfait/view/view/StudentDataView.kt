@@ -6,6 +6,7 @@
 
 package moe.hhm.parfait.view.view
 
+import moe.hhm.parfait.utils.i18n.I18nUtils.createButton
 import moe.hhm.parfait.view.component.table.StudentDataTable
 import net.miginfocom.swing.MigLayout
 import javax.swing.JButton
@@ -14,13 +15,13 @@ import javax.swing.JPanel
 import javax.swing.JScrollPane
 
 class StudentDataView : JPanel() {
-    private val buttonAdd: JButton = JButton("添加学生")
-    private val buttonDel: JButton = JButton("删除学生")
-    private val buttonEditScore: JButton = JButton("编辑成绩")
-    private val buttonImport: JButton = JButton("导入")
-    private val buttonExport: JButton = JButton("导出")
-    private val buttonGenerateDocument : JButton = JButton("生成文档")
-    private val buttonPanel : JPanel = JPanel().apply {
+    private val buttonAdd: JButton = createButton("student.add")
+    private val buttonDel: JButton = createButton("student.delete")
+    private val buttonEditScore: JButton = createButton("grades.edit")
+    private val buttonImport: JButton = createButton("button.import")
+    private val buttonExport: JButton = createButton("button.export")
+    private val buttonGenerateDocument: JButton = createButton("button.generate")
+    private val buttonPanel: JPanel = JPanel().apply {
         this.layout = MigLayout("hidemode 3", "[fill]", "[][][][][][][][][][][][][]")
         this.add(buttonAdd, "cell 0 0")
         this.add(buttonDel, "cell 0 1")
@@ -33,6 +34,7 @@ class StudentDataView : JPanel() {
     private val scrollPane = JScrollPane().apply {
         this.setViewportView(table)
     }
+
     init {
         this.layout = MigLayout(
             "hidemode 3",  // columns

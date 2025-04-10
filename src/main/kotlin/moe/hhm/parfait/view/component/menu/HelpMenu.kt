@@ -7,6 +7,8 @@
 package moe.hhm.parfait.view.component.menu
 
 import com.formdev.flatlaf.FlatClientProperties
+import moe.hhm.parfait.utils.i18n.I18nUtils
+import moe.hhm.parfait.utils.i18n.I18nUtils.bindText
 import java.awt.Cursor
 import java.awt.Desktop
 import java.awt.event.MouseAdapter
@@ -20,8 +22,9 @@ import javax.swing.JMenu
 import javax.swing.JMenuItem
 import javax.swing.JOptionPane
 
-class HelpMenu : JMenu("帮助") {
-    private val about = JMenuItem("关于").apply {
+class HelpMenu : JMenu() {
+    private val about = JMenuItem().apply {
+        bindText(this, "menu.about")
         this.setMnemonic('A')
         this.addActionListener {
             val titleLabel = JLabel("Parfait Moe").apply {
@@ -49,14 +52,14 @@ class HelpMenu : JMenu("帮助") {
             JOptionPane.showMessageDialog(
                 this, arrayOf(
                     titleLabel,
-                    "简易的学生数据管理系统",
+                    I18nUtils.getText("about.description"),
                     " ",
                     "Copyright 2023-$currentYear Elebird(Grow Zheng).",
                     "All rights reserved.",
                     linkLabel,
-                    "Running in Java™ SE Runtime Environment (build $javaVersion) on $osName",
+                    I18nUtils.getFormattedText("about.runtime", javaVersion, osName),
                 ),
-                "关于 Parfait",
+                I18nUtils.getText("about.title"),
                 JOptionPane.PLAIN_MESSAGE
             )
         }
@@ -64,6 +67,9 @@ class HelpMenu : JMenu("帮助") {
 
     init {
         setMnemonic('C')
+
+        bindText(this, "menu.help")
+
         add(about)
     }
 }

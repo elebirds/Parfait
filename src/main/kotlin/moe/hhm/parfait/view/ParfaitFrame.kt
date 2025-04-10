@@ -14,10 +14,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.swing.Swing
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
+import moe.hhm.parfait.utils.i18n.I18nUtils.bindTitle
+import moe.hhm.parfait.view.component.menu.MainMenuBar
 import moe.hhm.parfait.view.panel.LoadingPanel
 import moe.hhm.parfait.view.panel.MainPanel
 import moe.hhm.parfait.view.panel.WelcomePanel
-import moe.hhm.parfait.view.component.menu.MainMenuBar
 import net.miginfocom.swing.MigLayout
 import java.awt.Dimension
 import javax.swing.JFrame
@@ -36,6 +37,9 @@ class ParfaitFrame : JFrame() {
         size = Dimension(1366, 768)
         setLocationRelativeTo(null)
         jMenuBar = menuBar
+
+        // 设置国际化标题
+        bindTitle(this, "app.title")
 
         add(contentPane)
 

@@ -8,6 +8,7 @@ package moe.hhm.parfait.view.panel
 
 import com.formdev.flatlaf.FlatClientProperties
 import com.formdev.flatlaf.extras.FlatSVGIcon
+import moe.hhm.parfait.utils.i18n.I18nUtils.createLabel
 import net.miginfocom.swing.MigLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -16,7 +17,7 @@ class LoadingPanel : JPanel() {
     private val loadingIcon = JLabel(FlatSVGIcon("ui/nwicons/loading.svg", 0.5f)).apply {
         putClientProperty(FlatClientProperties.STYLE, "foreground:\$Component.accentColor;")
     }
-    private val loadingText = JLabel("正在连接数据库...").apply {
+    private val loadingText = createLabel("loading.message").apply {
         putClientProperty(FlatClientProperties.STYLE, "font:bold +2;")
     }
 

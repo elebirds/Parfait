@@ -8,28 +8,26 @@ package moe.hhm.parfait.view.panel
 
 import com.formdev.flatlaf.FlatClientProperties
 import com.formdev.flatlaf.extras.FlatSVGIcon
+import moe.hhm.parfait.utils.i18n.I18nUtils
+import moe.hhm.parfait.utils.i18n.I18nUtils.createButton
+import moe.hhm.parfait.utils.i18n.I18nUtils.createCheckBox
+import moe.hhm.parfait.utils.i18n.I18nUtils.createLabel
 import moe.hhm.parfait.view.action.DatabaseAction
 import net.miginfocom.swing.MigLayout
 import javax.swing.*
 
 class WelcomePanel : JPanel() {
-    private val standaloneButton = JButton(
-        "Continue in standalone mode",
-        FlatSVGIcon("ui/nwicons/standalone.svg", 0.063f)
-    ).apply {
-        this.putClientProperty(
-            FlatClientProperties.STYLE,
-            "focusWidth:0;" + "font:+1;"
-        )
-        this.addActionListener {
-            DatabaseAction.openStandaloneChooser()
+    private val standaloneButton =
+        createButton("button.standalone", FlatSVGIcon("ui/nwicons/standalone.svg", 0.063f)).apply {
+            this.putClientProperty(
+                FlatClientProperties.STYLE,
+                "focusWidth:0;" + "font:+1;"
+            )
+            this.addActionListener {
+                DatabaseAction.openStandaloneChooser()
+            }
         }
-    }
-    private val cmdSignIn: JButton = object : JButton("Sign in", FlatSVGIcon("ui/nwicons/next.svg")) {
-        override fun isDefaultButton(): Boolean {
-            return true
-        }
-    }.apply {
+    private val cmdSignIn: JButton = createButton("button.signin", FlatSVGIcon("ui/nwicons/next.svg")).apply {
         this.putClientProperty(
             FlatClientProperties.STYLE,
             "foreground:#FFFFFF;" + "iconTextGap:10;"
@@ -44,10 +42,9 @@ class WelcomePanel : JPanel() {
             FlatClientProperties.STYLE,
             "iconTextGap:10;"
         )
-        this.putClientProperty(
-            FlatClientProperties.PLACEHOLDER_TEXT,
-            "Enter your database address (e.g. localhost:3306)"
-        )
+        I18nUtils.bindProperty(this, "form.placeholder.address") { c, v ->
+            this.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, v)
+        }
         this.putClientProperty(
             FlatClientProperties.TEXT_FIELD_LEADING_ICON,
             FlatSVGIcon("ui/nwicons/host.svg", 0.068f)
@@ -58,7 +55,9 @@ class WelcomePanel : JPanel() {
             FlatClientProperties.STYLE,
             "iconTextGap:10;"
         )
-        this.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Enter your username")
+        I18nUtils.bindProperty(this, "form.placeholder.user") { c, v ->
+            this.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, v)
+        }
         this.putClientProperty(
             FlatClientProperties.TEXT_FIELD_LEADING_ICON,
             FlatSVGIcon("ui/nwicons/user.svg", 0.068f)
@@ -69,7 +68,9 @@ class WelcomePanel : JPanel() {
             FlatClientProperties.STYLE,
             "iconTextGap:10;" + "showRevealButton:true;"
         )
-        this.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Enter your password")
+        I18nUtils.bindProperty(this, "form.placeholder.password") { c, v ->
+            this.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, v)
+        }
         this.putClientProperty(
             FlatClientProperties.TEXT_FIELD_LEADING_ICON,
             FlatSVGIcon("ui/nwicons/password.svg", 0.35f)
@@ -86,16 +87,16 @@ class WelcomePanel : JPanel() {
 
         add(JLabel(FlatSVGIcon("ui/nwicons/logo.svg", 1.5f)))
 
-        val titleLabel = JLabel("Welcome back, un peu de Parfait?", JLabel.CENTER).apply {
+        val titleLabel = createLabel("welcome.title", JLabel.CENTER).apply {
             putClientProperty(FlatClientProperties.STYLE, "font:bold +15;")
         }
         add(titleLabel, "gapy 8 8")
 
-        add(JLabel("Sign in to access to your dashboard!", JLabel.CENTER))
+        add(JLabel(I18nUtils.getText("welcome.message"), JLabel.CENTER))
 
         add(standaloneButton, "gapy 15 10")
 
-        val lbSeparator = JLabel("Or connect to a MySQL database in online mode").apply {
+        val lbSeparator = createLabel("welcome.separator").apply {
             putClientProperty(
                 FlatClientProperties.STYLE,
                 "foreground:\$Label.disabledForeground;" + "font:-1;"
@@ -107,54 +108,46 @@ class WelcomePanel : JPanel() {
         add(lbSeparator, "sizegroup g1")
         add(createSeparator(), "sizegroup g1")
 
-        val lbAddress = JLabel("Address").apply {
+        val lbAddress = createLabel("form.address").apply {
             putClientProperty(FlatClientProperties.STYLE, "font:bold;")
         }
         add(lbAddress, "gapy 10 5")
         add(txtAddress)
 
-        val lbUser = JLabel("User").apply {
+        val lbUser = createLabel("form.user").apply {
             putClientProperty(FlatClientProperties.STYLE, "font:bold;")
         }
         add(lbUser, "gapy 10 5")
         add(txtUser)
 
-        val lbPassword = JLabel("Password").apply {
+        val lbPassword = createLabel("form.password").apply {
             putClientProperty(FlatClientProperties.STYLE, "font:bold;")
         }
         add(lbPassword, "gapy 10 5,split 2")
-        val cmdForgotPassword = createNoBorderButton("Forgot Password ?")
+        val cmdForgotPassword = createNoBorderButton("button.forgot")
         add(cmdForgotPassword, "grow 0,gapy 10 5")
 
         add(txtPassword)
 
-        add(JCheckBox("Remember for 30 days"), "gapy 10 10")
+        add(createCheckBox("welcome.remember"), "gapy 10 10")
         add(cmdSignIn, "gapy n 10")
 
-        val lbNoAccount = JLabel("No account ?")
-        lbNoAccount.putClientProperty(
-            FlatClientProperties.STYLE, "" +
-                    "foreground:\$Label.disabledForeground;"
-        )
+        val lbNoAccount = createLabel("welcome.noaccount").apply {
+            putClientProperty(FlatClientProperties.STYLE, "foreground:\$Label.disabledForeground;")
+        }
         add(lbNoAccount, "split 2,gapx push n")
 
-        val cmdCreateAccount = createNoBorderButton("Create an account")
+        val cmdCreateAccount = createNoBorderButton("button.create")
 
         add(cmdCreateAccount, "gapx n push")
     }
 
-    private fun createSeparator(): JSeparator {
-        val separator = JSeparator()
-        separator.putClientProperty(
-            FlatClientProperties.STYLE, "" +
-                    "stripeIndent:8;"
-        )
-        return separator
+    private fun createSeparator(): JSeparator = JSeparator().apply {
+        putClientProperty(FlatClientProperties.STYLE, "stripeIndent:8;")
     }
 
-    private fun createNoBorderButton(text: String): JButton {
-        val button = JButton(text)
-        button.putClientProperty(
+    private fun createNoBorderButton(key: String): JButton = createButton(key).apply {
+        putClientProperty(
             FlatClientProperties.STYLE, "" +
                     "foreground:\$Component.accentColor;" +
                     "margin:1,5,1,5;" +
@@ -163,6 +156,6 @@ class WelcomePanel : JPanel() {
                     "innerFocusWidth:0;" +
                     "background:null;"
         )
-        return button
     }
+
 }
