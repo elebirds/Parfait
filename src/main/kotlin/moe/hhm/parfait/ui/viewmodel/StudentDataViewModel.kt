@@ -42,9 +42,9 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
     private val _loadState = MutableStateFlow(StudentDataLoadState.DISCONNECTED)
     val loadState: StateFlow<StudentDataLoadState> = _loadState.asStateFlow()
 
-    // 当前选中的学生
-    private val _selectedStudent = MutableStateFlow<StudentDTO?>(null)
-    val selectedStudent: StateFlow<StudentDTO?> = _selectedStudent.asStateFlow()
+    // 当前选中的多个学生
+    private val _selectedStudents = MutableStateFlow<List<StudentDTO>>(emptyList())
+    val selectedStudents: StateFlow<List<StudentDTO>> = _selectedStudents.asStateFlow()
 
     init {
         // 监听数据库连接状态
@@ -69,7 +69,7 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                         _loadState.value = StudentDataLoadState.DISCONNECTED
                         _students.value = emptyList()
                         _paginationState.value = StudentDataPaginationState()
-                        _selectedStudent.value = null
+                        _selectedStudents.value = emptyList()
                     }
 
                     is DatabaseConnectionState.Connecting -> _loadState.value = StudentDataLoadState.CONNECTING
@@ -94,7 +94,7 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                 _loadState.value = StudentDataLoadState.LOADING
 
                 // 保存当前选中的学生ID，用于后续恢复选中状态
-                val selectedStudentId = _selectedStudent.value?.studentId
+                val selectedStudentIds = _selectedStudents.value.map { it.studentId }
 
                 // 获取总学生数量（未分页）
                 // TODO: 每一次加载都查询总数，可能会影响性能？ 但是目前没有更好的方法
@@ -121,9 +121,9 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                 _students.value = pageStudents
 
                 // 尝试在新数据中找回之前选中的学生
-                if (selectedStudentId != null) {
-                    val student = pageStudents.find { it.studentId == selectedStudentId }
-                    _selectedStudent.value = student
+                if (selectedStudentIds.isNotEmpty()) {
+                    val selectedStudents = pageStudents.filter { it.studentId in selectedStudentIds }
+                    _selectedStudents.value = selectedStudents
                 }
 
                 _loadState.value = StudentDataLoadState.DONE
@@ -140,9 +140,15 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
      * 设置选中的学生
      */
     fun setSelectedStudent(student: StudentDTO?) {
-        _selectedStudent.value = student
+        _selectedStudents.value = if (student == null) emptyList() else listOf(student)
     }
 
+    /**
+     * 设置选中的多个学生
+     */
+    fun setSelectedStudents(students: List<StudentDTO>) {
+        _selectedStudents.value = students
+    }
 
     /// 学生操作
     /**
@@ -173,6 +179,10 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
      * 删除学生
      */
     fun deleteStudent(uuid: UUID) {
+        deleteStudents(listOf(uuid))
+    }
+
+    fun deleteStudents(uuids: List<UUID>) {
         // 检查数据库是否已连接
         if (_loadState.value != StudentDataLoadState.DONE) {
             logger.warn("在未初始化完毕时尝试删除学生")
@@ -182,15 +192,15 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
         scope.launch {
             try {
                 _loadState.value = StudentDataLoadState.PROCESSING
-                val result = studentService.deleteStudent(uuid)
-                if (result) {
-                    // 如果删除的是当前选中的学生，取消选择
-                    if (_selectedStudent.value?.uuid == uuid) {
-                        _selectedStudent.value = null
+                uuids.forEach { uuid ->
+                    val selectedUUIDs = _selectedStudents.value.mapNotNull { it.uuid }
+                    if (uuid in selectedUUIDs) {
+                        _selectedStudents.value = _selectedStudents.value.filter { it.uuid != uuid }
                     }
-                    _loadState.value = StudentDataLoadState.PRELOADING
-                    loadData()
                 }
+                uuids.forEach { uuid -> studentService.deleteStudent(uuid) }
+                _loadState.value = StudentDataLoadState.PRELOADING
+                loadData()
             } catch (e: Exception) {
                 _loadState.value = StudentDataLoadState.ERROR
                 logger.error("删除学生失败", e)
@@ -219,8 +229,10 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                 }
                 
                 // 更新当前选中的学生
-                if (_selectedStudent.value?.studentId == student.studentId) {
-                    _selectedStudent.value = student
+                val currentSelectedStudent = selectedStudents.value.firstOrNull()
+                if (currentSelectedStudent?.studentId == student.studentId) {
+                    // 如果更新的是当前选中的学生，更新选择列表
+                    _selectedStudents.value = listOf(student) + _selectedStudents.value.filter { it.studentId != student.studentId }
                 }
                 _loadState.value = StudentDataLoadState.PRELOADING
                 loadData()
@@ -246,7 +258,7 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
 
         _paginationState.update { it.copy(currentPage = page) }
         // 切换页面时清除选中状态
-        _selectedStudent.value = null
+        _selectedStudents.value = emptyList()
         _loadState.value = StudentDataLoadState.PRELOADING
         loadData()
     }
@@ -300,7 +312,7 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
             )
         }
         // 切换页面大小时清除选中状态
-        _selectedStudent.value = null
+        _selectedStudents.value = emptyList()
         // 重新加载数据
         _loadState.value = StudentDataLoadState.PRELOADING
         loadData()

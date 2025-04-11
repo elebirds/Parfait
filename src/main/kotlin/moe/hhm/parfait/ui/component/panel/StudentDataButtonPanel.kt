@@ -9,6 +9,7 @@ package moe.hhm.parfait.ui.component.panel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
@@ -20,6 +21,7 @@ import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import javax.swing.JButton
+import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
@@ -38,27 +40,49 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
 
     private val buttonDel: JButton = createButton("student.action.delete").apply {
         addActionListener {
-            val uuid = viewModel.selectedStudent.value?.uuid
-            if (uuid != null) {
-                viewModel.deleteStudent(uuid)
+            val selectedStudents = viewModel.selectedStudents.value
+            if (selectedStudents.isNotEmpty()) {
+                // 显示确认对话框
+                val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
+                
+                // 根据选择的学生数量构建不同的确认消息
+                // 姓名取前五个人的
+                val message = I18nUtils.getFormattedText(
+                    "student.delete.confirm",
+                    selectedStudents.take(5).joinToString(", ") { it.name },
+                    selectedStudents.size
+                )
+                
+                val result = JOptionPane.showConfirmDialog(
+                    owner,
+                    message,
+                    I18nUtils.getText("student.delete.title"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+                )
+                
+                // 如果用户确认删除
+                if (result == JOptionPane.YES_OPTION) {
+                    // 批量删除选中的学生
+                    viewModel.deleteStudents(selectedStudents.mapNotNull { it.uuid })
+                }
             }
         }
     }
 
     private val buttonEdit: JButton = createButton("student.action.edit").apply {
         addActionListener {
-            val student = viewModel.selectedStudent.value
+            val student = viewModel.selectedStudents.value.firstOrNull()
             if (student != null) {
                 val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
                 StudentModifyDialog.show(student, owner)
-
             }
         }
     }
 
     private val buttonEditScore: JButton = createButton("grades.action.edit").apply {
         addActionListener {
-            val student = viewModel.selectedStudent.value
+            val student = viewModel.selectedStudents.value.firstOrNull()
             if (student != null) {
                 // 打开编辑成绩对话框
                 val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
@@ -102,11 +126,11 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
     override fun observer() {
         // 订阅ViewModel的加载状态和选中学生
         scope.launch {
-            combine(viewModel.loadState, viewModel.selectedStudent) { loadState, student ->
-                loadState to (student != null)
-            }.collectLatest { (loadState, isSelected) ->
+            combine(viewModel.loadState, viewModel.selectedStudents) { loadState, students ->
+                loadState to students.isNotEmpty()
+            }.collectLatest { (loadState, hasSelection) ->
                 // 更新按钮状态
-                updateState(loadState, isSelected)
+                updateState(loadState, hasSelection)
             }
         }
     }
@@ -114,14 +138,15 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
     /**
      * 更新按钮状态
      */
-    fun updateState(state: StudentDataLoadState, selected: Boolean) {
+    fun updateState(state: StudentDataLoadState, hasSelection: Boolean) {
         // 根据数据库连接状态和加载状态确定按钮启用状态
         val enabled = state == StudentDataLoadState.DONE
 
         // 设置按钮启用状态
         buttonAdd.isEnabled = enabled
-        buttonDel.isEnabled = enabled && selected
-        buttonEditScore.isEnabled = enabled && selected
+        buttonDel.isEnabled = enabled && hasSelection
+        buttonEdit.isEnabled = enabled && hasSelection && viewModel.selectedStudents.value.size == 1
+        buttonEditScore.isEnabled = enabled && hasSelection && viewModel.selectedStudents.value.size == 1
         buttonImport.isEnabled = enabled
         buttonExport.isEnabled = enabled
         buttonGenerateDocument.isEnabled = enabled

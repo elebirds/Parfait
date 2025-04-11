@@ -44,15 +44,17 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
         model = tableModel
         preferredViewportSize = Dimension(800, 600)
         autoResizeMode = AUTO_RESIZE_SUBSEQUENT_COLUMNS
-        selectionModel.selectionMode = ListSelectionModel.SINGLE_SELECTION
+        selectionModel.selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
         rowHeight = 25
 
         // 初始化表格列
         initColumns()
 
         // 表格行选择监听器
-        this.setRowSelectionListener { selectedStudent ->
-            viewModel.setSelectedStudent(selectedStudent)
+        this.selectionModel.addListSelectionListener { event ->
+            if (!event.valueIsAdjusting) {
+                viewModel.setSelectedStudents(getSelectedStudents())
+            }
         }
     }
 
@@ -111,33 +113,31 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
         }
     }
 
+    // 获取当前选中的所有学生
+    fun getSelectedStudents(): List<StudentDTO> {
+        return selectedRows.map { row ->
+            if (row >= 0 && row < studentList.size) {
+                studentList[row]
+            } else {
+                null
+            }
+        }.filterNotNull()
+    }
+
     // 获取当前选中的学生
     fun getSelectedStudent(): StudentDTO? {
-        val selectedRow = selectedRow
-        return if (selectedRow >= 0 && selectedRow < studentList.size) {
-            studentList[selectedRow]
-        } else {
-            null
-        }
+        val selectedStudents = getSelectedStudents()
+        return if (selectedStudents.isNotEmpty()) selectedStudents[0] else null
     }
 
-    // 获取当前选中的学生ID
-    fun getSelectedStudentId(): String? {
-        return getSelectedStudent()?.studentId
+    // 获取当前选中的学生ID列表
+    fun getSelectedStudentIds(): List<String> {
+        return getSelectedStudents().map { it.studentId }
     }
 
-    // 获取当前选中的学生UUID
-    fun getSelectedStudentUUID(): UUID? {
-        return getSelectedStudent()?.uuid
-    }
-
-    // 设置行选择监听器
-    fun setRowSelectionListener(action: (StudentDTO?) -> Unit) {
-        selectionModel.addListSelectionListener { event ->
-            if (!event.valueIsAdjusting) {
-                action(getSelectedStudent())
-            }
-        }
+    // 获取当前选中的学生UUID列表
+    fun getSelectedStudentUUIDs(): List<UUID> {
+        return getSelectedStudents().mapNotNull { it.uuid }
     }
 
     // 选择指定学生的行
@@ -160,6 +160,26 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
         }
     }
 
+    // 选择多个学生的行
+    fun selectStudents(students: List<StudentDTO>) {
+        clearSelection()
+        
+        if (students.isEmpty()) return
+        
+        students.forEach { student ->
+            // 查找学生在列表中的索引
+            val index = studentList.indexOfFirst { it.studentId == student.studentId }
+            if (index >= 0) {
+                // 添加到选择
+                addRowSelectionInterval(index, index)
+                // 确保第一个选中的行可见
+                if (students.first() == student) {
+                    scrollRectToVisible(getCellRect(index, 0, true))
+                }
+            }
+        }
+    }
+
     // 根据学生ID选择行
     fun selectStudentById(studentId: String?) {
         if (studentId == null) {
@@ -177,6 +197,26 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
         } else {
             // 未找到匹配的学生，清除选择
             clearSelection()
+        }
+    }
+    
+    // 根据多个学生ID选择行
+    fun selectStudentsByIds(studentIds: List<String>) {
+        clearSelection()
+        
+        if (studentIds.isEmpty()) return
+        
+        studentIds.forEach { studentId ->
+            // 查找学生在列表中的索引
+            val index = studentList.indexOfFirst { it.studentId == studentId }
+            if (index >= 0) {
+                // 添加到选择
+                addRowSelectionInterval(index, index)
+                // 确保第一个选中的行可见
+                if (studentIds.first() == studentId) {
+                    scrollRectToVisible(getCellRect(index, 0, true))
+                }
+            }
         }
     }
 }

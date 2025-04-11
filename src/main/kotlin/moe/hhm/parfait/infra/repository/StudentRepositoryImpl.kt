@@ -75,9 +75,8 @@ class StudentRepositoryImpl : StudentRepository {
     }
 
     override suspend fun delete(uuid: UUID): Boolean {
-        if (!isExistByUUID(uuid)) throw BusinessException("学生不存在") // TODO: 国际化
         return DatabaseUtils.dbQuery {
-            Students.deleteWhere { Op.build { Students.id eq uuid } }
+            Students.deleteWhere { Op.build { id eq uuid } }
         } > 0
     }
 
