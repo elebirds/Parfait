@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
+import moe.hhm.parfait.ui.component.dialog.AddStudentDialog
 import moe.hhm.parfait.ui.state.StudentDataLoadState
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import net.miginfocom.swing.MigLayout
@@ -19,6 +20,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import javax.swing.JButton
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinComponent,
     CoroutineComponent by DefaultCoroutineComponent(parent) {
@@ -28,7 +30,8 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
     private val buttonAdd: JButton = createButton("student.action.add").apply {
         addActionListener {
             // 打开添加学生对话框
-            // TODO: 实现添加学生对话框
+            val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
+            AddStudentDialog.show(owner)
         }
     }
 
