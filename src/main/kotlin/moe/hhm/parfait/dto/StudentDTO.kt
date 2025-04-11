@@ -22,8 +22,17 @@ data class StudentDTO(
     val classGroup: String,
     var scores: List<ScoreDTO>
 ) {
-    enum class Gender { UNKNOWN, MALE, FEMALE }
-    enum class Status { ENROLLED, SUSPENDED, GRADUATED, ABNORMAL }
+    enum class Gender(val i18nKey: String) {
+        UNKNOWN("student.gender.unknown"),
+        MALE("student.gender.male"),
+        FEMALE("student.gender.female");
+    }
+    enum class Status(val i18nKey: String) { 
+        ENROLLED("student.status.enrolled"),
+        SUSPENDED("student.status.suspended"),
+        GRADUATED("student.status.graduated"),
+        ABNORMAL("student.status.abnormal");
+    }
 
     fun <T : Any> into(it: UpdateBuilder<T>) {
         it[Students.studentId] = studentId

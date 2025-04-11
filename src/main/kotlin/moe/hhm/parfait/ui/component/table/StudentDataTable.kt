@@ -12,6 +12,7 @@ import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.awt.Dimension
@@ -33,8 +34,9 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
     private var studentList: List<StudentDTO> = emptyList()
 
     // 表格列名称
-    private val columnNames = arrayOf(
-        "学号", "姓名", "性别", "学院", "专业", "年级", "班级", "状态"
+    private val columnKeys = listOf(
+        "student.property.id", "student.property.name", "student.property.gender", "student.property.department",
+        "student.property.major", "student.property.grade", "student.property.classGroup", "student.property.status"
     )
 
     init {
@@ -67,7 +69,9 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
 
     // 初始化表格列
     private fun initColumns() {
-        tableModel.setColumnIdentifiers(columnNames)
+        I18nUtils.bindProperty(this, columnKeys) { table, resources ->
+            table.tableModel.setColumnIdentifiers(resources.toTypedArray())
+        }
     }
 
     // 将学生DTO对象转换为表格行数据

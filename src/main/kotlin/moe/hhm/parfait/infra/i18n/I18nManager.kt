@@ -82,6 +82,14 @@ object I18nManager {
     }
 
     /**
+     * 获取指定键的国际化文本列表
+     *
+     * @param keys 文本键列表
+     * @return 国际化文本列表
+     */ 
+    fun getMessages(keys: List<String>): List<String> = keys.map { getMessage(it) }
+
+    /**
      * 获取指定键的国际化文本，并进行参数替换
      *
      * @param key 文本键

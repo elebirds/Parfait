@@ -25,14 +25,14 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
     // 通过Koin获取ViewModel
     private val viewModel: StudentDataViewModel by inject()
 
-    private val buttonAdd: JButton = createButton("student.add").apply {
+    private val buttonAdd: JButton = createButton("student.action.add").apply {
         addActionListener {
             // 打开添加学生对话框
             // TODO: 实现添加学生对话框
         }
     }
 
-    private val buttonDel: JButton = createButton("student.delete").apply {
+    private val buttonDel: JButton = createButton("student.action.delete").apply {
         addActionListener {
             val studentId = viewModel.selectedStudent.value?.studentId
             if (studentId != null) {
@@ -41,7 +41,7 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
         }
     }
 
-    private val buttonEditScore: JButton = createButton("grades.edit").apply {
+    private val buttonEditScore: JButton = createButton("grades.action.edit").apply {
         addActionListener {
             val student = viewModel.selectedStudent.value
             if (student != null) {
@@ -51,21 +51,21 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
         }
     }
 
-    private val buttonImport: JButton = createButton("button.import").apply {
+    private val buttonImport: JButton = createButton("student.action.import").apply {
         addActionListener {
             // 打开导入对话框
             // TODO: 实现导入功能
         }
     }
 
-    private val buttonExport: JButton = createButton("button.export").apply {
+    private val buttonExport: JButton = createButton("student.action.export").apply {
         addActionListener {
             // 打开导出对话框
             // TODO: 实现导出功能
         }
     }
 
-    private val buttonGenerateDocument: JButton = createButton("button.generate").apply {
+    private val buttonGenerateDocument: JButton = createButton("certificate.action.generate").apply {
         addActionListener {
             // 打开生成文档对话框
             // TODO: 实现生成文档功能

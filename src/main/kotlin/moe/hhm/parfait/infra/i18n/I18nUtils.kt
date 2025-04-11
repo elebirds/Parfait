@@ -56,7 +56,7 @@ object I18nUtils {
      * @param key 国际化资源键
      * @param updater 更新函数，接收组件和文本
      */
-    private class ComponentPropertyUpdater<T : Component>(
+    private class ComponentSinglePropertyUpdater<T : Component>(
         private val component: WeakReference<T>,
         private val key: String,
         private val updater: (T, String) -> Unit
@@ -68,6 +68,25 @@ object I18nUtils {
         }
 
         override fun isValid(): Boolean = component.get() != null
+    }
+
+    /**
+     * 组件列表更新器
+     *
+     * 用于更新多个组件的属性
+     */
+    private class ComponentMultiplePropertyUpdater<T : Component>(
+        private val components: WeakReference<T>,
+        private val keys: List<String>,
+        private val updater: (T, List<String>) -> Unit
+    ) : I18nUpdater {
+        override fun update() {
+            components.get()?.let { comp ->
+                updater(comp, I18nManager.getMessages(keys))
+            }
+        }
+
+        override fun isValid(): Boolean = components.get() != null
     }
 
     // 所有注册的更新器
@@ -119,7 +138,25 @@ object I18nUtils {
         updater(component, I18nManager.getMessage(key))
 
         // 创建更新器并添加到集合
-        val propertyUpdater = ComponentPropertyUpdater(WeakReference(component), key, updater)
+        val propertyUpdater = ComponentSinglePropertyUpdater(WeakReference(component), key, updater)
+        updaters.add(propertyUpdater)
+    }
+
+    /**
+     * 绑定组件属性到国际化键
+     *
+     * 通用方法，可以绑定任何组件的任何属性
+     *
+     * @param component 要绑定的组件
+     * @param keys 国际化资源键列表
+     * @param updater 更新函数，指定如何将文本应用到组件
+     */
+    fun <T : Component> bindProperty(component: T, keys: List<String>, updater: (T, List<String>) -> Unit) {
+        // 先应用初始值
+        updater(component, I18nManager.getMessages(keys))
+
+        // 创建更新器并添加到集合
+        val propertyUpdater = ComponentMultiplePropertyUpdater(WeakReference(component), keys, updater)
         updaters.add(propertyUpdater)
     }
 
