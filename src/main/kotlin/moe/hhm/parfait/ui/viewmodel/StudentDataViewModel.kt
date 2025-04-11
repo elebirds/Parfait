@@ -17,6 +17,7 @@ import moe.hhm.parfait.ui.state.StudentDataPaginationState
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.slf4j.LoggerFactory
+import java.util.UUID
 import kotlin.math.ceil
 
 /**
@@ -171,7 +172,7 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
     /**
      * 删除学生
      */
-    fun deleteStudent(studentId: String) {
+    fun deleteStudent(uuid: UUID) {
         // 检查数据库是否已连接
         if (_loadState.value != StudentDataLoadState.DONE) {
             logger.warn("在未初始化完毕时尝试删除学生")
@@ -181,10 +182,10 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
         scope.launch {
             try {
                 _loadState.value = StudentDataLoadState.PROCESSING
-                val result = studentService.deleteStudent(studentId)
+                val result = studentService.deleteStudent(uuid)
                 if (result) {
                     // 如果删除的是当前选中的学生，取消选择
-                    if (_selectedStudent.value?.studentId == studentId) {
+                    if (_selectedStudent.value?.uuid == uuid) {
                         _selectedStudent.value = null
                     }
                     _loadState.value = StudentDataLoadState.PRELOADING
@@ -198,6 +199,38 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
         }
     }
 
+    /**
+     * 更新学生成绩
+     */
+    fun updateStudent(student: StudentDTO, isScores: Boolean) {
+        // 检查数据库是否已连接
+        if (_loadState.value != StudentDataLoadState.DONE) {
+            logger.warn("在未初始化完毕时尝试更新学生成绩")
+            return
+        }
+
+        scope.launch {
+            try {
+                _loadState.value = StudentDataLoadState.PROCESSING
+                if(isScores) {
+                    studentService.updateScore(student)
+                } else {
+                    studentService.updateInfo(student)
+                }
+                
+                // 更新当前选中的学生
+                if (_selectedStudent.value?.studentId == student.studentId) {
+                    _selectedStudent.value = student
+                }
+                _loadState.value = StudentDataLoadState.PRELOADING
+                loadData()
+            } catch (e: Exception) {
+                _loadState.value = StudentDataLoadState.ERROR
+                logger.error("更新学生成绩失败", e)
+                e.printStackTrace()
+            }
+        }
+    }
 
     /// 分页操作
 

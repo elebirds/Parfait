@@ -9,10 +9,10 @@ package moe.hhm.parfait.ui.component.table
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.dto.StudentDTO
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
-import moe.hhm.parfait.infra.i18n.I18nUtils
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.awt.Dimension

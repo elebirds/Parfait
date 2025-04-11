@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
-import moe.hhm.parfait.ui.component.dialog.AddStudentDialog
+import moe.hhm.parfait.ui.component.dialog.StudentModifyDialog
+import moe.hhm.parfait.ui.component.dialog.StudentGradesDialog
 import moe.hhm.parfait.ui.state.StudentDataLoadState
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import net.miginfocom.swing.MigLayout
@@ -31,15 +32,26 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
         addActionListener {
             // 打开添加学生对话框
             val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
-            AddStudentDialog.show(owner)
+            StudentModifyDialog.show(null, owner)
         }
     }
 
     private val buttonDel: JButton = createButton("student.action.delete").apply {
         addActionListener {
-            val studentId = viewModel.selectedStudent.value?.studentId
-            if (studentId != null) {
-                viewModel.deleteStudent(studentId)
+            val uuid = viewModel.selectedStudent.value?.uuid
+            if (uuid != null) {
+                viewModel.deleteStudent(uuid)
+            }
+        }
+    }
+
+    private val buttonEdit: JButton = createButton("student.action.edit").apply {
+        addActionListener {
+            val student = viewModel.selectedStudent.value
+            if (student != null) {
+                val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
+                StudentModifyDialog.show(student, owner)
+
             }
         }
     }
@@ -49,7 +61,8 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
             val student = viewModel.selectedStudent.value
             if (student != null) {
                 // 打开编辑成绩对话框
-                // TODO: 实现编辑成绩对话框
+                val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
+                StudentGradesDialog.show(student, owner)
             }
         }
     }
@@ -79,10 +92,11 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
         this.layout = MigLayout("hidemode 3", "[fill]", "[][][][][][][][][][][][][]")
         this.add(buttonAdd, "cell 0 0")
         this.add(buttonDel, "cell 0 1")
-        this.add(buttonEditScore, "cell 0 2")
-        this.add(buttonImport, "cell 0 3")
-        this.add(buttonExport, "cell 0 4")
-        this.add(buttonGenerateDocument, "cell 0 5")
+        this.add(buttonEdit, "cell 0 2")
+        this.add(buttonEditScore, "cell 0 3")
+        this.add(buttonImport, "cell 0 4")
+        this.add(buttonExport, "cell 0 5")
+        this.add(buttonGenerateDocument, "cell 0 6")
     }
 
     override fun observer() {

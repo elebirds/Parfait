@@ -39,20 +39,24 @@ class StudentRepositoryImpl : StudentRepository {
             .toList()
     }
 
-    override suspend fun findByUUID(id: UUID): Student? = DatabaseUtils.dbQuery {
-        Student.findById(EntityID(id, Students))
+    override suspend fun findByUUID(uuid: UUID): Student? = DatabaseUtils.dbQuery {
+        Student.findById(EntityID(uuid, Students))
     }
 
-    override suspend fun findById(studentID: String): Student? = DatabaseUtils.dbQuery {
+    override suspend fun findByStudentId(studentID: String): Student? = DatabaseUtils.dbQuery {
         Student.find { studentId eq studentID }.firstOrNull()
     }
 
-    override suspend fun isExistById(studentID: String): Boolean = DatabaseUtils.dbQuery {
+    override suspend fun isExistByUUID(uuid: UUID): Boolean = DatabaseUtils.dbQuery {
+        Student.find { Students.id eq uuid }.count() > 0
+    }
+
+    override suspend fun isExistByStudentId(studentID: String): Boolean = DatabaseUtils.dbQuery {
         Student.find { studentId eq studentID }.count() > 0
     }
 
     override suspend fun addStudent(student: StudentDTO): EntityID<UUID> {
-        if (isExistById(student.studentId)) throw BusinessException("学生已存在") // TODO: 国际化
+        if (isExistByStudentId(student.studentId)) throw BusinessException("学生已存在") // TODO: 国际化
         return DatabaseUtils.dbQuery {
             Students.insertAndGetId {
                 student.into(it)
@@ -61,26 +65,26 @@ class StudentRepositoryImpl : StudentRepository {
     }
 
     override suspend fun updateInfo(student: StudentDTO): Boolean {
-        if (!isExistById(student.studentId)) throw BusinessException("学生不存在") // TODO: 国际化
-        return DatabaseUtils.dbQuery {
-            Students.update({ studentId eq student.studentId }) {
+        if (!isExistByUUID(student.uuid!!)) throw BusinessException("学生不存在") // TODO: 国际化
+        return DatabaseUtils.dbQuery { // 使用uuid更新
+            Students.update({ Students.id eq student.uuid }) {
                 student.into(it)
                 it[updatedAt] = LocalDateTime.now()
             }
         } > 0
     }
 
-    override suspend fun delete(studentId: String): Boolean {
-        if (!isExistById(studentId)) throw BusinessException("学生不存在") // TODO: 国际化
+    override suspend fun delete(uuid: UUID): Boolean {
+        if (!isExistByUUID(uuid)) throw BusinessException("学生不存在") // TODO: 国际化
         return DatabaseUtils.dbQuery {
-            Students.deleteWhere { Op.build { Students.studentId eq studentId } }
+            Students.deleteWhere { Op.build { Students.id eq uuid } }
         } > 0
     }
 
     override suspend fun updateScore(student: StudentDTO): Boolean {
-        if (!isExistById(student.studentId)) throw BusinessException("学生不存在") // TODO: 国际化
+        if (!isExistByUUID(student.uuid!!)) throw BusinessException("学生不存在") // TODO: 国际化
         return DatabaseUtils.dbQuery {
-            Students.update({ studentId eq student.studentId }) {
+            Students.update({ Students.id eq student.uuid }) {
                 it[scores] = student.scores.toScoreString()
                 it[updatedAt] = LocalDateTime.now()
             }

@@ -33,12 +33,17 @@ interface StudentRepository {
     /**
      * 根据学号查找学生
      */
-    suspend fun findById(studentID: String): Student?
+    suspend fun findByStudentId(studentID: String): Student?
+
+    /**
+     * 查询指定UUID的学生是否存在
+     */
+    suspend fun isExistByUUID(uuid: UUID): Boolean
 
     /**
      * 查询指定学号的学生是否存在
      */
-    suspend fun isExistById(studentID: String): Boolean
+    suspend fun isExistByStudentId(studentID: String): Boolean
 
     /**
      * 添加学生
@@ -58,7 +63,7 @@ interface StudentRepository {
     /**
      * 删除学生
      */
-    suspend fun delete(studentID: String): Boolean
+    suspend fun delete(uuid: UUID): Boolean
 
     /**
      * 统计学生数量
