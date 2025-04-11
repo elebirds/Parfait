@@ -33,7 +33,7 @@ class MainToolBar : JToolBar() {
     private val refreshButton = JButton(FlatSVGIcon("ui/nwicons/refresh.svg")).apply {
         bindToolTipText(this, "toolbar.refresh")
         addActionListener {
-            // TODO: 实现刷新功能
+
         }
     }
     private val redrawButton = JButton(FlatSVGIcon("ui/nwicons/redraw.svg")).apply {
