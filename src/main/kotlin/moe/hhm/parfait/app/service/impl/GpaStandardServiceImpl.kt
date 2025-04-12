@@ -52,4 +52,8 @@ class GpaStandardServiceImpl(private val rep: GpaRepository) : GpaStandardServic
         }
         return defaultStandard!!
     }
+
+    override suspend fun setDefault(uuid: UUID): Boolean {
+        return rep.setDefault(uuid)
+    }
 }

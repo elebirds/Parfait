@@ -7,8 +7,10 @@
 package moe.hhm.parfait.di
 
 import moe.hhm.parfait.app.service.GpaStandardService
+import moe.hhm.parfait.app.service.StudentSearchService
 import moe.hhm.parfait.app.service.StudentService
 import moe.hhm.parfait.app.service.impl.GpaStandardServiceImpl
+import moe.hhm.parfait.app.service.impl.StudentSearchServiceImpl
 import moe.hhm.parfait.app.service.impl.StudentServiceImpl
 import org.koin.dsl.module
 
@@ -18,4 +20,5 @@ import org.koin.dsl.module
 val appModule = module {
     single<GpaStandardService> { GpaStandardServiceImpl(get()) }
     single<StudentService> { StudentServiceImpl(get()) }
+    single<StudentSearchService> { StudentSearchServiceImpl() }
 }
