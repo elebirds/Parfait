@@ -22,6 +22,7 @@ class GpaStandard(id: EntityID<UUID>) : UUIDEntity(id) {
     var description by GpaStandards.description
     var category by GpaStandards.category
     var mapping by GpaStandards.mapping
+    var isDefault by GpaStandards.isDefault
 
     var createdAt by GpaStandards.createdAt
     var updatedAt by GpaStandards.updatedAt

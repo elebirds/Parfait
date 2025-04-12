@@ -36,6 +36,18 @@ class GpaRepositoryImpl : GpaRepository {
         GpaStandard.find { GpaStandards.name eq name }.count() > 0
     }
 
+    override suspend fun getDefault(): GpaStandard = DatabaseUtils.dbQuery {
+        GpaStandard.find {
+            GpaStandards.isDefault eq true
+        }.firstOrNull() ?: throw BusinessException("gpa.error.default.not.exist")
+    }
+
+    override fun getDefaultSync(): GpaStandard = DatabaseUtils.dbQuerySync {
+        GpaStandard.find {
+            GpaStandards.isDefault eq true
+        }.firstOrNull() ?: throw BusinessException("gpa.error.default.not.exist")
+    }
+
     override suspend fun findAll(): List<GpaStandard> = DatabaseUtils.dbQuery {
         GpaStandard.all().toList()
     }
@@ -60,5 +72,4 @@ class GpaRepositoryImpl : GpaRepository {
     override suspend fun delete(uuid: UUID) = DatabaseUtils.dbQuery {
         GpaStandards.deleteWhere { Op.build {id eq uuid}}
     } > 0
-
 }

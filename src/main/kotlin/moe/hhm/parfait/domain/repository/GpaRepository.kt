@@ -20,4 +20,6 @@ interface GpaRepository {
     suspend fun count(): Long
     suspend fun update(gpaStandard: GpaStandardDTO): Boolean
     suspend fun isExistByName(name: String): Boolean
+    suspend fun getDefault(): GpaStandard
+    fun getDefaultSync(): GpaStandard
 }

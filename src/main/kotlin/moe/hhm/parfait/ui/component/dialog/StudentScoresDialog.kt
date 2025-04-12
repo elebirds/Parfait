@@ -7,8 +7,10 @@
 package moe.hhm.parfait.ui.component.dialog
 
 import kotlinx.coroutines.launch
-import moe.hhm.parfait.app.service.GradeCalculationService
+import moe.hhm.parfait.app.service.GpaStandardService
 import moe.hhm.parfait.dto.StudentDTO
+import moe.hhm.parfait.dto.simpleMean
+import moe.hhm.parfait.dto.weightedMean
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
 import moe.hhm.parfait.ui.base.CoroutineComponent
@@ -35,7 +37,7 @@ class StudentScoresDialog(
 
     // 通过Koin获取ViewModel和服务
     private val viewModel: StudentDataViewModel by inject()
-    private val gradeCalculationService: GradeCalculationService by inject()
+    private val gpaService: GpaStandardService by inject()
 
     // 成绩表格相关组件
     private val tableModel = ScoresTableModel()
@@ -167,9 +169,9 @@ class StudentScoresDialog(
             gpaLabel.text = "0.0"
             totalCreditLabel.text = "0"
         } else {
-            avgScoreLabel.text = String.format("%.2f", gradeCalculationService.simpleMean(scores))
-            weightedAvgLabel.text = String.format("%.2f", gradeCalculationService.weightedMean(scores))
-            gpaLabel.text = String.format("%.2f", gradeCalculationService.gpa(scores))
+            avgScoreLabel.text = String.format("%.2f", scores.simpleMean())
+            weightedAvgLabel.text = String.format("%.2f", scores.weightedMean())
+            gpaLabel.text = String.format("%.2f", gpaService.getDefault().mapping.getGpa(scores))
             totalCreditLabel.text = scores.sumOf { it.credit }.toString()
         }
     }

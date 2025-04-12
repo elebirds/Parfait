@@ -14,6 +14,10 @@ import org.jetbrains.exposed.dao.id.EntityID
 import java.util.UUID
 
 class GpaStandardServiceImpl(private val rep: GpaRepository) : GpaStandardService  {
+    companion object {
+        private var defaultStandard: GpaStandardDTO? = null
+    }
+
     override suspend fun getAllGpaStandards(): List<GpaStandardDTO> {
         return rep.findAll().map { it.toDTO() }
     }
@@ -36,5 +40,16 @@ class GpaStandardServiceImpl(private val rep: GpaRepository) : GpaStandardServic
 
     override suspend fun updateGpaStandard(gpaStandard: GpaStandardDTO): Boolean {
         return rep.update(gpaStandard)
+    }
+
+    override suspend fun loadDefault(): GpaStandardDTO {
+        return rep.getDefault().toDTO()
+    }
+
+    override fun getDefault(): GpaStandardDTO {
+        if (defaultStandard == null) {
+            defaultStandard = rep.getDefaultSync().toDTO()
+        }
+        return defaultStandard!!
     }
 }

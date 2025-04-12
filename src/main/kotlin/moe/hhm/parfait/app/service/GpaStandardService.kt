@@ -18,4 +18,6 @@ interface GpaStandardService {
     suspend fun addGpaStandard(gpaStandard: GpaStandardDTO): EntityID<UUID>
     suspend fun deleteGpaStandard(uuid: UUID): Boolean
     suspend fun updateGpaStandard(gpaStandard: GpaStandardDTO): Boolean
+    suspend fun loadDefault(): GpaStandardDTO
+    fun getDefault(): GpaStandardDTO
 }
