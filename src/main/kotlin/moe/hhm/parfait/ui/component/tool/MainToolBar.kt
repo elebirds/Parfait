@@ -9,12 +9,14 @@ package moe.hhm.parfait.ui.component.tool
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindToolTipText
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.dialog.AdvancedFilterDialog
 import moe.hhm.parfait.ui.component.dialog.SearchFilterDialog
 import moe.hhm.parfait.ui.state.FilterState
+import moe.hhm.parfait.ui.state.StudentDataLoadState
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -55,7 +57,7 @@ class MainToolBar : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoro
     private val refreshButton = JButton(FlatSVGIcon("ui/nwicons/refresh.svg")).apply {
         bindToolTipText(this, "toolbar.refresh")
         addActionListener {
-            viewModel.loadData()
+            refreshData()
         }
     }
     
@@ -77,6 +79,18 @@ class MainToolBar : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoro
         
         // 监听筛选状态变化
         observeFilterState()
+    }
+    
+    /**
+     * 刷新数据
+     */
+    private fun refreshData() {
+        // 如果当前是DONE状态，先设置为PRELOADING再执行loadData
+        if (viewModel.loadState.value == StudentDataLoadState.DONE) {
+            viewModel.prepareForReload()
+        } else {
+            viewModel.loadData()
+        }
     }
     
     /**

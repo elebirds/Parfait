@@ -538,5 +538,18 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
             }
         }
     }
+
+    /**
+     * 准备重新加载数据
+     * 当前状态为DONE时，将状态设置为PRELOADING，然后加载数据
+     */
+    fun prepareForReload() {
+        if (_loadState.value == StudentDataLoadState.DONE) {
+            _loadState.value = StudentDataLoadState.PRELOADING
+            loadData()
+        } else {
+            logger.warn("无法准备重新加载数据，当前状态：${_loadState.value.name}")
+        }
+    }
 }
 
