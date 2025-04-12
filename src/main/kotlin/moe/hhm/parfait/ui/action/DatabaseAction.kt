@@ -9,6 +9,7 @@ package moe.hhm.parfait.ui.action
 import moe.hhm.parfait.infra.db.DatabaseConnectionConfig
 import moe.hhm.parfait.infra.db.DatabaseFactory
 import moe.hhm.parfait.infra.db.STANDALONE_DB_SUFFIX
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.JOptionPane
@@ -44,26 +45,26 @@ object DatabaseAction {
         // 检测地址是否合法
         val a = address.split(":")
         if (a.size != 2) {
-            throw IllegalArgumentException("Invalid address: $address")
+            throw IllegalArgumentException(I18nUtils.getFormattedText("database.invalidAddress", a))
         } 
         // IP 地址是否合法，需要支持域名,localhost,127.0.0.1等
         val ip = a[0]
         if (!ip.matches(Regex("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) && !ip.matches(Regex("[a-zA-Z0-9.-]+"))) {
-            throw IllegalArgumentException("Invalid IP address: $ip")
+            throw IllegalArgumentException(I18nUtils.getFormattedText("database.illegalIp", ip))
         }
         // 端口是否合法
         val port = a[1].toInt()
         if (port < 0 || port > 65535) {
-            throw IllegalArgumentException("Invalid port: $port")
-        }   
+            throw IllegalArgumentException(I18nUtils.getFormattedText("database.invalidPort", port))
+        }
         // 数据库名是否合法
         if (databaseName.isEmpty()) {
-            throw IllegalArgumentException("Database name cannot be empty")
+            throw IllegalArgumentException(I18nUtils.getFormattedText("database.invalidDatabaseName", databaseName))
         }
         
         // 用户名是否合法
         if (user.isEmpty()) {
-            throw IllegalArgumentException("User name cannot be empty")
+            throw IllegalArgumentException(I18nUtils.getText("database.invalidUserName"))
         }
         // 密码允许为空
     }
@@ -89,8 +90,8 @@ object DatabaseAction {
             // 显示连接错误
             JOptionPane.showMessageDialog( // TODO: 需要国际化
                 null,
-                "连接失败: ${e.message}",
-                "连接错误",
+                I18nUtils.getFormattedText("database.failconnet",e.message) ,
+                I18nUtils.getText("database.connectError"),
                 JOptionPane.ERROR_MESSAGE
             )
         }
