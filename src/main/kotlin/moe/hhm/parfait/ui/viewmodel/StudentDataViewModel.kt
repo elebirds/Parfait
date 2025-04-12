@@ -9,9 +9,12 @@ package moe.hhm.parfait.ui.viewmodel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.app.service.StudentService
+import moe.hhm.parfait.app.service.StudentSearchService
 import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
+import moe.hhm.parfait.ui.component.dialog.SearchFilterCriteria
+import moe.hhm.parfait.ui.state.FilterState
 import moe.hhm.parfait.ui.state.StudentDataLoadState
 import moe.hhm.parfait.ui.state.StudentDataPaginationState
 import org.koin.core.component.KoinComponent
@@ -30,6 +33,9 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
     // 通过Koin获取StudentService实例
     private val studentService: StudentService by inject()
 
+    // 通过Koin获取StudentSearchService实例
+    private val studentSearchService: StudentSearchService by inject()
+
     // 学生列表数据状态
     private val _students = MutableStateFlow<List<StudentDTO>>(emptyList())
     val students: StateFlow<List<StudentDTO>> = _students.asStateFlow()
@@ -45,6 +51,14 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
     // 当前选中的多个学生
     private val _selectedStudents = MutableStateFlow<List<StudentDTO>>(emptyList())
     val selectedStudents: StateFlow<List<StudentDTO>> = _selectedStudents.asStateFlow()
+
+    // 筛选状态
+    private val _filterState = MutableStateFlow(FilterState.NO_FILTER)
+    val filterState: StateFlow<FilterState> = _filterState.asStateFlow()
+
+    // 当前使用的筛选条件
+    private val _currentFilterCriteria = MutableStateFlow<SearchFilterCriteria?>(null)
+    val currentFilterCriteria: StateFlow<SearchFilterCriteria?> = _currentFilterCriteria.asStateFlow()
 
     init {
         // 监听数据库连接状态
@@ -97,8 +111,11 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                 val selectedStudentIds = _selectedStudents.value.map { it.studentId }
 
                 // 获取总学生数量（未分页）
-                // TODO: 每一次加载都查询总数，可能会影响性能？ 但是目前没有更好的方法
-                val totalStudents = studentService.count()
+                val totalStudents = if (_currentFilterCriteria.value != null) {
+                    studentSearchService.countSearchResults(_currentFilterCriteria.value!!)
+                } else {
+                    studentService.count()
+                }
                 val totalPages = calculateTotalPages(totalStudents, _paginationState.value.pageSize)
 
                 // 更新分页状态
@@ -112,10 +129,18 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                 }
 
                 // 获取当前页的学生数据
-                val pageStudents = studentService.getStudentsPage(
-                    _paginationState.value.currentPage,
-                    _paginationState.value.pageSize
-                )
+                val pageStudents = if (_currentFilterCriteria.value != null) {
+                    studentSearchService.searchStudentsPage(
+                        _currentFilterCriteria.value!!,
+                        _paginationState.value.currentPage,
+                        _paginationState.value.pageSize
+                    )
+                } else {
+                    studentService.getStudentsPage(
+                        _paginationState.value.currentPage,
+                        _paginationState.value.pageSize
+                    )
+                }
 
                 // 更新学生列表
                 _students.value = pageStudents
@@ -327,6 +352,129 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
      */
     private fun calculateTotalPages(totalItems: Long, pageSize: Int): Int {
         return ceil(totalItems.toDouble() / pageSize).toInt().coerceAtLeast(1)
+    }
+
+    /**
+     * 搜索学生
+     * @param criteria 搜索条件
+     */
+    fun search(criteria: SearchFilterCriteria) {
+        // 检查数据库是否已连接
+        if (_loadState.value != StudentDataLoadState.DONE) {
+            logger.warn("在未初始化完毕时尝试搜索学生")
+            return
+        }
+
+        scope.launch {
+            try {
+                _loadState.value = StudentDataLoadState.PROCESSING
+                
+                // 清空当前选中的学生
+                _selectedStudents.value = emptyList()
+                
+                val searchResults = studentSearchService.searchStudents(criteria)
+                
+                // 更新学生列表，不应用为筛选条件
+                _students.value = searchResults
+                _filterState.value = FilterState.NO_FILTER
+                _currentFilterCriteria.value = null
+                
+                // 更新分页状态（搜索结果不分页）
+                _paginationState.update {
+                    it.copy(
+                        currentPage = 1,
+                        totalStudents = searchResults.size.toLong(),
+                        totalPages = 1
+                    )
+                }
+                
+                _loadState.value = StudentDataLoadState.DONE
+            } catch (e: Exception) {
+                _loadState.value = StudentDataLoadState.ERROR
+                logger.error("搜索学生失败", e)
+                e.printStackTrace()
+            }
+        }
+    }
+    
+    /**
+     * 应用筛选条件
+     * @param criteria 筛选条件
+     */
+    fun applyFilter(criteria: SearchFilterCriteria) {
+        // 检查数据库是否已连接
+        if (_loadState.value != StudentDataLoadState.DONE) {
+            logger.warn("在未初始化完毕时尝试筛选学生")
+            return
+        }
+        
+        scope.launch {
+            try {
+                _loadState.value = StudentDataLoadState.PROCESSING
+                
+                // 清空当前选中的学生
+                _selectedStudents.value = emptyList()
+                
+                // 保存筛选条件
+                _currentFilterCriteria.value = criteria
+                _filterState.value = FilterState.FILTERED
+                
+                // 重置页码
+                _paginationState.update {
+                    it.copy(currentPage = 1)
+                }
+                
+                // 重新加载数据
+                _loadState.value = StudentDataLoadState.PRELOADING
+                loadData()
+            } catch (e: Exception) {
+                _loadState.value = StudentDataLoadState.ERROR
+                logger.error("应用筛选条件失败", e)
+                e.printStackTrace()
+            }
+        }
+    }
+    
+    /**
+     * 清除筛选条件
+     */
+    fun clearFilter() {
+        // 检查数据库是否已连接
+        if (_loadState.value != StudentDataLoadState.DONE) {
+            logger.warn("在未初始化完毕时尝试清除筛选条件")
+            return
+        }
+        
+        // 如果当前没有筛选条件，不做任何操作
+        if (_filterState.value == FilterState.NO_FILTER) {
+            return
+        }
+        
+        scope.launch {
+            try {
+                _loadState.value = StudentDataLoadState.PROCESSING
+                
+                // 清空当前选中的学生
+                _selectedStudents.value = emptyList()
+                
+                // 清除筛选条件
+                _currentFilterCriteria.value = null
+                _filterState.value = FilterState.NO_FILTER
+                
+                // 重置页码
+                _paginationState.update {
+                    it.copy(currentPage = 1)
+                }
+                
+                // 重新加载数据
+                _loadState.value = StudentDataLoadState.PRELOADING
+                loadData()
+            } catch (e: Exception) {
+                _loadState.value = StudentDataLoadState.ERROR
+                logger.error("清除筛选条件失败", e)
+                e.printStackTrace()
+            }
+        }
     }
 }
 
