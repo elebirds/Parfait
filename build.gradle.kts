@@ -59,6 +59,8 @@ dependencies {
     implementation("com.deepoove:poi-tl:1.12.2")
     // 拼音英文转换
     implementation("com.belerweb:pinyin4j:2.5.1")
+    // YAML配置支持
+    implementation("org.yaml:snakeyaml:2.0")
     // 测试
     testImplementation(kotlin("test"))
 }

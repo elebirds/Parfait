@@ -1,0 +1,81 @@
+# 证书术语配置文件 - 专业名称翻译
+
+# 中文专业名称 (Chinese)
+major.zh.广告学: 广告学
+major.zh.财务管理: 财务管理
+major.zh.经济学: 经济学
+major.zh.金融工程: 金融工程
+major.zh.金融学: 金融学
+major.zh.计算机科学与技术: 计算机科学与技术
+major.zh.金融科技: 金融科技
+major.zh.资产评估: 资产评估
+
+# 英文专业名称 (English)
+major.en.广告学: Advertising
+major.en.财务管理: Financial Management
+major.en.经济学: Economics
+major.en.金融工程: Financial Engineering
+major.en.金融学: Finance
+major.en.计算机科学与技术: Computer Science and Technology
+major.en.金融科技: Financial Technology
+major.en.资产评估: Asset Valuation
+
+# 法语专业名称 (French)
+major.fr.广告学: Publicité
+major.fr.财务管理: Gestion Financière
+major.fr.经济学: Sciences Économiques
+major.fr.金融工程: Ingénierie Financière
+major.fr.金融学: Finance
+major.fr.计算机科学与技术: Informatique et Technologie
+major.fr.金融科技: Technologie Financière
+major.fr.资产评估: Évaluation des Actifs
+
+# 日语专业名称 (Japanese)
+major.jp.广告学: 広告学
+major.jp.财务管理: 財務管理
+major.jp.经济学: 経済学
+major.jp.金融工程: 金融工学
+major.jp.金融学: 金融学
+major.jp.计算机科学与技术: コンピュータサイエンスと技術
+major.jp.金融科技: フィンテック
+major.jp.资产评估: 資産評価
+
+# 通用证书术语 - 中文
+certificate.term.日期: 日期
+certificate.term.姓名: 姓名
+certificate.term.学号: 学号
+certificate.term.证书标题: 证书标题
+certificate.term.证书内容: 证书内容
+certificate.term.签名: 签名
+certificate.term.颁发单位: 颁发单位
+certificate.term.印章: 印章
+
+# 通用证书术语 - 英文
+certificate.term.en.日期: Date
+certificate.term.en.姓名: Name
+certificate.term.en.学号: Student ID
+certificate.term.en.证书标题: Certificate Title
+certificate.term.en.证书内容: Certificate Content
+certificate.term.en.签名: Signature
+certificate.term.en.颁发单位: Issuer
+certificate.term.en.印章: Seal
+
+# 通用证书术语 - 法文
+certificate.term.fr.日期: Date
+certificate.term.fr.姓名: Nom
+certificate.term.fr.学号: Numéro d'étudiant
+certificate.term.fr.证书标题: Titre du certificat
+certificate.term.fr.证书内容: Contenu du certificat
+certificate.term.fr.签名: Signature
+certificate.term.fr.颁发单位: Émetteur
+certificate.term.fr.印章: Sceau
+
+# 通用证书术语 - 日文
+certificate.term.jp.日期: 日付
+certificate.term.jp.姓名: 氏名
+certificate.term.jp.学号: 学籍番号
+certificate.term.jp.证书标题: 証明書タイトル
+certificate.term.jp.证书内容: 証明書内容
+certificate.term.jp.签名: 署名
+certificate.term.jp.颁发单位: 発行機関
+certificate.term.jp.印章: 印章

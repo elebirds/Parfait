@@ -9,18 +9,18 @@ package moe.hhm.parfait.ui.component.panel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.ui.base.CoroutineComponent
-import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
+import moe.hhm.parfait.ui.viewmodel.TermViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 /**
- * 学生数据分页面板
+ * 术语分页面板
  */
-class StudentDataPaginationPanel(parent: CoroutineComponent? = null) : 
+class TermPaginationPanel(parent: CoroutineComponent? = null) : 
     PaginationPanel(parent), KoinComponent {
     
     // 通过Koin获取ViewModel
-    private val viewModel: StudentDataViewModel by inject()
+    private val viewModel: TermViewModel by inject()
     
     init {
         // 设置回调

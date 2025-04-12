@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import moe.hhm.parfait.infra.db.certificate.CertificateDatas
 import moe.hhm.parfait.infra.db.certificate.CertificateRecords
 import moe.hhm.parfait.infra.db.certificate.CertificateTemplates
+import moe.hhm.parfait.infra.db.certificate.CertificateTerms
 import moe.hhm.parfait.infra.db.gpa.GpaStandards
 import moe.hhm.parfait.infra.db.student.Students
 import org.jetbrains.exposed.sql.Database
@@ -142,7 +143,8 @@ object DatabaseFactory {
                 GpaStandards,
                 CertificateTemplates,
                 CertificateRecords,
-                CertificateDatas
+                CertificateDatas,
+                CertificateTerms
             )
         }
     }
@@ -151,7 +153,8 @@ object DatabaseFactory {
         logger.info("初始化默认数据")
         transaction {
             GpaStandards.init()
-            CertificateTemplates.init();
+            CertificateTemplates.init()
+            CertificateTerms.init()
         }
     }
 }
