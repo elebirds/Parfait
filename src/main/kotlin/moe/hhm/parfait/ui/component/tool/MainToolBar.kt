@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindToolTipText
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
+import moe.hhm.parfait.ui.component.dialog.AdvancedFilterDialog
 import moe.hhm.parfait.ui.component.dialog.SearchFilterDialog
 import moe.hhm.parfait.ui.state.FilterState
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
@@ -38,7 +39,7 @@ class MainToolBar : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoro
         bindToolTipText(this, "toolbar.filter")
         addActionListener {
             SwingUtilities.getWindowAncestor(this)?.let { window ->
-                SearchFilterDialog.showFilter(window)
+                AdvancedFilterDialog.show(window)
             }
         }
     }
