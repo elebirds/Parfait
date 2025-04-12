@@ -7,42 +7,58 @@
 package moe.hhm.parfait.infra.repository
 
 import moe.hhm.parfait.domain.model.gpa.GpaStandard
-import moe.hhm.parfait.domain.model.gpa.GradePointMapping
 import moe.hhm.parfait.domain.repository.GpaRepository
+import moe.hhm.parfait.dto.GpaStandardDTO
 import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.infra.db.DatabaseUtils
 import moe.hhm.parfait.infra.db.gpa.GpaStandards
-import moe.hhm.parfait.infra.db.gpa.GradePointMappings
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insertAndGetId
+import org.jetbrains.exposed.sql.update
+import java.time.LocalDateTime
 import java.util.*
 
 class GpaRepositoryImpl : GpaRepository {
-    companion object {
-        private var GPA_STANDARD: GpaStandard? = null
-        private var GRADE_POINT_MAPPING: List<GradePointMapping>? = null
+    override suspend fun count(): Long = DatabaseUtils.dbQuery {
+        GpaStandard.count()
     }
 
-    override fun getGpaStandard(): GpaStandard {
-        return GPA_STANDARD ?: loadGpaStandard()
+    override suspend fun update(gpaStandard: GpaStandardDTO): Boolean = DatabaseUtils.dbQuery {
+        GpaStandards.update({ GpaStandards.id eq gpaStandard.uuid }) {
+            gpaStandard.into(it)
+            it[updatedAt] = LocalDateTime.now()
+        } > 0
     }
 
-    override fun getGradePointMappings(): List<GradePointMapping> {
-        return GRADE_POINT_MAPPING ?: loadGradePointMappings(getGpaStandard().id.value)
+    override suspend fun isExistByName(name: String): Boolean = DatabaseUtils.dbQuery {
+        GpaStandard.find { GpaStandards.name eq name }.count() > 0
     }
 
-    override fun loadGpaStandard(): GpaStandard {
-        return DatabaseUtils.dbQuerySync {
-            val res = GpaStandard.Companion.find { GpaStandards.isDefault eq true }.firstOrNull()
-            GPA_STANDARD = res
-            res
-        } ?: throw BusinessException("缺失默认绩点标准")
+    override suspend fun findAll(): List<GpaStandard> = DatabaseUtils.dbQuery {
+        GpaStandard.all().toList()
     }
 
-    override fun loadGradePointMappings(standardID: UUID): List<GradePointMapping> = DatabaseUtils.dbQuerySync {
-        val res = GradePointMapping.Companion.find { GradePointMappings.standardId eq standardID }.toList()
-            .sortedByDescending {
-                it.gradePoint
+    override suspend fun findByUUID(uuid: UUID): GpaStandard? = DatabaseUtils.dbQuery {
+        GpaStandard.findById(uuid)
+    }
+
+    override suspend fun findByName(name: String): GpaStandard? = DatabaseUtils.dbQuery{
+        GpaStandard.find { GpaStandards.name eq name }.firstOrNull()
+    }
+
+    override suspend fun add(gpaStandard: GpaStandardDTO): EntityID<UUID>  {
+        if (isExistByName(gpaStandard.name)) throw BusinessException("gpa.error.name.exist")
+        return DatabaseUtils.dbQuery {
+            GpaStandards.insertAndGetId {
+                gpaStandard.into(it)
             }
-        GRADE_POINT_MAPPING = res
-        res
+        }
     }
+
+    override suspend fun delete(uuid: UUID) = DatabaseUtils.dbQuery {
+        GpaStandards.deleteWhere { Op.build {id eq uuid}}
+    } > 0
+
 }

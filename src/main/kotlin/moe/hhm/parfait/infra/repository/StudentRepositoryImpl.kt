@@ -56,7 +56,7 @@ class StudentRepositoryImpl : StudentRepository {
     }
 
     override suspend fun addStudent(student: StudentDTO): EntityID<UUID> {
-        if (isExistByStudentId(student.studentId)) throw BusinessException("学生已存在") // TODO: 国际化
+        if (isExistByStudentId(student.studentId)) throw BusinessException("student.error.id.exists")
         return DatabaseUtils.dbQuery {
             Students.insertAndGetId {
                 student.into(it)
@@ -65,7 +65,7 @@ class StudentRepositoryImpl : StudentRepository {
     }
 
     override suspend fun updateInfo(student: StudentDTO): Boolean {
-        if (!isExistByUUID(student.uuid!!)) throw BusinessException("学生不存在") // TODO: 国际化
+        if (!isExistByUUID(student.uuid!!)) throw BusinessException("student.error.id.notExists")
         return DatabaseUtils.dbQuery { // 使用uuid更新
             Students.update({ Students.id eq student.uuid }) {
                 student.into(it)
@@ -81,7 +81,7 @@ class StudentRepositoryImpl : StudentRepository {
     }
 
     override suspend fun updateScore(student: StudentDTO): Boolean {
-        if (!isExistByUUID(student.uuid!!)) throw BusinessException("学生不存在") // TODO: 国际化
+        if (!isExistByUUID(student.uuid!!)) throw BusinessException("student.error.id.notExists")
         return DatabaseUtils.dbQuery {
             Students.update({ Students.id eq student.uuid }) {
                 it[scores] = student.scores.toScoreString()

@@ -13,8 +13,8 @@ import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
-import moe.hhm.parfait.ui.component.dialog.grade.GradeModifyDialog
-import moe.hhm.parfait.ui.component.table.GradesTableModel
+import moe.hhm.parfait.ui.component.dialog.score.ScoreModifyDialog
+import moe.hhm.parfait.ui.component.table.ScoresTableModel
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent
@@ -27,7 +27,7 @@ import javax.swing.*
 /**
  * 学生成绩管理对话框
  */
-class StudentGradesDialog(
+class StudentScoresDialog(
     private val studentDTO: StudentDTO,
     owner: Window? = null,
     parent: CoroutineComponent? = null
@@ -38,7 +38,7 @@ class StudentGradesDialog(
     private val gradeCalculationService: GradeCalculationService by inject()
 
     // 成绩表格相关组件
-    private val tableModel = GradesTableModel()
+    private val tableModel = ScoresTableModel()
     private val table = JTable(tableModel)
     private val scrollPane = JScrollPane(table)
 
@@ -82,7 +82,7 @@ class StudentGradesDialog(
     }
 
     private fun initDialog() {
-        title = I18nUtils.getFormattedText("grades.dialog.title", "${studentDTO.studentId}-${studentDTO.name}")
+        title = I18nUtils.getFormattedText("score.dialog.title", "${studentDTO.studentId}-${studentDTO.name}")
         isModal = true
         defaultCloseOperation = DISPOSE_ON_CLOSE
         isResizable = false
@@ -100,7 +100,7 @@ class StudentGradesDialog(
 
         // 中央面板 - 成绩表格
         val tablePanel = JPanel(BorderLayout())
-        tablePanel.border = BorderFactory.createTitledBorder(I18nUtils.getText("grades.dialog.scores"))
+        tablePanel.border = BorderFactory.createTitledBorder(I18nUtils.getText("score.dialog.scores"))
 
         // 表格设置
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
@@ -122,18 +122,18 @@ class StudentGradesDialog(
 
         // 统计信息面板
         val statsPanel = JPanel(MigLayout("fillx", "[][grow]"))
-        statsPanel.border = BorderFactory.createTitledBorder(I18nUtils.getText("grades.dialog.summary"))
+        statsPanel.border = BorderFactory.createTitledBorder(I18nUtils.getText("score.dialog.summary"))
 
-        statsPanel.add(JLabel(I18nUtils.getText("grades.dialog.stats.avg")))
+        statsPanel.add(JLabel(I18nUtils.getText("score.dialog.stats.avg")))
         statsPanel.add(avgScoreLabel, "wrap")
 
-        statsPanel.add(JLabel(I18nUtils.getText("grades.dialog.stats.weighted")))
+        statsPanel.add(JLabel(I18nUtils.getText("score.dialog.stats.weighted")))
         statsPanel.add(weightedAvgLabel, "wrap")
 
-        statsPanel.add(JLabel(I18nUtils.getText("grades.dialog.stats.gpa")))
+        statsPanel.add(JLabel(I18nUtils.getText("score.dialog.stats.gpa")))
         statsPanel.add(gpaLabel, "wrap")
 
-        statsPanel.add(JLabel(I18nUtils.getText("grades.dialog.stats.total.credit")))
+        statsPanel.add(JLabel(I18nUtils.getText("score.dialog.stats.total.credit")))
         statsPanel.add(totalCreditLabel, "wrap")
 
         bottomPanel.add(statsPanel, BorderLayout.CENTER)
@@ -175,7 +175,7 @@ class StudentGradesDialog(
     }
 
     private fun addGrade() {
-        val dialog = GradeModifyDialog(this)
+        val dialog = ScoreModifyDialog(this)
         dialog.setLocationRelativeTo(this)
         dialog.isVisible = true
 
@@ -190,7 +190,7 @@ class StudentGradesDialog(
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(
                 this,
-                I18nUtils.getText("grades.dialog.validation.required"),
+                I18nUtils.getText("score.dialog.validation.required"),
                 I18nUtils.getText("error.generic"),
                 JOptionPane.ERROR_MESSAGE
             )
@@ -198,7 +198,7 @@ class StudentGradesDialog(
         }
 
         val selectedScore = tableModel.getData()[selectedRow]
-        val dialog = GradeModifyDialog(this, selectedScore)
+        val dialog = ScoreModifyDialog(this, selectedScore)
         dialog.setLocationRelativeTo(this)
         dialog.isVisible = true
 
@@ -213,7 +213,7 @@ class StudentGradesDialog(
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(
                 this,
-                I18nUtils.getText("grades.dialog.validation.required"),
+                I18nUtils.getText("score.dialog.validation.required"),
                 I18nUtils.getText("error.generic"),
                 JOptionPane.ERROR_MESSAGE
             )
@@ -222,8 +222,8 @@ class StudentGradesDialog(
 
         val confirm = JOptionPane.showConfirmDialog(
             this,
-            I18nUtils.getText("grades.dialog.confirm.delete"),
-            I18nUtils.getText("grades.action.delete"),
+            I18nUtils.getText("score.dialog.confirm.delete"),
+            I18nUtils.getText("score.action.delete"),
             JOptionPane.YES_NO_OPTION
         )
 
@@ -242,15 +242,15 @@ class StudentGradesDialog(
             try {
                 viewModel.updateStudent(studentDTO, isScores = true)
                 JOptionPane.showMessageDialog(
-                    this@StudentGradesDialog,
-                    I18nUtils.getText("grades.dialog.save.success"),
+                    this@StudentScoresDialog,
+                    I18nUtils.getText("score.dialog.save.success"),
                     I18nUtils.getText("button.save"),
                     JOptionPane.INFORMATION_MESSAGE
                 )
                 dispose()
             } catch (e: Exception) {
                 JOptionPane.showMessageDialog(
-                    this@StudentGradesDialog,
+                    this@StudentScoresDialog,
                     e.message,
                     I18nUtils.getText("error.generic"),
                     JOptionPane.ERROR_MESSAGE
@@ -261,7 +261,7 @@ class StudentGradesDialog(
 
     companion object {
         fun show(student: StudentDTO, owner: Window? = null) {
-            val dialog = StudentGradesDialog(student, owner)
+            val dialog = StudentScoresDialog(student, owner)
             dialog.pack()
             dialog.setLocationRelativeTo(owner)
             dialog.isVisible = true

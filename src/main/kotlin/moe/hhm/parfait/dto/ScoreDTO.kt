@@ -7,6 +7,19 @@ fun List<ScoreDTO>.toScoreString(): String {
     return this.joinToString("|") { it.toString() }
 }
 
+fun List<ScoreDTO>.weightedMean(): Double {
+    val totalCredit = this.sumOf { it.credit }
+    if (totalCredit == 0) return 0.0
+    return this.sumOf {
+        it.credit * it.score
+    }.castTo(2) / totalCredit
+}
+
+fun List<ScoreDTO>.simpleMean(): Double {
+    if (this.isEmpty()) return 0.0
+    return this.sumOf { it.score }.castTo(2) / this.size
+}
+
 enum class CourseType(val i18nKey: String) {
     DEFAULT("course.type.default"),
     PROFESSIONAL_BASIC("course.type.professional.basic"),
@@ -45,7 +58,7 @@ data class ScoreDTO(
                     gpa = parts[5].toBoolean()
                 )
             } else {
-                throw BusinessException("无法解析成绩字符串: $score")
+                throw BusinessException("score.parse.error", score)
             }
         }
     }

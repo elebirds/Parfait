@@ -8,9 +8,11 @@ package moe.hhm.parfait.ui.view
 
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
+import moe.hhm.parfait.ui.component.button.GpaStandardButton
 import moe.hhm.parfait.ui.viewmodel.GpaStandardViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import javax.swing.ButtonGroup
 import javax.swing.JPanel
 import kotlin.getValue
 
@@ -18,4 +20,9 @@ class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
     CoroutineComponent by DefaultCoroutineComponent(parent) {
     // 通过Koin获取ViewModel
     private val viewModel: GpaStandardViewModel by inject()
+
+    init {
+        val group = ButtonGroup()
+        // group.add(GpaStandardButton())
+    }
 }

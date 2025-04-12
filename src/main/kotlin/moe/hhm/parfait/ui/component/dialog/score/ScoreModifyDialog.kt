@@ -4,7 +4,7 @@
  * All rights reserved.
  */
 
-package moe.hhm.parfait.ui.component.dialog.grade
+package moe.hhm.parfait.ui.component.dialog.score
 
 import com.formdev.flatlaf.FlatClientProperties
 import moe.hhm.parfait.dto.CourseType
@@ -14,7 +14,7 @@ import net.miginfocom.swing.MigLayout
 import java.awt.Window
 import javax.swing.*
 
-class GradeModifyDialog(owner: Window, existingScore: ScoreDTO? = null) : JDialog(owner) {
+class ScoreModifyDialog(owner: Window, existingScore: ScoreDTO? = null) : JDialog(owner) {
     var result: ScoreDTO? = null
 
     private val textCourseName = JTextField(20)
@@ -30,9 +30,9 @@ class GradeModifyDialog(owner: Window, existingScore: ScoreDTO? = null) : JDialo
         isResizable = false
 
         title = if (existingScore == null) {
-            I18nUtils.getText("grades.dialog.add.title")
+            I18nUtils.getText("score.dialog.add.title")
         } else {
-            I18nUtils.getText("grades.dialog.edit.title")
+            I18nUtils.getText("score.dialog.edit.title")
         }
         defaultCloseOperation = DISPOSE_ON_CLOSE
 
@@ -40,22 +40,22 @@ class GradeModifyDialog(owner: Window, existingScore: ScoreDTO? = null) : JDialo
         contentPane = JPanel(MigLayout("fillx, wrap 2", "[][grow,fill]"))
 
         // 添加组件
-        add(JLabel(I18nUtils.getText("grades.course")))
+        add(JLabel(I18nUtils.getText("score.course")))
         add(textCourseName)
 
-        add(JLabel(I18nUtils.getText("grades.type")))
+        add(JLabel(I18nUtils.getText("score.type")))
         add(comboType)
 
-        add(JLabel(I18nUtils.getText("grades.exam")))
+        add(JLabel(I18nUtils.getText("score.exam")))
         add(textExam)
 
-        add(JLabel(I18nUtils.getText("grades.credit")))
+        add(JLabel(I18nUtils.getText("score.credit")))
         add(textCredit)
 
-        add(JLabel(I18nUtils.getText("grades.score")))
+        add(JLabel(I18nUtils.getText("score.score")))
         add(textScore)
 
-        add(JLabel(I18nUtils.getText("grades.gpa")))
+        add(JLabel(I18nUtils.getText("score.gpa")))
         add(checkGPA)
 
         // 填充现有数据（如果有）
@@ -71,19 +71,19 @@ class GradeModifyDialog(owner: Window, existingScore: ScoreDTO? = null) : JDialo
         // 设置提示文本
         textCourseName.putClientProperty(
             FlatClientProperties.PLACEHOLDER_TEXT,
-            I18nUtils.getText("grades.dialog.placeholder.course")
+            I18nUtils.getText("score.dialog.placeholder.course")
         )
         textExam.putClientProperty(
             FlatClientProperties.PLACEHOLDER_TEXT,
-            I18nUtils.getText("grades.dialog.placeholder.exam")
+            I18nUtils.getText("score.dialog.placeholder.exam")
         )
         textCredit.putClientProperty(
             FlatClientProperties.PLACEHOLDER_TEXT,
-            I18nUtils.getText("grades.dialog.placeholder.credit")
+            I18nUtils.getText("score.dialog.placeholder.credit")
         )
         textScore.putClientProperty(
             FlatClientProperties.PLACEHOLDER_TEXT,
-            I18nUtils.getText("grades.dialog.placeholder.score")
+            I18nUtils.getText("score.dialog.placeholder.score")
         )
 
         // 按钮面板
@@ -125,7 +125,7 @@ class GradeModifyDialog(owner: Window, existingScore: ScoreDTO? = null) : JDialo
         if (name.isEmpty() || exam.isEmpty() || creditText.isEmpty() || scoreText.isEmpty()) {
             JOptionPane.showMessageDialog(
                 this,
-                I18nUtils.getText("grades.dialog.validation.required"),
+                I18nUtils.getText("score.dialog.validation.required"),
                 I18nUtils.getText("error.generic"),
                 JOptionPane.ERROR_MESSAGE
             )
@@ -151,7 +151,7 @@ class GradeModifyDialog(owner: Window, existingScore: ScoreDTO? = null) : JDialo
         } catch (e: NumberFormatException) {
             JOptionPane.showMessageDialog(
                 this,
-                I18nUtils.getText("grades.dialog.validation.numeric"),
+                I18nUtils.getText("score.dialog.validation.numeric"),
                 I18nUtils.getText("error.generic"),
                 JOptionPane.ERROR_MESSAGE
             )

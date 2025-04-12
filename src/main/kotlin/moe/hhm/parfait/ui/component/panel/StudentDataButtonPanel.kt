@@ -14,7 +14,7 @@ import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.dialog.StudentModifyDialog
-import moe.hhm.parfait.ui.component.dialog.StudentGradesDialog
+import moe.hhm.parfait.ui.component.dialog.StudentScoresDialog
 import moe.hhm.parfait.ui.state.StudentDataLoadState
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import net.miginfocom.swing.MigLayout
@@ -80,13 +80,13 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
         }
     }
 
-    private val buttonEditScore: JButton = createButton("grades.action.edit").apply {
+    private val buttonEditScore: JButton = createButton("score.action.edit").apply {
         addActionListener {
             val student = viewModel.selectedStudents.value.firstOrNull()
             if (student != null) {
                 // 打开编辑成绩对话框
                 val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
-                StudentGradesDialog.show(student, owner)
+                StudentScoresDialog.show(student, owner)
             }
         }
     }

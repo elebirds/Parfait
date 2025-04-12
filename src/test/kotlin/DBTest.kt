@@ -1,11 +1,8 @@
-import moe.hhm.parfait.app.service.GradeCalculationService
 import moe.hhm.parfait.app.service.StudentService
-import moe.hhm.parfait.app.service.impl.GradeCalculationServiceImpl
 import moe.hhm.parfait.di.appModule
 import moe.hhm.parfait.di.domainModule
 import moe.hhm.parfait.di.infrastructureModule
 import moe.hhm.parfait.di.presentationModule
-import moe.hhm.parfait.dto.ScoreDTO
 import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.infra.db.DatabaseConnectionConfig
 import moe.hhm.parfait.infra.db.DatabaseFactory
@@ -21,7 +18,7 @@ import java.io.File
  */
 
 suspend fun main() {
-    DatabaseFactory.connect(DatabaseConnectionConfig.standalone("data.pardb"))
+    DatabaseFactory.connect(DatabaseConnectionConfig.standalone("db.pardb"))
     startKoin {
         modules(
             infrastructureModule,

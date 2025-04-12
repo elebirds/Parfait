@@ -16,7 +16,6 @@ import moe.hhm.parfait.infra.db.certificate.CertificateDatas
 import moe.hhm.parfait.infra.db.certificate.CertificateRecords
 import moe.hhm.parfait.infra.db.certificate.CertificateTemplates
 import moe.hhm.parfait.infra.db.gpa.GpaStandards
-import moe.hhm.parfait.infra.db.gpa.GradePointMappings
 import moe.hhm.parfait.infra.db.student.Students
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -141,7 +140,6 @@ object DatabaseFactory {
             SchemaUtils.create(
                 Students,
                 GpaStandards,
-                GradePointMappings,
                 CertificateTemplates,
                 CertificateRecords,
                 CertificateDatas

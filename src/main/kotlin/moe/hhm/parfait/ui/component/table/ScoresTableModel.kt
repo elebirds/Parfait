@@ -10,14 +10,14 @@ import moe.hhm.parfait.dto.ScoreDTO
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import javax.swing.table.AbstractTableModel
 
-class GradesTableModel : AbstractTableModel() {
+class ScoresTableModel : AbstractTableModel() {
     private val columnNames = arrayOf(
-        I18nUtils.getText("grades.course"),
-        I18nUtils.getText("grades.type"),
-        I18nUtils.getText("grades.exam"),
-        I18nUtils.getText("grades.credit"),
-        I18nUtils.getText("grades.score"),
-        I18nUtils.getText("grades.gpa")
+        I18nUtils.getText("score.course"),
+        I18nUtils.getText("score.type"),
+        I18nUtils.getText("score.exam"),
+        I18nUtils.getText("score.credit"),
+        I18nUtils.getText("score.score"),
+        I18nUtils.getText("score.gpa")
     )
 
     private var data = mutableListOf<ScoreDTO>()
@@ -62,7 +62,7 @@ class GradesTableModel : AbstractTableModel() {
             2 -> score.exam
             3 -> score.credit
             4 -> score.score
-            5 -> if (score.gpa) I18nUtils.getText("grades.dialog.yes") else I18nUtils.getText("grades.dialog.no")
+            5 -> if (score.gpa) I18nUtils.getText("score.dialog.yes") else I18nUtils.getText("score.dialog.no")
             else -> ""
         }
     }
