@@ -6,17 +6,15 @@
 
 package moe.hhm.parfait.ui.state
 
-/**
- * GPA标准加载状态
- */
-enum class GpaStandardLoadState {
+enum class VMState {
     DISCONNECTED,
     CONNECTING,
+    PRELOADING,
     LOADING,
+    PROCESSING,
     DONE,
     ERROR,
-    PROCESSING,
-    PRELOADING;
+    FATAL;
 
     fun isConnected() = this != DISCONNECTED && this != CONNECTING
-} 
+}

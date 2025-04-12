@@ -12,7 +12,6 @@ import moe.hhm.parfait.ui.viewmodel.StatisticsViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import javax.swing.JPanel
-import kotlin.getValue
 
 class StatisticsView(parent: DefaultCoroutineComponent? = null) : JPanel(), KoinComponent,
     CoroutineComponent by DefaultCoroutineComponent(parent) {

@@ -61,7 +61,7 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
     override fun observer() {
         // 监听表格数据更新（高频更新）
         scope.launch {
-            viewModel.students.collectLatest { students ->
+            viewModel.data.collectLatest { students ->
                 // 更新表格数据
                 this@StudentDataTable.updateData(students)
             }
@@ -163,9 +163,9 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
     // 选择多个学生的行
     fun selectStudents(students: List<StudentDTO>) {
         clearSelection()
-        
+
         if (students.isEmpty()) return
-        
+
         students.forEach { student ->
             // 查找学生在列表中的索引
             val index = studentList.indexOfFirst { it.studentId == student.studentId }
@@ -199,13 +199,13 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
             clearSelection()
         }
     }
-    
+
     // 根据多个学生ID选择行
     fun selectStudentsByIds(studentIds: List<String>) {
         clearSelection()
-        
+
         if (studentIds.isEmpty()) return
-        
+
         studentIds.forEach { studentId ->
             // 查找学生在列表中的索引
             val index = studentList.indexOfFirst { it.studentId == studentId }

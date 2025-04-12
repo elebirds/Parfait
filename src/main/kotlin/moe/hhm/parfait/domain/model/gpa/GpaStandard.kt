@@ -8,7 +8,6 @@ package moe.hhm.parfait.domain.model.gpa
 
 import moe.hhm.parfait.dto.GpaMappingDTO
 import moe.hhm.parfait.dto.GpaStandardDTO
-import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.infra.db.gpa.GpaStandards
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -30,6 +29,7 @@ class GpaStandard(id: EntityID<UUID>) : UUIDEntity(id) {
     var updatedAt by GpaStandards.updatedAt
 
     fun toDTO() = GpaStandardDTO(
+        uuid = id.value,
         name = name,
         description = description,
         category = category,

@@ -22,7 +22,6 @@ class GpaStandardButton(
     private val description: String,
     private val purpose: String,
     private val type: GpaType,
-    private val rightHighlight: String,
     private val createTime: String
 ) : JToggleButton() {
 
@@ -65,27 +64,6 @@ class GpaStandardButton(
         panel.add(JLabel(description), "wrap")
 
         // create size
-        when(type) {
-            GpaType.NORMAL -> {
-                panel.add(createLabel("gpa.type.normal"))
-            }
-            GpaType.LIKE -> {
-                val lbLimit = createLabel("gpa.type.like")
-                lbLimit.setIcon(FlatSVGIcon("ui/nwicons/love_pink.svg"))
-                lbLimit.putClientProperty(
-                    FlatClientProperties.STYLE, "foreground:#d4237a"
-                )
-                panel.add(lbLimit)
-            }
-            GpaType.DEFAULT -> {
-                val lbLimit = createLabel("gpa.type.default")
-                lbLimit.setIcon(FlatSVGIcon("ui/nwicons/infinity.svg"))
-                lbLimit.putClientProperty(
-                    FlatClientProperties.STYLE, "foreground:#22b65a"
-                )
-                panel.add(lbLimit)
-            }
-        }
         val lbSizeDescription = JLabel(purpose)
         lbSizeDescription.putClientProperty(
             FlatClientProperties.STYLE, "" +
@@ -97,13 +75,29 @@ class GpaStandardButton(
 
         // panel price
         val panelPrice = JPanel(MigLayout("insets 0,wrap"))
-        val lbPrice = JLabel(rightHighlight)
-        lbPrice.putClientProperty(
-            FlatClientProperties.STYLE, "" +
-                    "foreground:\$Component.accentColor;" +
-                    "font:bold +2;"
-        )
-        panelPrice.add(lbPrice)
+        when (type) {
+            GpaType.NORMAL -> {
+                panelPrice.add(createLabel("gpa.type.normal"))
+            }
+
+            GpaType.LIKE -> {
+                val lbLimit = createLabel("gpa.type.like")
+                lbLimit.setIcon(FlatSVGIcon("ui/nwicons/love_pink.svg"))
+                lbLimit.putClientProperty(
+                    FlatClientProperties.STYLE, "foreground:#d4237a"
+                )
+                panelPrice.add(lbLimit)
+            }
+
+            GpaType.DEFAULT -> {
+                val lbLimit = createLabel("gpa.type.default")
+                lbLimit.setIcon(FlatSVGIcon("ui/nwicons/infinity.svg"))
+                lbLimit.putClientProperty(
+                    FlatClientProperties.STYLE, "foreground:#22b65a"
+                )
+                panelPrice.add(lbLimit)
+            }
+        }
         panelPrice.add(JLabel(createTime), "al trailing")
 
         add(panelPrice)

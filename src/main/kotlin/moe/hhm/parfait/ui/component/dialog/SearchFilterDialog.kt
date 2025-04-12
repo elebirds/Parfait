@@ -32,7 +32,7 @@ class SearchFilterDialog(
     private val isFilter: Boolean = false // true表示筛选模式，false表示搜索模式
 ) : JDialog(owner),
     KoinComponent, CoroutineComponent by DefaultCoroutineComponent(parent) {
-    
+
     // 通过Koin获取ViewModel
     private val viewModel: StudentDataViewModel by inject()
 
@@ -63,7 +63,7 @@ class SearchFilterDialog(
         bindText(this, if (isFilter) "button.filter" else "button.search")
         addActionListener { submitForm() }
     }
-    
+
     private val buttonCancel = JButton().apply {
         bindText(this, "button.cancel")
         addActionListener { dispose() }
@@ -131,7 +131,7 @@ class SearchFilterDialog(
         // 学号
         add(JLabel(I18nUtils.getText("student.property.id")), "span 2")
         add(textStudentId, "gapy n 5,span 2")
-        
+
         // 姓名和性别（同一行标签，下一行字段）
         add(JLabel(I18nUtils.getText("student.property.name")))
         add(JLabel(I18nUtils.getText("student.property.gender")))
@@ -160,7 +160,8 @@ class SearchFilterDialog(
         add(comboStatus)
 
         // 添加提示信息
-        val tipLabel = JLabel(I18nUtils.getText(if (isFilter) "search.dialog.filter.tip" else "search.dialog.search.tip"))
+        val tipLabel =
+            JLabel(I18nUtils.getText(if (isFilter) "search.dialog.filter.tip" else "search.dialog.search.tip"))
         tipLabel.putClientProperty(
             FlatClientProperties.STYLE, "" +
                     "border:8,8,8,8;" +

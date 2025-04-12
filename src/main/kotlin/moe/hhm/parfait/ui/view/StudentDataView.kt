@@ -43,7 +43,7 @@ class StudentDataView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
     }
 
     // 数据库连接状态提示
-    private val databaseStatusLabel = createLabel("database.needConnect").apply {
+    private val databaseStatusLabel = createLabel("database.connect.error.needConnect").apply {
         foreground = Color.RED
         horizontalAlignment = JLabel.CENTER
     }
@@ -86,7 +86,7 @@ class StudentDataView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
     override fun observer() {
         // 监听数据库连接状态变化
         scope.launch {
-            viewModel.loadState.collectLatest {
+            viewModel.vmState.collectLatest {
                 updateDatabaseConnectionStatus(it.isConnected())
             }
         }

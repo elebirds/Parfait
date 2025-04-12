@@ -6,11 +6,7 @@
 
 package moe.hhm.parfait.di
 
-import moe.hhm.parfait.ui.viewmodel.CertificateTemplateViewModel
-import moe.hhm.parfait.ui.viewmodel.GpaStandardViewModel
-import moe.hhm.parfait.ui.viewmodel.StatisticsViewModel
-import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
-import moe.hhm.parfait.ui.viewmodel.TermViewModel
+import moe.hhm.parfait.ui.viewmodel.*
 import org.koin.dsl.module
 
 val presentationModule = module {

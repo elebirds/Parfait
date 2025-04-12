@@ -13,10 +13,7 @@ import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.infra.db.DatabaseUtils
 import moe.hhm.parfait.infra.db.gpa.GpaStandards
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.*
 import java.time.LocalDateTime
 import java.util.*
 
@@ -25,11 +22,15 @@ class GpaRepositoryImpl : GpaRepository {
         GpaStandard.count()
     }
 
-    override suspend fun update(gpaStandard: GpaStandardDTO): Boolean = DatabaseUtils.dbQuery {
-        GpaStandards.update({ GpaStandards.id eq gpaStandard.uuid }) {
-            gpaStandard.into(it)
-            it[updatedAt] = LocalDateTime.now()
-        } > 0
+    override suspend fun update(gpaStandard: GpaStandardDTO): Boolean {
+        if (gpaStandard.uuid == null) throw BusinessException("gpa.error.not.exist")
+        if (isExistByNameExceptMe(gpaStandard.name, gpaStandard.uuid)) throw BusinessException("gpa.error.name.exist")
+        return DatabaseUtils.dbQuery {
+            GpaStandards.update({ GpaStandards.id eq gpaStandard.uuid }) {
+                gpaStandard.into(it)
+                it[updatedAt] = LocalDateTime.now()
+            } > 0
+        }
     }
 
     override suspend fun isExistByName(name: String): Boolean = DatabaseUtils.dbQuery {
@@ -45,11 +46,11 @@ class GpaRepositoryImpl : GpaRepository {
     override suspend fun setDefault(uuid: UUID): Boolean = DatabaseUtils.dbQuery {
         // 先把所有默认的设置为非默认
         GpaStandards.update({ GpaStandards.isDefault eq true }) {
-            it[GpaStandards.isDefault] = false
+            it[isDefault] = false
         }
         // 再把当前的设置为默认
         GpaStandards.update({ GpaStandards.id eq uuid }) {
-            it[GpaStandards.isDefault] = true
+            it[isDefault] = true
         } > 0
     }
 
@@ -57,6 +58,10 @@ class GpaRepositoryImpl : GpaRepository {
         GpaStandard.find {
             GpaStandards.isDefault eq true
         }.firstOrNull() ?: throw BusinessException("gpa.error.default.not.exist")
+    }
+
+    override suspend fun isExistByNameExceptMe(name: String, uuid: UUID): Boolean = DatabaseUtils.dbQuery {
+        GpaStandard.find { (GpaStandards.name eq name) and (GpaStandards.id neq uuid) }.count() > 0
     }
 
     override suspend fun findAll(): List<GpaStandard> = DatabaseUtils.dbQuery {
@@ -67,11 +72,11 @@ class GpaRepositoryImpl : GpaRepository {
         GpaStandard.findById(uuid)
     }
 
-    override suspend fun findByName(name: String): GpaStandard? = DatabaseUtils.dbQuery{
+    override suspend fun findByName(name: String): GpaStandard? = DatabaseUtils.dbQuery {
         GpaStandard.find { GpaStandards.name eq name }.firstOrNull()
     }
 
-    override suspend fun add(gpaStandard: GpaStandardDTO): EntityID<UUID>  {
+    override suspend fun add(gpaStandard: GpaStandardDTO): EntityID<UUID> {
         if (isExistByName(gpaStandard.name)) throw BusinessException("gpa.error.name.exist")
         return DatabaseUtils.dbQuery {
             GpaStandards.insertAndGetId {
@@ -81,6 +86,6 @@ class GpaRepositoryImpl : GpaRepository {
     }
 
     override suspend fun delete(uuid: UUID) = DatabaseUtils.dbQuery {
-        GpaStandards.deleteWhere { Op.build {id eq uuid}}
+        GpaStandards.deleteWhere { Op.build { id eq uuid } }
     } > 0
 }

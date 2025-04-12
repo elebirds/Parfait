@@ -16,12 +16,12 @@ import org.koin.core.component.inject
 /**
  * 学生数据分页面板
  */
-class StudentDataPaginationPanel(parent: CoroutineComponent? = null) : 
+class StudentDataPaginationPanel(parent: CoroutineComponent? = null) :
     PaginationPanel(parent), KoinComponent {
-    
+
     // 通过Koin获取ViewModel
     private val viewModel: StudentDataViewModel by inject()
-    
+
     init {
         // 设置回调
         setCallbacks(
@@ -35,13 +35,13 @@ class StudentDataPaginationPanel(parent: CoroutineComponent? = null) :
 
     override fun observer() {
         scope.launch {
-            combine(viewModel.loadState, viewModel.paginationState) { loadState, paginationState ->
+            combine(viewModel.vmState, viewModel.paginationState) { loadState, paginationState ->
                 Pair(loadState, paginationState)
             }.collect { (loadState, paginationState) ->
                 // 更新分页状态
                 updateState(
-                    connected = loadState.isConnected(), 
-                    currentPage = paginationState.currentPage, 
+                    connected = loadState.isConnected(),
+                    currentPage = paginationState.currentPage,
                     totalPages = paginationState.totalPages
                 )
             }

@@ -12,6 +12,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import java.util.*
 
 interface GpaRepository {
+    suspend fun isExistByNameExceptMe(name: String, uuid: UUID): Boolean
     suspend fun findAll(): List<GpaStandard>
     suspend fun findByUUID(uuid: UUID): GpaStandard?
     suspend fun findByName(name: String): GpaStandard?

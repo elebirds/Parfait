@@ -30,7 +30,7 @@ enum class CourseType(val i18nKey: String) {
     PLATFORM("course.type.platform"),
     GENERAL_REQUIRED("course.type.general.required"),
     GENERAL_ELECTIVE("course.type.general.elective");
-} 
+}
 
 data class ScoreDTO(
     var name: String = "",

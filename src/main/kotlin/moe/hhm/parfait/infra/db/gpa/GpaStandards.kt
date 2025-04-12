@@ -27,16 +27,18 @@ object GpaStandards : UUIDTable("gpa_standards") {
     fun init() {
         if (GpaStandard.count() == 0L) {
             // 默认绩点映射，左闭右开
-            val defaultGradePointMappings = GpaMappingDTO(listOf(
-                Triple("A", 90..100, 4.0),
-                Triple("B+", 85..<90, 3.5),
-                Triple("B", 80..<85, 3.0),
-                Triple("C+", 75..<80, 2.5),
-                Triple("C", 70..<75, 2.0),
-                Triple("D+", 65..<70, 1.5),
-                Triple("D", 60..<65, 1.0),
-                Triple("F", 0..<60, 0.0)
-            ))
+            val defaultGradePointMappings = GpaMappingDTO(
+                listOf(
+                    Triple("A", 90..100, 4.0),
+                    Triple("B+", 85..<90, 3.5),
+                    Triple("B", 80..<85, 3.0),
+                    Triple("C+", 75..<80, 2.5),
+                    Triple("C", 70..<75, 2.0),
+                    Triple("D+", 65..<70, 1.5),
+                    Triple("D", 60..<65, 1.0),
+                    Triple("F", 0..<60, 0.0)
+                )
+            )
             val defaultGpaStandard = GpaStandard.new {
                 name = "默认标准"
                 description = "基础四分制标准"
@@ -46,18 +48,20 @@ object GpaStandards : UUIDTable("gpa_standards") {
                 isDefault = true
                 isLike = true
             }
-            val pekingUniversityGPMapping = GpaMappingDTO(listOf(
-                Triple("A", 90..100, 4.0),
-                Triple("B+", 85..<90, 3.7),
-                Triple("B", 82..<85, 3.3),
-                Triple("B-", 78..<82, 3.0),
-                Triple("C+", 75..<78, 2.7),
-                Triple("C", 72..<75, 2.3),
-                Triple("C-", 68..<72, 2.0),
-                Triple("D+", 64..<68, 1.5),
-                Triple("D", 60..<64, 1.0),
-                Triple("F", 0..<60, 0.0)
-            ))
+            val pekingUniversityGPMapping = GpaMappingDTO(
+                listOf(
+                    Triple("A", 90..100, 4.0),
+                    Triple("B+", 85..<90, 3.7),
+                    Triple("B", 82..<85, 3.3),
+                    Triple("B-", 78..<82, 3.0),
+                    Triple("C+", 75..<78, 2.7),
+                    Triple("C", 72..<75, 2.3),
+                    Triple("C-", 68..<72, 2.0),
+                    Triple("D+", 64..<68, 1.5),
+                    Triple("D", 60..<64, 1.0),
+                    Triple("F", 0..<60, 0.0)
+                )
+            )
             val pekingUniversityStandard = GpaStandard.new {
                 name = "北京大学4.0标准"
                 description = "北京大学4.0标准"
@@ -67,16 +71,18 @@ object GpaStandards : UUIDTable("gpa_standards") {
                 isDefault = false
                 isLike = false
             }
-            val canadaGPMapping = GpaMappingDTO(listOf(
-                Triple("A", 90..100, 4.3),
-                Triple("B+", 85..<90, 4.0),
-                Triple("B", 80..<85, 3.7),
-                Triple("C+", 75..<80, 3.3),
-                Triple("C", 70..<75, 3.0),
-                Triple("C-", 65..<70, 2.7),
-                Triple("D+", 60..<65, 2.3),
-                Triple("D", 0..<60, 0.0)
-            ))
+            val canadaGPMapping = GpaMappingDTO(
+                listOf(
+                    Triple("A", 90..100, 4.3),
+                    Triple("B+", 85..<90, 4.0),
+                    Triple("B", 80..<85, 3.7),
+                    Triple("C+", 75..<80, 3.3),
+                    Triple("C", 70..<75, 3.0),
+                    Triple("C-", 65..<70, 2.7),
+                    Triple("D+", 60..<65, 2.3),
+                    Triple("D", 0..<60, 0.0)
+                )
+            )
             val canadaStandard = GpaStandard.new {
                 name = "加拿大4.3标准"
                 description = "加拿大标准"

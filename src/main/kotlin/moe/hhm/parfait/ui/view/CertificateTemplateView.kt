@@ -11,7 +11,6 @@ import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import javax.swing.JPanel
-import kotlin.getValue
 
 class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPanel(), KoinComponent,
     CoroutineComponent by DefaultCoroutineComponent(parent) {

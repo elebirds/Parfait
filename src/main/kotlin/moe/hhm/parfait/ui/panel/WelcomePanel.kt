@@ -8,8 +8,6 @@ package moe.hhm.parfait.ui.panel
 
 import com.formdev.flatlaf.FlatClientProperties
 import com.formdev.flatlaf.extras.FlatSVGIcon
-import moe.hhm.parfait.infra.db.DatabaseConnectionConfig
-import moe.hhm.parfait.infra.db.DatabaseFactory
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
@@ -157,7 +155,7 @@ class WelcomePanel : JPanel() {
         add(lbUser, "gapy 10 5")
         add(txtUser)
 
-        
+
         val lbPassword = createLabel("form.password").apply {
             putClientProperty(FlatClientProperties.STYLE, "font:bold;")
         }
@@ -166,7 +164,7 @@ class WelcomePanel : JPanel() {
         add(cmdForgotPassword, "grow 0,gapy 10 5")
 
         add(txtPassword)
-        
+
 
         add(createCheckBox("welcome.remember"), "gapy 10 10")
         add(cmdSignIn, "gapy n 10")

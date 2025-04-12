@@ -15,10 +15,7 @@ import moe.hhm.parfait.infra.db.DatabaseUtils
 import moe.hhm.parfait.infra.db.student.Students
 import moe.hhm.parfait.infra.db.student.Students.studentId
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.*
 import java.time.LocalDateTime
 import java.util.*
 
@@ -55,8 +52,12 @@ class StudentRepositoryImpl : StudentRepository {
         Student.find { studentId eq studentID }.count() > 0
     }
 
+    override suspend fun isExistByStudentIdExceptMe(studentID: String, uuid: UUID): Boolean = DatabaseUtils.dbQuery {
+        Student.find { (studentId eq studentID) and (Students.id neq uuid) }.count() > 0
+    }
+
     override suspend fun addStudent(student: StudentDTO): EntityID<UUID> {
-        if (isExistByStudentId(student.studentId)) throw BusinessException("student.error.id.exists")
+        if (isExistByStudentId(student.studentId)) throw BusinessException("student.error.id.exists", student.studentId)
         return DatabaseUtils.dbQuery {
             Students.insertAndGetId {
                 student.into(it)
@@ -65,7 +66,13 @@ class StudentRepositoryImpl : StudentRepository {
     }
 
     override suspend fun updateInfo(student: StudentDTO): Boolean {
-        if (!isExistByUUID(student.uuid!!)) throw BusinessException("student.error.id.notExists")
+        if (student.uuid == null) throw BusinessException("student.error.uuid.notExists")
+        if (!isExistByUUID(student.uuid)) throw BusinessException("student.error.uuid.notExists")
+        if (isExistByStudentIdExceptMe(
+                student.studentId,
+                student.uuid
+            )
+        ) throw BusinessException("student.error.id.exists", student.studentId)
         return DatabaseUtils.dbQuery { // 使用uuid更新
             Students.update({ Students.id eq student.uuid }) {
                 student.into(it)
@@ -81,7 +88,7 @@ class StudentRepositoryImpl : StudentRepository {
     }
 
     override suspend fun updateScore(student: StudentDTO): Boolean {
-        if (!isExistByUUID(student.uuid!!)) throw BusinessException("student.error.id.notExists")
+        if (!isExistByUUID(student.uuid!!)) throw BusinessException("student.error.uuid.notExists")
         return DatabaseUtils.dbQuery {
             Students.update({ Students.id eq student.uuid }) {
                 it[scores] = student.scores.toScoreString()

@@ -14,7 +14,7 @@ enum class FilterState {
      * 无筛选条件
      */
     NO_FILTER,
-    
+
     /**
      * 已应用筛选条件
      */

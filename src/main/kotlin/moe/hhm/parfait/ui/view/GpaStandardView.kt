@@ -9,13 +9,13 @@ package moe.hhm.parfait.ui.view
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.dto.GpaStandardDTO
-import moe.hhm.parfait.dto.GpaType
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
 import moe.hhm.parfait.infra.i18n.I18nUtils.createLabel
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.button.GpaStandardButton
-import moe.hhm.parfait.ui.state.GpaStandardLoadState
+import moe.hhm.parfait.ui.component.dialog.GpaStandardDialog
+import moe.hhm.parfait.ui.state.VMState
 import moe.hhm.parfait.ui.viewmodel.GpaStandardViewModel
 import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent
@@ -23,14 +23,7 @@ import org.koin.core.component.inject
 import java.awt.BorderLayout
 import java.awt.Color
 import java.time.format.DateTimeFormatter
-import java.util.UUID
-import javax.swing.ButtonGroup
-import javax.swing.JButton
-import javax.swing.JLabel
-import javax.swing.JOptionPane
-import javax.swing.JPanel
-import javax.swing.JScrollPane
-import javax.swing.SwingUtilities
+import javax.swing.*
 import javax.swing.border.EmptyBorder
 
 class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), KoinComponent,
@@ -51,7 +44,7 @@ class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
     }
 
     // 数据库连接状态提示
-    private val databaseStatusLabel = createLabel("database.needConnect").apply {
+    private val databaseStatusLabel = createLabel("database.connect.error.needConnect").apply {
         foreground = Color.RED
         horizontalAlignment = JLabel.CENTER
     }
@@ -93,14 +86,14 @@ class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
     override fun observer() {
         // 监听数据库连接状态变化
         scope.launch {
-            viewModel.loadState.collectLatest { state ->
+            viewModel.vmState.collectLatest { state ->
                 updateDatabaseConnectionStatus(state.isConnected())
             }
         }
 
         // 监听GPA标准数据变化
         scope.launch {
-            viewModel.standards.collectLatest { standards ->
+            viewModel.data.collectLatest { standards ->
                 updateStandardButtons(standards)
             }
         }
@@ -137,12 +130,12 @@ class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
         standardButtonGroup.clearSelection()
 
         // 对标准进行排序：默认最高，重要标准其次，其他最后
-        val sortedStandards = standards.sortedWith(compareByDescending<GpaStandardDTO> { 
-            it.isDefault 
-        }.thenByDescending { 
-            it.isLike 
-        }.thenBy { 
-            it.name 
+        val sortedStandards = standards.sortedWith(compareByDescending<GpaStandardDTO> {
+            it.isDefault
+        }.thenByDescending {
+            it.isLike
+        }.thenBy {
+            it.name
         })
 
         sortedStandards.forEach { standard ->
@@ -155,7 +148,6 @@ class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
                 description = standard.description,
                 purpose = standard.purpose,
                 type = standard.type,
-                rightHighlight = "GPA标准",
                 createTime = createdAtStr
             )
 
@@ -194,17 +186,13 @@ class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
      */
     inner class GpaStandardButtonPanel : JPanel(), KoinComponent,
         CoroutineComponent by DefaultCoroutineComponent(this@GpaStandardView) {
-        
+
         // 添加标准按钮
         private val buttonAdd = createButton("gpa.action.add").apply {
             addActionListener {
-                // TODO: 实现添加GPA标准功能
-                JOptionPane.showMessageDialog(
-                    SwingUtilities.getWindowAncestor(this@GpaStandardView),
-                    "添加标准功能尚未实现",
-                    "提示",
-                    JOptionPane.INFORMATION_MESSAGE
-                )
+                // 打开添加GPA标准对话框
+                val owner = SwingUtilities.getWindowAncestor(this@GpaStandardView)
+                GpaStandardDialog.show(null, owner)
             }
         }
 
@@ -220,7 +208,7 @@ class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
                         "确认删除",
                         JOptionPane.YES_NO_OPTION
                     )
-                    
+
                     if (result == JOptionPane.YES_OPTION) {
                         standard.uuid?.let { viewModel.deleteStandard(it) }
                     }
@@ -233,13 +221,9 @@ class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
             addActionListener {
                 val standard = viewModel.selectedStandard.value
                 if (standard != null) {
-                    // TODO: 实现编辑GPA标准功能
-                    JOptionPane.showMessageDialog(
-                        SwingUtilities.getWindowAncestor(this@GpaStandardView),
-                        "编辑标准功能尚未实现",
-                        "提示",
-                        JOptionPane.INFORMATION_MESSAGE
-                    )
+                    // 打开编辑GPA标准对话框
+                    val owner = SwingUtilities.getWindowAncestor(this@GpaStandardView)
+                    GpaStandardDialog.show(standard, owner)
                 }
             }
         }
@@ -256,7 +240,7 @@ class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
                         "确认设为默认",
                         JOptionPane.YES_NO_OPTION
                     )
-                    
+
                     if (result == JOptionPane.YES_OPTION) {
                         standard.uuid?.let { viewModel.setDefaultStandard(it) }
                     }
@@ -277,7 +261,7 @@ class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
                         "确认操作",
                         JOptionPane.YES_NO_OPTION
                     )
-                    
+
                     if (result == JOptionPane.YES_OPTION) {
                         viewModel.toggleLikeStandard(standard)
                     }
@@ -305,9 +289,9 @@ class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), Koi
 
             // 监听加载状态
             scope.launch {
-                viewModel.loadState.collectLatest { state ->
+                viewModel.vmState.collectLatest { state ->
                     // 根据加载状态更新按钮启用状态
-                    val isLoaded = state == GpaStandardLoadState.DONE
+                    val isLoaded = state == VMState.DONE
                     buttonAdd.isEnabled = isLoaded
                     if (!isLoaded) {
                         buttonDelete.isEnabled = false

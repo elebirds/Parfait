@@ -32,15 +32,19 @@ class StudentSearchServiceImpl : StudentSearchService, KoinComponent {
     override suspend fun countSearchResults(criteria: SearchFilterCriteria): Long {
         return repository.countSearchResults(criteria)
     }
-    
+
     override suspend fun searchAdvancedStudents(criteria: AdvancedFilterCriteria): List<StudentDTO> {
         return repository.searchAdvancedStudents(criteria).map { it.toDTO() }
     }
-    
-    override suspend fun searchAdvancedStudentsPage(criteria: AdvancedFilterCriteria, page: Int, size: Int): List<StudentDTO> {
+
+    override suspend fun searchAdvancedStudentsPage(
+        criteria: AdvancedFilterCriteria,
+        page: Int,
+        size: Int
+    ): List<StudentDTO> {
         return repository.searchAdvancedStudentsPage(criteria, page, size).map { it.toDTO() }
     }
-    
+
     override suspend fun countAdvancedSearchResults(criteria: AdvancedFilterCriteria): Long {
         return repository.countAdvancedSearchResults(criteria)
     }

@@ -6,10 +6,9 @@
 
 package moe.hhm.parfait.ui.viewmodel
 
+import moe.hhm.parfait.ui.viewmodel.common.BaseViewModel
 import org.koin.core.component.KoinComponent
-import org.slf4j.LoggerFactory
 
 class StatisticsViewModel : BaseViewModel(), KoinComponent {
-    // 日志
-    private val logger = LoggerFactory.getLogger(this::class.java)
+
 }

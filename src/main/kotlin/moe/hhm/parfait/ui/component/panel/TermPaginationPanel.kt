@@ -16,12 +16,12 @@ import org.koin.core.component.inject
 /**
  * 术语分页面板
  */
-class TermPaginationPanel(parent: CoroutineComponent? = null) : 
+class TermPaginationPanel(parent: CoroutineComponent? = null) :
     PaginationPanel(parent), KoinComponent {
-    
+
     // 通过Koin获取ViewModel
     private val viewModel: TermViewModel by inject()
-    
+
     init {
         // 设置回调
         setCallbacks(
@@ -35,13 +35,13 @@ class TermPaginationPanel(parent: CoroutineComponent? = null) :
 
     override fun observer() {
         scope.launch {
-            combine(viewModel.loadState, viewModel.paginationState) { loadState, paginationState ->
+            combine(viewModel.vmState, viewModel.paginationState) { loadState, paginationState ->
                 Pair(loadState, paginationState)
             }.collect { (loadState, paginationState) ->
                 // 更新分页状态
                 updateState(
-                    connected = loadState.isConnected(), 
-                    currentPage = paginationState.currentPage, 
+                    connected = loadState.isConnected(),
+                    currentPage = paginationState.currentPage,
                     totalPages = paginationState.totalPages
                 )
             }

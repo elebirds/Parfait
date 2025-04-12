@@ -20,7 +20,7 @@ interface StudentSearchRepository {
      * @return 符合条件的学生列表
      */
     suspend fun searchStudents(criteria: SearchFilterCriteria): List<Student>
-    
+
     /**
      * 根据条件分页搜索学生
      * @param criteria 搜索条件
@@ -29,21 +29,21 @@ interface StudentSearchRepository {
      * @return 符合条件的学生列表
      */
     suspend fun searchStudentsPage(criteria: SearchFilterCriteria, page: Int, size: Int): List<Student>
-    
+
     /**
      * 统计符合搜索条件的学生数量
      * @param criteria 搜索条件
      * @return 符合条件的学生数量
      */
     suspend fun countSearchResults(criteria: SearchFilterCriteria): Long
-    
+
     /**
      * 根据高级筛选条件搜索学生
      * @param criteria 高级筛选条件
      * @return 符合条件的学生列表
      */
     suspend fun searchAdvancedStudents(criteria: AdvancedFilterCriteria): List<Student>
-    
+
     /**
      * 根据高级筛选条件分页搜索学生
      * @param criteria 高级筛选条件
@@ -52,7 +52,7 @@ interface StudentSearchRepository {
      * @return 符合条件的学生列表
      */
     suspend fun searchAdvancedStudentsPage(criteria: AdvancedFilterCriteria, page: Int, size: Int): List<Student>
-    
+
     /**
      * 统计符合高级筛选条件的学生数量
      * @param criteria 高级筛选条件

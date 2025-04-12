@@ -16,7 +16,7 @@ import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.dialog.score.ScoreModifyDialog
-import moe.hhm.parfait.ui.component.table.ScoresTableModel
+import moe.hhm.parfait.ui.component.table.model.ScoresTableModel
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent

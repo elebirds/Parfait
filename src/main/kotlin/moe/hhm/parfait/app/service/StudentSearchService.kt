@@ -20,7 +20,7 @@ interface StudentSearchService {
      * @return 符合条件的学生DTO列表
      */
     suspend fun searchStudents(criteria: SearchFilterCriteria): List<StudentDTO>
-    
+
     /**
      * 根据条件分页搜索学生
      * @param criteria 搜索条件
@@ -29,7 +29,7 @@ interface StudentSearchService {
      * @return 符合条件的学生DTO列表
      */
     suspend fun searchStudentsPage(criteria: SearchFilterCriteria, page: Int, size: Int): List<StudentDTO>
-    
+
     /**
      * 统计符合搜索条件的学生数量
      * @param criteria 搜索条件
@@ -43,7 +43,7 @@ interface StudentSearchService {
      * @return 符合条件的学生DTO列表
      */
     suspend fun searchAdvancedStudents(criteria: AdvancedFilterCriteria): List<StudentDTO>
-    
+
     /**
      * 根据高级筛选条件分页搜索学生
      * @param criteria 高级筛选条件
@@ -52,7 +52,7 @@ interface StudentSearchService {
      * @return 符合条件的学生DTO列表
      */
     suspend fun searchAdvancedStudentsPage(criteria: AdvancedFilterCriteria, page: Int, size: Int): List<StudentDTO>
-    
+
     /**
      * 统计符合高级筛选条件的学生数量
      * @param criteria 高级筛选条件

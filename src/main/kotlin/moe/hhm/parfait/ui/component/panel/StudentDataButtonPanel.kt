@@ -15,7 +15,7 @@ import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.dialog.StudentModifyDialog
 import moe.hhm.parfait.ui.component.dialog.StudentScoresDialog
-import moe.hhm.parfait.ui.state.StudentDataLoadState
+import moe.hhm.parfait.ui.state.VMState
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent
@@ -44,7 +44,7 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
             if (selectedStudents.isNotEmpty()) {
                 // 显示确认对话框
                 val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
-                
+
                 // 根据选择的学生数量构建不同的确认消息
                 // 姓名取前五个人的
                 val message = I18nUtils.getFormattedText(
@@ -52,7 +52,7 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
                     selectedStudents.take(5).joinToString(", ") { it.name },
                     selectedStudents.size
                 )
-                
+
                 val result = JOptionPane.showConfirmDialog(
                     owner,
                     message,
@@ -60,7 +60,7 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE
                 )
-                
+
                 // 如果用户确认删除
                 if (result == JOptionPane.YES_OPTION) {
                     // 批量删除选中的学生
@@ -126,7 +126,7 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
     override fun observer() {
         // 订阅ViewModel的加载状态和选中学生
         scope.launch {
-            combine(viewModel.loadState, viewModel.selectedStudents) { loadState, students ->
+            combine(viewModel.vmState, viewModel.selectedStudents) { loadState, students ->
                 loadState to students.isNotEmpty()
             }.collectLatest { (loadState, hasSelection) ->
                 // 更新按钮状态
@@ -138,9 +138,9 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
     /**
      * 更新按钮状态
      */
-    fun updateState(state: StudentDataLoadState, hasSelection: Boolean) {
+    fun updateState(state: VMState, hasSelection: Boolean) {
         // 根据数据库连接状态和加载状态确定按钮启用状态
-        val enabled = state == StudentDataLoadState.DONE
+        val enabled = state == VMState.DONE
 
         // 设置按钮启用状态
         buttonAdd.isEnabled = enabled

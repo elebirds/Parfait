@@ -19,7 +19,7 @@ import javax.swing.border.EmptyBorder
 
 /**
  * 通用分页面板
- * 
+ *
  * @param parent 父协程组件
  * @param pageSizeOptions 页大小选项
  * @param defaultPageSize 默认页大小
@@ -92,19 +92,19 @@ open class PaginationPanel(
         this.onNextPage = onNextPage
         this.onLastPage = onLastPage
         this.onPageSizeChange = onPageSizeChange
-        
+
         // 更新按钮事件监听器
         buttonFirstPage.actionListeners.forEach { buttonFirstPage.removeActionListener(it) }
         buttonPrevPage.actionListeners.forEach { buttonPrevPage.removeActionListener(it) }
         buttonNextPage.actionListeners.forEach { buttonNextPage.removeActionListener(it) }
         buttonLastPage.actionListeners.forEach { buttonLastPage.removeActionListener(it) }
         comboPageSize.actionListeners.forEach { comboPageSize.removeActionListener(it) }
-        
+
         buttonFirstPage.addActionListener { onFirstPage() }
         buttonPrevPage.addActionListener { onPrevPage() }
         buttonNextPage.addActionListener { onNextPage() }
         buttonLastPage.addActionListener { onLastPage() }
-        comboPageSize.addActionListener { 
+        comboPageSize.addActionListener {
             val size = comboPageSize.selectedItem as Int
             onPageSizeChange(size)
         }
@@ -129,14 +129,14 @@ open class PaginationPanel(
         labelCurrentPage.text = currentPage.toString()
         labelTotalPages.text = "/ $totalPages"
     }
-    
+
     /**
      * 设置页大小
      */
     fun setPageSize(pageSize: Int) {
         comboPageSize.selectedItem = pageSize
     }
-    
+
     /**
      * 观察者方法，用于子类覆盖
      */

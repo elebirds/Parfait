@@ -46,6 +46,11 @@ interface StudentRepository {
     suspend fun isExistByStudentId(studentID: String): Boolean
 
     /**
+     * 查询指定学号的学生是否存在，排除自己
+     */
+    suspend fun isExistByStudentIdExceptMe(studentID: String, uuid: UUID): Boolean
+
+    /**
      * 添加学生
      */
     suspend fun addStudent(student: StudentDTO): EntityID<UUID>

@@ -27,7 +27,8 @@ data class StudentDTO(
         MALE("student.gender.male"),
         FEMALE("student.gender.female");
     }
-    enum class Status(val i18nKey: String) { 
+
+    enum class Status(val i18nKey: String) {
         ENROLLED("student.status.enrolled"),
         SUSPENDED("student.status.suspended"),
         GRADUATED("student.status.graduated"),

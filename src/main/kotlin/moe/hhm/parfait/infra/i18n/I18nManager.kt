@@ -86,7 +86,7 @@ object I18nManager {
      *
      * @param keys 文本键列表
      * @return 国际化文本列表
-     */ 
+     */
     fun getMessages(keys: List<String>): List<String> = keys.map { getMessage(it) }
 
     /**

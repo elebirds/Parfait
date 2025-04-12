@@ -11,9 +11,9 @@ import moe.hhm.parfait.domain.model.gpa.GpaStandard
 import moe.hhm.parfait.domain.repository.GpaRepository
 import moe.hhm.parfait.dto.GpaStandardDTO
 import org.jetbrains.exposed.dao.id.EntityID
-import java.util.UUID
+import java.util.*
 
-class GpaStandardServiceImpl(private val rep: GpaRepository) : GpaStandardService  {
+class GpaStandardServiceImpl(private val rep: GpaRepository) : GpaStandardService {
     companion object {
         private var defaultStandard: GpaStandardDTO? = null
     }

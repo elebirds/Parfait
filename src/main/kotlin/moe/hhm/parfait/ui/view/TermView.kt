@@ -46,7 +46,7 @@ class TermView(parent: DefaultCoroutineComponent? = null) : JPanel(), KoinCompon
     }
 
     // 数据库连接状态提示
-    private val databaseStatusLabel = createLabel("database.needConnect").apply {
+    private val databaseStatusLabel = createLabel("database.connect.error.needConnect").apply {
         text = "请先连接数据库" // 临时文本，应通过国际化配置
         foreground = Color.RED
         horizontalAlignment = JLabel.CENTER
@@ -91,7 +91,7 @@ class TermView(parent: DefaultCoroutineComponent? = null) : JPanel(), KoinCompon
     override fun observer() {
         // 监听数据库连接状态变化
         scope.launch {
-            viewModel.loadState.collectLatest {
+            viewModel.vmState.collectLatest {
                 updateDatabaseConnectionStatus(it.isConnected())
             }
         }

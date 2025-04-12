@@ -9,7 +9,7 @@ package moe.hhm.parfait.app.service
 import moe.hhm.parfait.domain.model.gpa.GpaStandard
 import moe.hhm.parfait.dto.GpaStandardDTO
 import org.jetbrains.exposed.dao.id.EntityID
-import java.util.UUID
+import java.util.*
 
 interface GpaStandardService {
     suspend fun getAllGpaStandards(): List<GpaStandardDTO>

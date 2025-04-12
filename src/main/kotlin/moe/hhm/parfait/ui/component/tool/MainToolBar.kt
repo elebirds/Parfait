@@ -9,14 +9,13 @@ package moe.hhm.parfait.ui.component.tool
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindToolTipText
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.dialog.AdvancedFilterDialog
 import moe.hhm.parfait.ui.component.dialog.SearchFilterDialog
 import moe.hhm.parfait.ui.state.FilterState
-import moe.hhm.parfait.ui.state.StudentDataLoadState
+import moe.hhm.parfait.ui.state.VMState
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -25,9 +24,9 @@ import javax.swing.JToolBar
 import javax.swing.SwingUtilities
 
 class MainToolBar : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoroutineComponent() {
-    
+
     private val viewModel: StudentDataViewModel by inject()
-    
+
     private val searchButton = JButton(FlatSVGIcon("ui/nwicons/search.svg")).apply {
         bindToolTipText(this, "toolbar.search")
         addActionListener {
@@ -36,7 +35,7 @@ class MainToolBar : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoro
             }
         }
     }
-    
+
     private val filterButton = JButton(FlatSVGIcon("ui/nwicons/filter.svg")).apply {
         bindToolTipText(this, "toolbar.filter")
         addActionListener {
@@ -45,7 +44,7 @@ class MainToolBar : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoro
             }
         }
     }
-    
+
     private val cleanFilterButton = JButton(FlatSVGIcon("ui/nwicons/filter-cancel-16.svg")).apply {
         bindToolTipText(this, "toolbar.clearFilter")
         isEnabled = false // 初始状态下禁用
@@ -53,14 +52,14 @@ class MainToolBar : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoro
             viewModel.clearFilter()
         }
     }
-    
+
     private val refreshButton = JButton(FlatSVGIcon("ui/nwicons/refresh.svg")).apply {
         bindToolTipText(this, "toolbar.refresh")
         addActionListener {
             refreshData()
         }
     }
-    
+
     private val redrawButton = JButton(FlatSVGIcon("ui/nwicons/redraw.svg")).apply {
         bindToolTipText(this, "toolbar.redraw")
         addActionListener {
@@ -76,23 +75,23 @@ class MainToolBar : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoro
         add(refreshButton)
         add(redrawButton)
         addSeparator()
-        
+
         // 监听筛选状态变化
         observeFilterState()
     }
-    
+
     /**
      * 刷新数据
      */
     private fun refreshData() {
         // 如果当前是DONE状态，先设置为PRELOADING再执行loadData
-        if (viewModel.loadState.value == StudentDataLoadState.DONE) {
+        if (viewModel.vmState.value == VMState.DONE) {
             viewModel.prepareForReload()
         } else {
             viewModel.loadData()
         }
     }
-    
+
     /**
      * 监听筛选状态变化
      */

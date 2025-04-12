@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import moe.hhm.parfait.infra.db.certificate.CertificateDatas
 import moe.hhm.parfait.infra.db.certificate.CertificateRecords
 import moe.hhm.parfait.infra.db.certificate.CertificateTemplates
-import moe.hhm.parfait.infra.db.certificate.CertificateTerms
+import moe.hhm.parfait.infra.db.certificate.Terms
 import moe.hhm.parfait.infra.db.gpa.GpaStandards
 import moe.hhm.parfait.infra.db.student.Students
 import org.jetbrains.exposed.sql.Database
@@ -47,7 +47,13 @@ data class DatabaseConnectionConfig(
             )
         }
 
-        fun online(host: String, port: Int, user: String, password: String, databaseName: String): DatabaseConnectionConfig {
+        fun online(
+            host: String,
+            port: Int,
+            user: String,
+            password: String,
+            databaseName: String
+        ): DatabaseConnectionConfig {
             return DatabaseConnectionConfig(
                 mode = DatabaseFactoryMode.ONLINE,
                 host = host,
@@ -152,7 +158,7 @@ object DatabaseFactory {
                 CertificateTemplates,
                 CertificateRecords,
                 CertificateDatas,
-                CertificateTerms
+                Terms
             )
         }
     }
@@ -162,7 +168,7 @@ object DatabaseFactory {
         transaction {
             GpaStandards.init()
             CertificateTemplates.init()
-            CertificateTerms.init()
+            Terms.init()
         }
     }
 }

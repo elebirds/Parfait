@@ -45,26 +45,31 @@ object DatabaseAction {
         // 检测地址是否合法
         val a = address.split(":")
         if (a.size != 2) {
-            throw IllegalArgumentException(I18nUtils.getFormattedText("database.invalidAddress", a))
-        } 
+            throw IllegalArgumentException(I18nUtils.getFormattedText("database.connect.error.invalidAddress", a))
+        }
         // IP 地址是否合法，需要支持域名,localhost,127.0.0.1等
         val ip = a[0]
         if (!ip.matches(Regex("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) && !ip.matches(Regex("[a-zA-Z0-9.-]+"))) {
-            throw IllegalArgumentException(I18nUtils.getFormattedText("database.illegalIp", ip))
+            throw IllegalArgumentException(I18nUtils.getFormattedText("database.connect.error.illegalIp", ip))
         }
         // 端口是否合法
         val port = a[1].toInt()
         if (port < 0 || port > 65535) {
-            throw IllegalArgumentException(I18nUtils.getFormattedText("database.invalidPort", port))
+            throw IllegalArgumentException(I18nUtils.getFormattedText("database.connect.error.invalidPort", port))
         }
         // 数据库名是否合法
         if (databaseName.isEmpty()) {
-            throw IllegalArgumentException(I18nUtils.getFormattedText("database.invalidDatabaseName", databaseName))
+            throw IllegalArgumentException(
+                I18nUtils.getFormattedText(
+                    "database.connect.error.invalidDatabaseName",
+                    databaseName
+                )
+            )
         }
-        
+
         // 用户名是否合法
         if (user.isEmpty()) {
-            throw IllegalArgumentException(I18nUtils.getText("database.invalidUserName"))
+            throw IllegalArgumentException(I18nUtils.getText("database.connect.error.invalidUserName"))
         }
         // 密码允许为空
     }
@@ -86,12 +91,11 @@ object DatabaseAction {
                 databaseName = databaseName
             )
             DatabaseFactory.connect(config)
-        }catch (e: Exception){
-            // 显示连接错误
-            JOptionPane.showMessageDialog( // TODO: 需要国际化
+        } catch (e: Exception) {
+            JOptionPane.showMessageDialog(
                 null,
-                I18nUtils.getText("database.failconnet") ,
-                I18nUtils.getText("database.connectError"),
+                I18nUtils.getFormattedText("database.connect.error.msg", e.localizedMessage),
+                I18nUtils.getText("database.connect.error.title"),
                 JOptionPane.ERROR_MESSAGE
             )
         }

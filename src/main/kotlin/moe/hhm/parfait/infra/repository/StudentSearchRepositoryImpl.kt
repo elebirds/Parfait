@@ -43,10 +43,11 @@ class StudentSearchRepositoryImpl : StudentSearchRepository {
     override suspend fun countSearchResults(criteria: SearchFilterCriteria): Long = DatabaseUtils.dbQuery {
         Student.find { buildSearchCondition(criteria) }.count()
     }
-    
-    override suspend fun searchAdvancedStudents(criteria: AdvancedFilterCriteria): List<Student> = DatabaseUtils.dbQuery {
-        Student.find { buildAdvancedSearchCondition(criteria) }.toList()
-    }
+
+    override suspend fun searchAdvancedStudents(criteria: AdvancedFilterCriteria): List<Student> =
+        DatabaseUtils.dbQuery {
+            Student.find { buildAdvancedSearchCondition(criteria) }.toList()
+        }
 
     override suspend fun searchAdvancedStudentsPage(
         criteria: AdvancedFilterCriteria,
@@ -110,7 +111,7 @@ class StudentSearchRepositoryImpl : StudentSearchRepository {
 
         return condition
     }
-    
+
     /**
      * 构建高级搜索条件
      */

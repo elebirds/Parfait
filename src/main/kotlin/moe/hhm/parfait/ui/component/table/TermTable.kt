@@ -8,8 +8,7 @@ package moe.hhm.parfait.ui.component.table
 
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import moe.hhm.parfait.dto.CertificateTermDTO
-import moe.hhm.parfait.infra.i18n.I18nUtils
+import moe.hhm.parfait.dto.TermDTO
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.viewmodel.TermViewModel
@@ -39,7 +38,7 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     }
 
     // 保存术语数据的列表，用于获取选中的术语信息
-    private var termList: List<CertificateTermDTO> = emptyList()
+    private var termList: List<TermDTO> = emptyList()
 
     // 表格列名称
     private val columnKeys = listOf("UUID", "Key", "Term")
@@ -51,7 +50,7 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
         autoResizeMode = AUTO_RESIZE_SUBSEQUENT_COLUMNS
         selectionModel.selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
         rowHeight = 25
-        
+
         //// 设置UUID列不可见，但保留以便进行数据操作
         //columnModel.getColumn(0).minWidth = 0
         //columnModel.getColumn(0).maxWidth = 0
@@ -66,7 +65,7 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
                 viewModel.setSelectedTerms(getSelectedTerms())
             }
         }
-        
+
         // 添加双击编辑功能
         this.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
@@ -80,25 +79,25 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
                 }
             }
         })
-        
+
         // 添加单元格编辑完成监听器
         this.putClientProperty("terminateEditOnFocusLost", true)
         this.tableModel.addTableModelListener { event ->
             if (event.type == javax.swing.event.TableModelEvent.UPDATE) {
                 val row = event.firstRow
                 val col = event.column
-                
+
                 if (row >= 0 && col > 0 && row < termList.size) {
                     val term = termList[row]
                     val newValue = tableModel.getValueAt(row, col).toString()
-                    
+
                     // 更新术语数据
-                    val updatedTerm = when(col) {
+                    val updatedTerm = when (col) {
                         1 -> term.copy(key = newValue)
                         2 -> term.copy(term = newValue)
                         else -> term
                     }
-                    
+
                     if (updatedTerm != term) {
                         viewModel.updateTerm(updatedTerm)
                     }
@@ -110,7 +109,7 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     override fun observer() {
         // 监听表格数据更新
         scope.launch {
-            viewModel.terms.collectLatest { terms ->
+            viewModel.data.collectLatest { terms ->
                 // 更新表格数据
                 this@TermTable.updateData(terms)
             }
@@ -123,7 +122,7 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     }
 
     // 将术语DTO对象转换为表格行数据
-    private fun termToRow(term: CertificateTermDTO): Array<Any?> {
+    private fun termToRow(term: TermDTO): Array<Any?> {
         return arrayOf(
             term.uuid,
             term.key,
@@ -132,7 +131,7 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     }
 
     // 更新表格数据
-    fun updateData(terms: List<CertificateTermDTO>) {
+    fun updateData(terms: List<TermDTO>) {
         // 保存术语列表引用
         termList = terms
 
@@ -146,7 +145,7 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     }
 
     // 获取当前选中的所有术语
-    fun getSelectedTerms(): List<CertificateTermDTO> {
+    fun getSelectedTerms(): List<TermDTO> {
         return selectedRows.map { row ->
             if (row >= 0 && row < termList.size) {
                 termList[row]
@@ -157,7 +156,7 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     }
 
     // 获取当前选中的术语
-    fun getSelectedTerm(): CertificateTermDTO? {
+    fun getSelectedTerm(): TermDTO? {
         val selectedTerms = getSelectedTerms()
         return if (selectedTerms.isNotEmpty()) selectedTerms[0] else null
     }
@@ -168,7 +167,7 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     }
 
     // 选择指定术语的行
-    fun selectTerm(term: CertificateTermDTO?) {
+    fun selectTerm(term: TermDTO?) {
         if (term == null) {
             clearSelection()
             return
@@ -188,11 +187,11 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     }
 
     // 选择多个术语的行
-    fun selectTerms(terms: List<CertificateTermDTO>) {
+    fun selectTerms(terms: List<TermDTO>) {
         clearSelection()
-        
+
         if (terms.isEmpty()) return
-        
+
         terms.forEach { term ->
             // 查找术语在列表中的索引
             val index = termList.indexOfFirst { it.uuid == term.uuid }

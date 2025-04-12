@@ -18,7 +18,7 @@ import java.io.File
  */
 
 suspend fun main() {
-    DatabaseFactory.connect(DatabaseConnectionConfig.standalone("db.pardb"))
+    DatabaseFactory.connect(DatabaseConnectionConfig.standalone("C:\\Users\\hhmcn\\Documents\\1.pardb"))
     startKoin {
         modules(
             infrastructureModule,

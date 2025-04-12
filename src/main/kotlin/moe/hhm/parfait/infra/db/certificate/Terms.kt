@@ -6,14 +6,14 @@
 
 package moe.hhm.parfait.infra.db.certificate
 
-import moe.hhm.parfait.domain.model.certificate.CertificateTerm
+import moe.hhm.parfait.domain.model.certificate.Term
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
 import org.yaml.snakeyaml.Yaml
 import java.nio.charset.StandardCharsets
 
-object CertificateTerms : UUIDTable("certificate_terms") {
+object Terms : UUIDTable("certificate_terms") {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val key = varchar("key", 255)
@@ -21,19 +21,19 @@ object CertificateTerms : UUIDTable("certificate_terms") {
 
     fun init() {
         transaction {
-            if (CertificateTerm.count() != 0L) return@transaction
-            
+            if (Term.count() != 0L) return@transaction
+
             try {
                 val yaml = Yaml()
-                val resourceStream = CertificateTerms::class.java.classLoader.getResourceAsStream("terms.yaml") 
+                val resourceStream = Terms::class.java.classLoader.getResourceAsStream("terms.yaml")
                     ?: throw RuntimeException("资源文件未找到")
-                
+
                 val terms = yaml.load<Map<String, String>>(
                     resourceStream.bufferedReader(StandardCharsets.UTF_8)
                 )
-                
+
                 terms.forEach { (key, value) ->
-                    CertificateTerm.new {
+                    Term.new {
                         this.key = key
                         this.term = value
                     }
