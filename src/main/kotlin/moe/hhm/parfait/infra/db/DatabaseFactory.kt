@@ -111,14 +111,15 @@ object DatabaseFactory {
         scope.launch {
             try {
                 _connectionState.value = DatabaseConnectionState.Connecting(config)
-                when (config.mode) {
-                    DatabaseFactoryMode.ONLINE -> connection = Database.connect(
+                connection = when (config.mode) {
+                    DatabaseFactoryMode.ONLINE -> Database.connect(
                         driver = "com.mysql.cj.jdbc.Driver",
                         url = "jdbc:mysql://${config.host}:${config.port}/${config.databaseName}?useSSL=false&serverTimezone=UTC",
                         user = config.user,
                         password = config.password
                     )
-                    DatabaseFactoryMode.STANDALONE -> connection = Database.connect(
+
+                    DatabaseFactoryMode.STANDALONE -> Database.connect(
                         driver = "org.sqlite.JDBC",
                         url = "jdbc:sqlite:${config.host}",
                         user = config.user,

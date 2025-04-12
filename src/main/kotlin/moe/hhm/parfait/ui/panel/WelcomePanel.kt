@@ -46,37 +46,12 @@ class WelcomePanel : JPanel() {
         )
         this.setHorizontalTextPosition(JButton.LEADING)
         this.addActionListener {
-            val address = txtAddress.text
-            val port = 3306 // 可以添加一个端口输入框或从地址中解析
-            val user = txtUser.text
-            val password = String(txtPassword.password)
-            val databaseName = txtDatabaseName.text
-
-            try {
-                // 创建在线模式连接配置
-                val config = DatabaseConnectionConfig.online(
-                    host = address,
-                    port = port, 
-                    user = user,
-                    password = password,
-                    databaseName = databaseName
-                )
-                
-                // 尝试连接数据库
-                DatabaseFactory.connect(config)
-                
-                // 连接成功后可以切换到主界面
-                // ...
-                
-            } catch (e: Exception) {
-                // 显示连接错误
-                JOptionPane.showMessageDialog(
-                    this,
-                    "连接失败: ${e.message}",
-                    "连接错误",
-                    JOptionPane.ERROR_MESSAGE
-                )
-            }
+            DatabaseAction.connectOnline(
+                address = txtAddress.text,
+                user = txtUser.text,
+                password = String(txtPassword.password),
+                databaseName = txtDatabaseName.text
+            )
         }
     }
     private val txtAddress = JTextField().apply {
