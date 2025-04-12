@@ -9,6 +9,7 @@ package moe.hhm.parfait.ui.component.panel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.dto.CertificateTermDTO
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
@@ -32,13 +33,22 @@ class TermButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinCompon
     private val viewModel: TermViewModel by inject()
 
     private val buttonAdd: JButton = createButton("term.action.add").apply {
-        text = "添加术语" // 临时文本，应通过国际化配置
         addActionListener {
             // 打开添加术语对话框
             val owner = SwingUtilities.getWindowAncestor(this@TermButtonPanel)
-            val key = JOptionPane.showInputDialog(owner, "请输入术语键", "添加术语", JOptionPane.PLAIN_MESSAGE)
+            val key = JOptionPane.showInputDialog(
+                owner, 
+                I18nUtils.getText("term.dialog.add.key"), 
+                I18nUtils.getText("term.dialog.add.title"), 
+                JOptionPane.PLAIN_MESSAGE
+            )
             if (key != null && key.isNotBlank()) {
-                val term = JOptionPane.showInputDialog(owner, "请输入术语值", "添加术语", JOptionPane.PLAIN_MESSAGE)
+                val term = JOptionPane.showInputDialog(
+                    owner, 
+                    I18nUtils.getText("term.dialog.add.value"), 
+                    I18nUtils.getText("term.dialog.add.title"), 
+                    JOptionPane.PLAIN_MESSAGE
+                )
                 if (term != null && term.isNotBlank()) {
                     viewModel.addTerm(CertificateTermDTO(key = key, term = term))
                 }
@@ -47,18 +57,17 @@ class TermButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinCompon
     }
 
     private val buttonDelete: JButton = createButton("term.action.delete").apply {
-        text = "删除术语" // 临时文本，应通过国际化配置
         addActionListener {
             val selectedTerms = viewModel.selectedTerms.value
             if (selectedTerms.isNotEmpty()) {
                 // 显示确认对话框
                 val owner = SwingUtilities.getWindowAncestor(this@TermButtonPanel)
-                val message = "确定要删除所选中的 ${selectedTerms.size} 个术语吗？"
+                val message = I18nUtils.getFormattedText("term.dialog.delete.confirm", selectedTerms.size)
                 
                 val result = JOptionPane.showConfirmDialog(
                     owner,
                     message,
-                    "删除确认",
+                    I18nUtils.getText("term.dialog.delete.title"),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE
                 )
@@ -73,26 +82,24 @@ class TermButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinCompon
     }
 
     private val buttonExport: JButton = createButton("term.action.export").apply {
-        text = "导出术语" // 临时文本，应通过国际化配置
         addActionListener {
             // TODO: 实现导出功能
             JOptionPane.showMessageDialog(
                 SwingUtilities.getWindowAncestor(this@TermButtonPanel),
-                "导出功能尚未实现",
-                "提示",
+                I18nUtils.getText("term.dialog.export.notimplemented"),
+                I18nUtils.getText("term.dialog.message.title"),
                 JOptionPane.INFORMATION_MESSAGE
             )
         }
     }
 
     private val buttonImport: JButton = createButton("term.action.import").apply {
-        text = "导入术语" // 临时文本，应通过国际化配置
         addActionListener {
             // TODO: 实现导入功能
             JOptionPane.showMessageDialog(
                 SwingUtilities.getWindowAncestor(this@TermButtonPanel),
-                "导入功能尚未实现",
-                "提示",
+                I18nUtils.getText("term.dialog.import.notimplemented"),
+                I18nUtils.getText("term.dialog.message.title"),
                 JOptionPane.INFORMATION_MESSAGE
             )
         }

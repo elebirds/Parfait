@@ -16,8 +16,10 @@ object GpaStandards : UUIDTable("gpa_standards") {
     val name = varchar("name", 100).uniqueIndex() // 名称
     val description = text("description") // 描述
     val category = varchar("category", 100) // 类别
+    val purpose = varchar("purpose", 50)
     val mapping = text("mapping") // 标准映射
     val isDefault = bool("is_default").default(false) // 是否默认
+    val isLike = bool("is_like").default(false)
 
     val createdAt = datetime("created_at").clientDefault { LocalDateTime.now() } // 创建时间
     val updatedAt = datetime("updated_at").clientDefault { LocalDateTime.now() } // 更新时间
@@ -41,6 +43,7 @@ object GpaStandards : UUIDTable("gpa_standards") {
                 category = "基础"
                 mapping = defaultGradePointMappings.toString()
                 isDefault = true
+                isLike = true
             }
         }
     }

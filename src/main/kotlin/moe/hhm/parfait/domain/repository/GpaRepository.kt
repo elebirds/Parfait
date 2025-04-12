@@ -21,5 +21,6 @@ interface GpaRepository {
     suspend fun update(gpaStandard: GpaStandardDTO): Boolean
     suspend fun isExistByName(name: String): Boolean
     suspend fun getDefault(): GpaStandard
+    suspend fun setDefault(uuid: UUID): Boolean
     fun getDefaultSync(): GpaStandard
 }

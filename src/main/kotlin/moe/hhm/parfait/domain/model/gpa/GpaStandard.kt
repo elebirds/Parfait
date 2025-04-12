@@ -21,8 +21,10 @@ class GpaStandard(id: EntityID<UUID>) : UUIDEntity(id) {
     var name by GpaStandards.name
     var description by GpaStandards.description
     var category by GpaStandards.category
+    var purpose by GpaStandards.purpose
     var mapping by GpaStandards.mapping
     var isDefault by GpaStandards.isDefault
+    var isLike by GpaStandards.isLike
 
     var createdAt by GpaStandards.createdAt
     var updatedAt by GpaStandards.updatedAt
@@ -31,6 +33,10 @@ class GpaStandard(id: EntityID<UUID>) : UUIDEntity(id) {
         name = name,
         description = description,
         category = category,
-        mapping = GpaMappingDTO(mapping)
+        mapping = GpaMappingDTO(mapping),
+        purpose = purpose,
+        isDefault = isDefault,
+        isLike = isLike,
+        createdAt = createdAt
     )
 }
