@@ -10,6 +10,7 @@ import moe.hhm.parfait.app.service.StudentSearchService
 //import moe.hhm.parfait.domain.model.student.toDTO
 import moe.hhm.parfait.domain.repository.StudentSearchRepository
 import moe.hhm.parfait.dto.StudentDTO
+import moe.hhm.parfait.ui.component.dialog.AdvancedFilterCriteria
 import moe.hhm.parfait.ui.component.dialog.SearchFilterCriteria
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -30,5 +31,17 @@ class StudentSearchServiceImpl : StudentSearchService, KoinComponent {
 
     override suspend fun countSearchResults(criteria: SearchFilterCriteria): Long {
         return repository.countSearchResults(criteria)
+    }
+    
+    override suspend fun searchAdvancedStudents(criteria: AdvancedFilterCriteria): List<StudentDTO> {
+        return repository.searchAdvancedStudents(criteria).map { it.toDTO() }
+    }
+    
+    override suspend fun searchAdvancedStudentsPage(criteria: AdvancedFilterCriteria, page: Int, size: Int): List<StudentDTO> {
+        return repository.searchAdvancedStudentsPage(criteria, page, size).map { it.toDTO() }
+    }
+    
+    override suspend fun countAdvancedSearchResults(criteria: AdvancedFilterCriteria): Long {
+        return repository.countAdvancedSearchResults(criteria)
     }
 } 

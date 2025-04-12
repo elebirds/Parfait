@@ -14,6 +14,7 @@ import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
 import moe.hhm.parfait.ui.component.dialog.SearchFilterCriteria
+import moe.hhm.parfait.ui.component.dialog.AdvancedFilterCriteria
 import moe.hhm.parfait.ui.state.FilterState
 import moe.hhm.parfait.ui.state.StudentDataLoadState
 import moe.hhm.parfait.ui.state.StudentDataPaginationState
@@ -59,6 +60,10 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
     // 当前使用的筛选条件
     private val _currentFilterCriteria = MutableStateFlow<SearchFilterCriteria?>(null)
     val currentFilterCriteria: StateFlow<SearchFilterCriteria?> = _currentFilterCriteria.asStateFlow()
+
+    // 当前使用的高级筛选条件
+    private val _currentAdvancedFilterCriteria = MutableStateFlow<AdvancedFilterCriteria?>(null)
+    val currentAdvancedFilterCriteria: StateFlow<AdvancedFilterCriteria?> = _currentAdvancedFilterCriteria.asStateFlow()
 
     init {
         // 监听数据库连接状态
@@ -111,10 +116,16 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                 val selectedStudentIds = _selectedStudents.value.map { it.studentId }
 
                 // 获取总学生数量（未分页）
-                val totalStudents = if (_currentFilterCriteria.value != null) {
-                    studentSearchService.countSearchResults(_currentFilterCriteria.value!!)
-                } else {
-                    studentService.count()
+                val totalStudents = when {
+                    _currentAdvancedFilterCriteria.value != null -> {
+                        studentSearchService.countAdvancedSearchResults(_currentAdvancedFilterCriteria.value!!)
+                    }
+                    _currentFilterCriteria.value != null -> {
+                        studentSearchService.countSearchResults(_currentFilterCriteria.value!!)
+                    }
+                    else -> {
+                        studentService.count()
+                    }
                 }
                 val totalPages = calculateTotalPages(totalStudents, _paginationState.value.pageSize)
 
@@ -129,17 +140,27 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                 }
 
                 // 获取当前页的学生数据
-                val pageStudents = if (_currentFilterCriteria.value != null) {
-                    studentSearchService.searchStudentsPage(
-                        _currentFilterCriteria.value!!,
-                        _paginationState.value.currentPage,
-                        _paginationState.value.pageSize
-                    )
-                } else {
-                    studentService.getStudentsPage(
-                        _paginationState.value.currentPage,
-                        _paginationState.value.pageSize
-                    )
+                val pageStudents = when {
+                    _currentAdvancedFilterCriteria.value != null -> {
+                        studentSearchService.searchAdvancedStudentsPage(
+                            _currentAdvancedFilterCriteria.value!!,
+                            _paginationState.value.currentPage,
+                            _paginationState.value.pageSize
+                        )
+                    }
+                    _currentFilterCriteria.value != null -> {
+                        studentSearchService.searchStudentsPage(
+                            _currentFilterCriteria.value!!,
+                            _paginationState.value.currentPage,
+                            _paginationState.value.pageSize
+                        )
+                    }
+                    else -> {
+                        studentService.getStudentsPage(
+                            _paginationState.value.currentPage,
+                            _paginationState.value.pageSize
+                        )
+                    }
                 }
 
                 // 更新学生列表
@@ -436,6 +457,46 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
     }
     
     /**
+     * 应用高级筛选条件
+     * @param criteria 高级筛选条件
+     */
+    fun applyAdvancedFilter(criteria: AdvancedFilterCriteria) {
+        // 检查数据库是否已连接
+        if (_loadState.value != StudentDataLoadState.DONE) {
+            logger.warn("在未初始化完毕时尝试应用高级筛选条件")
+            return
+        }
+        
+        scope.launch {
+            try {
+                _loadState.value = StudentDataLoadState.PROCESSING
+                
+                // 清空当前选中的学生
+                _selectedStudents.value = emptyList()
+                
+                // 保存高级筛选条件
+                _currentAdvancedFilterCriteria.value = criteria
+                // 清除普通筛选条件
+                _currentFilterCriteria.value = null
+                _filterState.value = FilterState.FILTERED
+                
+                // 重置页码
+                _paginationState.update {
+                    it.copy(currentPage = 1)
+                }
+                
+                // 重新加载数据
+                _loadState.value = StudentDataLoadState.PRELOADING
+                loadData()
+            } catch (e: Exception) {
+                _loadState.value = StudentDataLoadState.ERROR
+                logger.error("应用高级筛选条件失败", e)
+                e.printStackTrace()
+            }
+        }
+    }
+    
+    /**
      * 清除筛选条件
      */
     fun clearFilter() {
@@ -459,6 +520,7 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                 
                 // 清除筛选条件
                 _currentFilterCriteria.value = null
+                _currentAdvancedFilterCriteria.value = null
                 _filterState.value = FilterState.NO_FILTER
                 
                 // 重置页码
@@ -474,6 +536,19 @@ class StudentDataViewModel : BaseViewModel(), KoinComponent {
                 logger.error("清除筛选条件失败", e)
                 e.printStackTrace()
             }
+        }
+    }
+
+    /**
+     * 准备重新加载数据
+     * 当前状态为DONE时，将状态设置为PRELOADING，然后加载数据
+     */
+    fun prepareForReload() {
+        if (_loadState.value == StudentDataLoadState.DONE) {
+            _loadState.value = StudentDataLoadState.PRELOADING
+            loadData()
+        } else {
+            logger.warn("无法准备重新加载数据，当前状态：${_loadState.value.name}")
         }
     }
 }
