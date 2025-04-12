@@ -90,7 +90,7 @@ object DatabaseAction {
             // 显示连接错误
             JOptionPane.showMessageDialog( // TODO: 需要国际化
                 null,
-                I18nUtils.getFormattedText("database.failconnet",e.message) ,
+                I18nUtils.getText("database.failconnet") ,
                 I18nUtils.getText("database.connectError"),
                 JOptionPane.ERROR_MESSAGE
             )
