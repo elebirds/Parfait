@@ -33,7 +33,8 @@ data class DatabaseConnectionConfig(
     val host: String,
     val port: Int,
     val user: String,
-    val password: String
+    val password: String,
+    val databaseName: String = ""
 ) {
     companion object {
         fun standalone(filePath: String): DatabaseConnectionConfig {
@@ -46,13 +47,14 @@ data class DatabaseConnectionConfig(
             )
         }
 
-        fun online(host: String, port: Int, user: String, password: String): DatabaseConnectionConfig {
+        fun online(host: String, port: Int, user: String, password: String, databaseName: String): DatabaseConnectionConfig {
             return DatabaseConnectionConfig(
                 mode = DatabaseFactoryMode.ONLINE,
                 host = host,
                 port = port,
                 user = user,
-                password = password
+                password = password,
+                databaseName = databaseName
             )
         }
     }
@@ -60,7 +62,7 @@ data class DatabaseConnectionConfig(
     fun checkValid(): Boolean {
         return when (mode) {
             DatabaseFactoryMode.STANDALONE -> host.isNotEmpty()
-            DatabaseFactoryMode.ONLINE -> host.isNotEmpty() && port > 0 && user.isNotEmpty() && password.isNotEmpty()
+            DatabaseFactoryMode.ONLINE -> host.isNotEmpty() && port > 0 && user.isNotEmpty() && password.isNotEmpty() && databaseName.isNotEmpty()
         }
     }
 }
@@ -109,9 +111,15 @@ object DatabaseFactory {
         scope.launch {
             try {
                 _connectionState.value = DatabaseConnectionState.Connecting(config)
-                when (config.mode) {
-                    DatabaseFactoryMode.ONLINE -> throw NotImplementedError("C/S模式尚未实现")
-                    DatabaseFactoryMode.STANDALONE -> connection = Database.connect(
+                connection = when (config.mode) {
+                    DatabaseFactoryMode.ONLINE -> Database.connect(
+                        driver = "com.mysql.cj.jdbc.Driver",
+                        url = "jdbc:mysql://${config.host}:${config.port}/${config.databaseName}?useSSL=false&serverTimezone=UTC",
+                        user = config.user,
+                        password = config.password
+                    )
+
+                    DatabaseFactoryMode.STANDALONE -> Database.connect(
                         driver = "org.sqlite.JDBC",
                         url = "jdbc:sqlite:${config.host}",
                         user = config.user,

@@ -8,6 +8,8 @@ package moe.hhm.parfait.ui.panel
 
 import com.formdev.flatlaf.FlatClientProperties
 import com.formdev.flatlaf.extras.FlatSVGIcon
+import moe.hhm.parfait.infra.db.DatabaseConnectionConfig
+import moe.hhm.parfait.infra.db.DatabaseFactory
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
@@ -44,7 +46,12 @@ class WelcomePanel : JPanel() {
         )
         this.setHorizontalTextPosition(JButton.LEADING)
         this.addActionListener {
-            JOptionPane.showMessageDialog(this, "别急，联机版本还没写完:)", "Parfait", JOptionPane.INFORMATION_MESSAGE)
+            DatabaseAction.connectOnline(
+                address = txtAddress.text,
+                user = txtUser.text,
+                password = String(txtPassword.password),
+                databaseName = txtDatabaseName.text
+            )
         }
     }
     private val txtAddress = JTextField().apply {
@@ -73,6 +80,7 @@ class WelcomePanel : JPanel() {
             FlatSVGIcon("ui/nwicons/user.svg", 0.068f)
         )
     }
+
     private val txtPassword = JPasswordField().apply {
         this.putClientProperty(
             FlatClientProperties.STYLE,
@@ -87,6 +95,19 @@ class WelcomePanel : JPanel() {
         )
     }
 
+    private val txtDatabaseName = JTextField().apply {
+        this.putClientProperty(
+            FlatClientProperties.STYLE,
+            "iconTextGap:10;"
+        )
+        I18nUtils.bindProperty(this, "form.placeholder.database") { c, v ->
+            this.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, v)
+        }
+        this.putClientProperty(
+            FlatClientProperties.TEXT_FIELD_LEADING_ICON,
+            FlatSVGIcon("ui/nwicons/database.svg", 0.068f)
+        )
+    }
 
     init {
         init()
@@ -124,12 +145,19 @@ class WelcomePanel : JPanel() {
         add(lbAddress, "gapy 10 5")
         add(txtAddress)
 
+        val lbDatabaseName = createLabel("form.databaseName").apply {
+            putClientProperty(FlatClientProperties.STYLE, "font:bold;")
+        }
+        add(lbDatabaseName, "gapy 10 5")
+        add(txtDatabaseName)
+
         val lbUser = createLabel("form.user").apply {
             putClientProperty(FlatClientProperties.STYLE, "font:bold;")
         }
         add(lbUser, "gapy 10 5")
         add(txtUser)
 
+        
         val lbPassword = createLabel("form.password").apply {
             putClientProperty(FlatClientProperties.STYLE, "font:bold;")
         }
@@ -138,6 +166,7 @@ class WelcomePanel : JPanel() {
         add(cmdForgotPassword, "grow 0,gapy 10 5")
 
         add(txtPassword)
+        
 
         add(createCheckBox("welcome.remember"), "gapy 10 10")
         add(cmdSignIn, "gapy n 10")

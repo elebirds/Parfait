@@ -42,6 +42,17 @@ class GpaRepositoryImpl : GpaRepository {
         }.firstOrNull() ?: throw BusinessException("gpa.error.default.not.exist")
     }
 
+    override suspend fun setDefault(uuid: UUID): Boolean = DatabaseUtils.dbQuery {
+        // 先把所有默认的设置为非默认
+        GpaStandards.update({ GpaStandards.isDefault eq true }) {
+            it[GpaStandards.isDefault] = false
+        }
+        // 再把当前的设置为默认
+        GpaStandards.update({ GpaStandards.id eq uuid }) {
+            it[GpaStandards.isDefault] = true
+        } > 0
+    }
+
     override fun getDefaultSync(): GpaStandard = DatabaseUtils.dbQuerySync {
         GpaStandard.find {
             GpaStandards.isDefault eq true

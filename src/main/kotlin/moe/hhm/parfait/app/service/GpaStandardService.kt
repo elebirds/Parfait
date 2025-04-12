@@ -19,5 +19,6 @@ interface GpaStandardService {
     suspend fun deleteGpaStandard(uuid: UUID): Boolean
     suspend fun updateGpaStandard(gpaStandard: GpaStandardDTO): Boolean
     suspend fun loadDefault(): GpaStandardDTO
+    suspend fun setDefault(uuid: UUID): Boolean
     fun getDefault(): GpaStandardDTO
 }
