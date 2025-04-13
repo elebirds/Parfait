@@ -1,6 +1,7 @@
 package moe.hhm.parfait.dto
 
 import moe.hhm.parfait.exception.BusinessException
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.utils.castTo
 
 fun List<ScoreDTO>.toScoreString(): String {
@@ -30,6 +31,10 @@ enum class CourseType(val i18nKey: String) {
     PLATFORM("course.type.platform"),
     GENERAL_REQUIRED("course.type.general.required"),
     GENERAL_ELECTIVE("course.type.general.elective");
+
+    override fun toString(): String {
+        return I18nUtils.getText(i18nKey)
+    }
 }
 
 data class ScoreDTO(

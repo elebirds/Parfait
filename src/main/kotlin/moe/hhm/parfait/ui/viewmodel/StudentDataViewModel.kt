@@ -214,7 +214,7 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
             _currentFilterCriteria.value != null -> studentSearchService.searchStudents(_currentFilterCriteria.value!!)
             else -> studentService.getAllStudents()
         }
-        StudentAction.exportScoresToExcel(students)
+        StudentAction.exportToExcel(students)
         _vmState.value = VMState.DONE
         true
     }

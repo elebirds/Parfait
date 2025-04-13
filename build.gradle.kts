@@ -57,6 +57,8 @@ dependencies {
 
     // 文档生成
     implementation("com.deepoove:poi-tl:1.12.2")
+    implementation("com.alibaba:easyexcel:4.0.3")
+
     // 拼音英文转换
     implementation("com.belerweb:pinyin4j:2.5.1")
     // YAML配置支持

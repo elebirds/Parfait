@@ -7,6 +7,7 @@
 package moe.hhm.parfait.dto
 
 import moe.hhm.parfait.infra.db.student.Students
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import java.util.*
 
@@ -26,6 +27,10 @@ data class StudentDTO(
         UNKNOWN("student.gender.unknown"),
         MALE("student.gender.male"),
         FEMALE("student.gender.female");
+
+        override fun toString(): String {
+            return I18nUtils.getText(i18nKey)
+        }
     }
 
     enum class Status(val i18nKey: String) {
@@ -33,6 +38,10 @@ data class StudentDTO(
         SUSPENDED("student.status.suspended"),
         GRADUATED("student.status.graduated"),
         ABNORMAL("student.status.abnormal");
+
+        override fun toString(): String {
+            return I18nUtils.getText(i18nKey)
+        }
     }
 
     fun <T : Any> into(it: UpdateBuilder<T>) {
