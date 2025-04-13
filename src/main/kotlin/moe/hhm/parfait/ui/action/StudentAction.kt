@@ -1,36 +1,31 @@
 package moe.hhm.parfait.ui.action
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import moe.hhm.parfait.app.service.StudentService
+import moe.hhm.parfait.dto.StudentDTO
+import moe.hhm.parfait.infra.i18n.I18nUtils
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.awt.Window
+import java.io.FileOutputStream
 import javax.swing.JFileChooser
 import javax.swing.JOptionPane
 import javax.swing.filechooser.FileNameExtensionFilter
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import org.apache.poi.ss.usermodel.*
-import moe.hhm.parfait.dto.StudentDTO
-import moe.hhm.parfait.infra.i18n.I18nUtils
-import java.io.FileOutputStream
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
-import moe.hhm.parfait.app.service.StudentService
-import kotlinx.coroutines.runBlocking
 
 object StudentAction : KoinComponent {
     private val studentService: StudentService by inject()
 
     /**
      * 导出学生信息到Excel
-     */
-    fun exportScoresToExcel(students: List<StudentDTO>, owner: Window? = null) {
-        if (students.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                owner,
-                I18nUtils.getText("student.export.noselection"),
-                I18nUtils.getText("error.generic"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return
-        }
 
+    * @param selectedStudents 选中的学生列表
+    * @param filteredStudents 筛选后的学生列表
+    * @param owner 父窗口
+    */
+    suspend fun exportScoresToExcel(students: List<StudentDTO> = emptyList(), owner: Window? = null) {
         val fileChooser = JFileChooser()
         fileChooser.fileFilter = FileNameExtensionFilter("Excel Files", "xlsx")
         
@@ -134,8 +129,10 @@ object StudentAction : KoinComponent {
                 }
                 
                 // 保存文件
-                FileOutputStream(filePath).use { 
-                    workbook.write(it)
+                withContext(Dispatchers.IO) {
+                    FileOutputStream(filePath).use {
+                        workbook.write(it)
+                    }
                 }
                 workbook.close()
 

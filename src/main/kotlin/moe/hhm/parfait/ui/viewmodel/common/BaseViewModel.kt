@@ -39,6 +39,13 @@ sealed class VMErrorHandlerChooser {
         exceptionPause = true,
         exceptionFatal = false
     )
+
+    object Process : VMErrorHandler(
+        validStates = listOf(VMState.DONE),
+        autoReload = false,
+        exceptionPause = false,
+        exceptionFatal = false
+    )
 }
 
 abstract class BaseViewModel : CoroutineComponent by DefaultCoroutineComponent() {

@@ -9,11 +9,14 @@ package moe.hhm.parfait.ui.component.panel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
 import moe.hhm.parfait.ui.action.StudentAction
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
+import moe.hhm.parfait.ui.component.dialog.AdvancedFilterCriteria
 import moe.hhm.parfait.ui.component.dialog.StudentModifyDialog
 import moe.hhm.parfait.ui.component.dialog.StudentScoresDialog
 import moe.hhm.parfait.ui.state.VMState
@@ -25,11 +28,14 @@ import javax.swing.JButton
 import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
+import moe.hhm.parfait.app.service.StudentSearchService
+import moe.hhm.parfait.ui.component.dialog.SearchFilterCriteria
 
 class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinComponent,
     CoroutineComponent by DefaultCoroutineComponent(parent) {
     // 通过Koin获取ViewModel
     private val viewModel: StudentDataViewModel by inject()
+    private val studentSearchService: StudentSearchService by inject()
 
     private val buttonAdd: JButton = createButton("student.action.add").apply {
         addActionListener {
@@ -115,8 +121,7 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
 
     private val buttonExportInformationStudent: JButton = createButton("student.action.export").apply {
         addActionListener {
-            val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
-            StudentAction.exportScoresToExcel(viewModel.selectedStudents.value, owner)
+            viewModel.exportStudentToExcel()
         }
     }
 

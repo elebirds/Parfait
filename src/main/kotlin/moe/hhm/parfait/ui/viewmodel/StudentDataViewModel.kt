@@ -13,6 +13,7 @@ import moe.hhm.parfait.app.service.StudentService
 import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
+import moe.hhm.parfait.ui.action.StudentAction
 import moe.hhm.parfait.ui.component.dialog.AdvancedFilterCriteria
 import moe.hhm.parfait.ui.component.dialog.SearchFilterCriteria
 import moe.hhm.parfait.ui.state.FilterState
@@ -202,6 +203,21 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
             }
             true
         }
+
+    fun exportStudentToExcel() = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Process) {
+        _vmState.value = VMState.PROCESSING
+        val students = when {
+            _selectedStudents.value.isNotEmpty()-> _selectedStudents.value
+            _currentAdvancedFilterCriteria.value != null -> studentSearchService.searchAdvancedStudents(
+                _currentAdvancedFilterCriteria.value!!
+            )
+            _currentFilterCriteria.value != null -> studentSearchService.searchStudents(_currentFilterCriteria.value!!)
+            else -> studentService.getAllStudents()
+        }
+        StudentAction.exportScoresToExcel(students)
+        _vmState.value = VMState.DONE
+        true
+    }
 
     /**
      * 搜索学生
