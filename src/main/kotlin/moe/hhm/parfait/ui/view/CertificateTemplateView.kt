@@ -16,4 +16,5 @@ class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPane
     CoroutineComponent by DefaultCoroutineComponent(parent) {
     // 通过Koin获取ViewModel
     private val viewModel: CertificateTemplateView by inject()
+
 }
