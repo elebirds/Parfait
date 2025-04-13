@@ -32,8 +32,8 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     // 自定义表格模型，可编辑单元格
     private val tableModel = object : DefaultTableModel() {
         override fun isCellEditable(row: Int, column: Int): Boolean {
-            // 允许编辑除了UUID列之外的单元格
-            return column > 0
+            // 只允许编辑字段名、上下文、语言和术语值列
+            return column in 1..4
         }
     }
 
@@ -41,21 +41,17 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     private var termList: List<TermDTO> = emptyList()
 
     // 表格列名称
-    private val columnKeys = listOf("UUID", "Key", "Term")
+    private val columnKeys = listOf("UUID", "字段", "上下文", "语言", "术语值")
 
     init {
         // 设置表格模型和基本属性
         model = tableModel
-        preferredViewportSize = Dimension(800, 600)
+        preferredViewportSize = Dimension(900, 600)
         autoResizeMode = AUTO_RESIZE_SUBSEQUENT_COLUMNS
         selectionModel.selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
         rowHeight = 25
 
-        //// 设置UUID列不可见，但保留以便进行数据操作
-        //columnModel.getColumn(0).minWidth = 0
-        //columnModel.getColumn(0).maxWidth = 0
-        //columnModel.getColumn(0).preferredWidth = 0
-
+        // 设置UUID列不可见，但保留以便进行数据操作
         // 初始化表格列
         initColumns()
 
@@ -72,7 +68,7 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
                 if (e.clickCount == 2) {
                     val row = rowAtPoint(e.point)
                     val col = columnAtPoint(e.point)
-                    if (row >= 0 && col > 0) {
+                    if (row >= 0 && col in 1..4) {
                         // 开始编辑单元格
                         editCellAt(row, col)
                     }
@@ -87,14 +83,16 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
                 val row = event.firstRow
                 val col = event.column
 
-                if (row >= 0 && col > 0 && row < termList.size) {
+                if (row >= 0 && col in 1..4 && row < termList.size) {
                     val term = termList[row]
                     val newValue = tableModel.getValueAt(row, col).toString()
 
                     // 更新术语数据
                     val updatedTerm = when (col) {
-                        1 -> term.copy(key = newValue)
-                        2 -> term.copy(term = newValue)
+                        1 -> term.copy(field = newValue)
+                        2 -> term.copy(context = if (newValue.isBlank()) null else newValue)
+                        3 -> term.copy(language = if (newValue.isBlank()) null else newValue)
+                        4 -> term.copy(term = newValue)
                         else -> term
                     }
 
@@ -119,13 +117,27 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     // 初始化表格列
     private fun initColumns() {
         tableModel.setColumnIdentifiers(columnKeys.toTypedArray())
+        
+        // 设置列宽
+        columnModel.getColumn(0).preferredWidth = 0  // UUID列（隐藏）
+        columnModel.getColumn(1).preferredWidth = 150 // 字段名
+        columnModel.getColumn(2).preferredWidth = 150 // 上下文
+        columnModel.getColumn(3).preferredWidth = 80  // 语言
+        columnModel.getColumn(4).preferredWidth = 300 // 术语值
+        
+        // 隐藏UUID列
+        columnModel.getColumn(0).minWidth = 0
+        columnModel.getColumn(0).maxWidth = 0
+        columnModel.getColumn(0).preferredWidth = 0
     }
 
     // 将术语DTO对象转换为表格行数据
     private fun termToRow(term: TermDTO): Array<Any?> {
         return arrayOf(
             term.uuid,
-            term.key,
+            term.field,
+            term.context ?: "",
+            term.language ?: "",
             term.term
         )
     }

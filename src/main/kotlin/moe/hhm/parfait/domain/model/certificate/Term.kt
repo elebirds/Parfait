@@ -11,18 +11,26 @@ import moe.hhm.parfait.infra.db.certificate.Terms
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import java.time.LocalDateTime
 import java.util.*
 
 class Term(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<Term>(Terms)
 
-    var key by Terms.key
+    var field by Terms.field
+    var context by Terms.context
+    var language by Terms.language
     var term by Terms.term
+    var isSystem by Terms.isSystem
+    var createdAt by Terms.createdAt
+    var updatedAt by Terms.updatedAt
 
     fun toDTO(): TermDTO {
         return TermDTO(
             uuid = this.id.value,
-            key = this.key,
+            field = this.field,
+            context = this.context,
+            language = this.language,
             term = this.term
         )
     }

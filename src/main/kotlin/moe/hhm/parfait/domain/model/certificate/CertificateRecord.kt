@@ -24,6 +24,7 @@ class CertificateRecord(id: EntityID<UUID>) : UUIDEntity(id) {
     var issuedBy by CertificateRecords.issuedBy
     var content by CertificateRecords.content
     var purpose by CertificateRecords.purpose
+
     var createdAt by CertificateRecords.createdAt
     var updatedAt by CertificateRecords.updatedAt
 }

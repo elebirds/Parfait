@@ -18,6 +18,12 @@ import moe.hhm.parfait.app.service.impl.GpaStandardServiceImpl
 import moe.hhm.parfait.app.service.impl.StudentSearchServiceImpl
 import moe.hhm.parfait.app.service.impl.StudentServiceImpl
 import moe.hhm.parfait.app.service.impl.TermServiceImpl
+import moe.hhm.parfait.app.term.CertificateTermProcessor
+import moe.hhm.parfait.app.term.ContextProvider
+import moe.hhm.parfait.app.term.MapBasedContextProvider
+import moe.hhm.parfait.app.term.StudentContextProvider
+import moe.hhm.parfait.app.term.TermParser
+import moe.hhm.parfait.app.term.TermProcessor
 import org.koin.dsl.module
 
 /**
@@ -30,4 +36,11 @@ val appModule = module {
     single<TermService> { TermServiceImpl(get()) }
     single<CertificateTemplateService> { CertificateTemplateServiceImpl(get()) }
     single<CertificateDataService> { CertificateDataServiceImpl(get()) }
+    
+    // 术语处理相关
+    single { TermParser() }
+    single<ContextProvider> { MapBasedContextProvider() }
+    single { StudentContextProvider() }
+    single { TermProcessor(get(), get(), get()) }
+    single { CertificateTermProcessor() }
 }

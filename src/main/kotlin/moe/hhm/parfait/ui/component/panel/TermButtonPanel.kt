@@ -18,10 +18,8 @@ import moe.hhm.parfait.ui.viewmodel.TermViewModel
 import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import javax.swing.JButton
-import javax.swing.JOptionPane
-import javax.swing.JPanel
-import javax.swing.SwingUtilities
+import java.time.LocalDateTime
+import javax.swing.*
 
 /**
  * 术语按钮面板
@@ -35,24 +33,7 @@ class TermButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinCompon
     private val buttonAdd: JButton = createButton("term.action.add").apply {
         addActionListener {
             // 打开添加术语对话框
-            val owner = SwingUtilities.getWindowAncestor(this@TermButtonPanel)
-            val key = JOptionPane.showInputDialog(
-                owner,
-                I18nUtils.getText("term.dialog.add.key"),
-                I18nUtils.getText("term.dialog.add.title"),
-                JOptionPane.PLAIN_MESSAGE
-            )
-            if (key != null && key.isNotBlank()) {
-                val term = JOptionPane.showInputDialog(
-                    owner,
-                    I18nUtils.getText("term.dialog.add.value"),
-                    I18nUtils.getText("term.dialog.add.title"),
-                    JOptionPane.PLAIN_MESSAGE
-                )
-                if (term != null && term.isNotBlank()) {
-                    viewModel.addTerm(TermDTO(key = key, term = term))
-                }
-            }
+            showAddTermDialog()
         }
     }
 
@@ -106,11 +87,78 @@ class TermButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinCompon
     }
 
     init {
-        this.layout = MigLayout("hidemode 3", "[fill]", "[][][][][][]")
+        this.layout = MigLayout("hidemode 3", "[fill]", "[][][][]")
         this.add(buttonAdd, "cell 0 0")
         this.add(buttonDelete, "cell 0 1")
         this.add(buttonExport, "cell 0 2")
         this.add(buttonImport, "cell 0 3")
+    }
+
+    /**
+     * 显示添加术语对话框
+     */
+    private fun showAddTermDialog() {
+        val owner = SwingUtilities.getWindowAncestor(this)
+        
+        // 创建面板
+        val panel = JPanel(MigLayout("wrap 2", "[][grow,fill]"))
+        
+        // 添加字段输入
+        panel.add(JLabel(I18nUtils.getText("term.dialog.add.field")))
+        val fieldField = JTextField(20)
+        panel.add(fieldField)
+        
+        // 添加上下文输入
+        panel.add(JLabel(I18nUtils.getText("term.dialog.add.context")))
+        val contextField = JTextField(20)
+        panel.add(contextField)
+        
+        // 添加语言输入
+        panel.add(JLabel(I18nUtils.getText("term.dialog.add.language")))
+        val languageField = JTextField(5)
+        panel.add(languageField)
+        
+        // 添加术语值输入
+        panel.add(JLabel(I18nUtils.getText("term.dialog.add.term")))
+        val termField = JTextField(20)
+        panel.add(termField)
+
+        // 显示对话框
+        val result = JOptionPane.showConfirmDialog(
+            owner,
+            panel,
+            I18nUtils.getText("term.dialog.add.title"),
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+        )
+
+        // 如果用户点击确定
+        if (result == JOptionPane.OK_OPTION) {
+            val field = fieldField.text.trim()
+            val context = contextField.text.trim().ifBlank { null }
+            val language = languageField.text.trim().ifBlank { null }
+            val term = termField.text.trim()
+
+            // 验证必填字段
+            if (field.isBlank() || term.isBlank()) {
+                JOptionPane.showMessageDialog(
+                    owner,
+                    I18nUtils.getText("term.dialog.add.error.requiredFields"),
+                    I18nUtils.getText("term.dialog.error.title"),
+                    JOptionPane.ERROR_MESSAGE
+                )
+                return
+            }
+
+            // 创建术语对象并添加
+            val termDTO = TermDTO(
+                field = field,
+                context = context,
+                language = language,
+                term = term
+            )
+            viewModel.addTerm(termDTO)
+        }
     }
 
     override fun observer() {

@@ -23,6 +23,8 @@ import moe.hhm.parfait.ui.viewmodel.common.VMErrorHandlerChooser
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.*
+import java.io.File
+import moe.hhm.parfait.ui.component.dialog.CertificateGenerateDialog
 
 /**
  * 学生数据视图模型
@@ -217,6 +219,25 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
         StudentAction.exportToExcel(students)
         _vmState.value = VMState.DONE
         true
+    }
+
+    /**
+     * 生成学生证书
+     * @param params 证书生成参数
+     * @return 生成的证书文件列表
+     */
+    suspend fun generateCertificates(params: CertificateGenerateDialog.CertificateGenerationParams): List<File> {
+        _vmState.value = VMState.PROCESSING
+        
+        try {
+            // 调用证书生成服务生成证书
+            val generatedFiles = StudentAction.generateCertificates(params)
+            _vmState.value = VMState.DONE
+            return generatedFiles
+        } catch (e: Exception) {
+            _vmState.value = VMState.ERROR
+            throw e
+        }
     }
 
     /**

@@ -13,6 +13,8 @@ import java.util.*
  */
 data class TermDTO(
     val uuid: UUID? = null,
-    val key: String,
+    val field: String,
+    val context: String? = null,
+    val language: String? = null,
     val term: String
 )

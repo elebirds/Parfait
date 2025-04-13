@@ -7,6 +7,7 @@
 package moe.hhm.parfait
 
 import moe.hhm.parfait.di.appModule
+import moe.hhm.parfait.di.documentModule
 import moe.hhm.parfait.di.domainModule
 import moe.hhm.parfait.di.infrastructureModule
 import moe.hhm.parfait.di.presentationModule
@@ -34,7 +35,8 @@ fun main(args: Array<String>) {
                     appModule,
                     domainModule,
                     infrastructureModule,
-                    presentationModule
+                    presentationModule,
+                    documentModule
                 )
             )
         }

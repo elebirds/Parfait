@@ -16,6 +16,9 @@ interface TermRepository {
     suspend fun findPage(page: Int, size: Int): List<Term>
     suspend fun findByUUID(id: UUID): Term?
     suspend fun findByKey(key: String): Term?
+    suspend fun findTerm(field: String, context: String? = null, language: String? = null): Term?
+    suspend fun findByFields(fields: List<String>): Map<String, Term>
+    suspend fun findByLanguage(language: String): List<Term>
     suspend fun isExistByUUID(uuid: UUID): Boolean
     suspend fun isExistByKey(key: String): Boolean
     suspend fun isExistByKeyExceptMe(key: String, uuid: UUID): Boolean

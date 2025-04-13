@@ -115,7 +115,9 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
     private val buttonGenerateDocument: JButton = createButton("certificate.action.generate").apply {
         addActionListener {
             // 打开生成文档对话框
-            // TODO: 实现生成文档功能
+            val selectedStudents = viewModel.selectedStudents.value
+            val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
+            moe.hhm.parfait.ui.component.dialog.CertificateGenerateDialog.show(selectedStudents, owner)
         }
     }
 
@@ -162,6 +164,7 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
         buttonEditScore.isEnabled = enabled && hasSelection && viewModel.selectedStudents.value.size == 1
         buttonImport.isEnabled = enabled
         buttonExport.isEnabled = enabled
-        buttonGenerateDocument.isEnabled = enabled
+        buttonExportInformationStudent.isEnabled = enabled
+        buttonGenerateDocument.isEnabled = enabled && hasSelection
     }
 }
