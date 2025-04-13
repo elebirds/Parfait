@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
+import moe.hhm.parfait.ui.action.StudentAction
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.dialog.StudentModifyDialog
@@ -112,6 +113,13 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
         }
     }
 
+    private val buttonExportInformationStudent: JButton = createButton("student.action.export").apply {
+        addActionListener {
+            val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
+            StudentAction.exportScoresToExcel(viewModel.selectedStudents.value, owner)
+        }
+    }
+
     init {
         this.layout = MigLayout("hidemode 3", "[fill]", "[][][][][][][][][][][][][]")
         this.add(buttonAdd, "cell 0 0")
@@ -119,7 +127,7 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
         this.add(buttonEdit, "cell 0 2")
         this.add(buttonEditScore, "cell 0 3")
         this.add(buttonImport, "cell 0 4")
-        this.add(buttonExport, "cell 0 5")
+        this.add(buttonExportInformationStudent, "cell 0 5")
         this.add(buttonGenerateDocument, "cell 0 6")
     }
 
