@@ -192,8 +192,8 @@ class StudentScoresDialog(
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(
                 this,
-                I18nUtils.getText("score.dialog.validation.required"),
-                I18nUtils.getText("error.generic"),
+                I18nUtils.getText("score.dialog.validation.needSelect"),
+                I18nUtils.getText("error.business.title"),
                 JOptionPane.ERROR_MESSAGE
             )
             return
@@ -215,8 +215,8 @@ class StudentScoresDialog(
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(
                 this,
-                I18nUtils.getText("score.dialog.validation.required"),
-                I18nUtils.getText("error.generic"),
+                I18nUtils.getText("score.dialog.validation.needSelect"),
+                I18nUtils.getText("error.business.title"),
                 JOptionPane.ERROR_MESSAGE
             )
             return

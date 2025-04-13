@@ -92,6 +92,10 @@ object I18nUtils {
     // 所有注册的更新器
     private val updaters = mutableListOf<I18nUpdater>()
 
+    fun addUpdater(updater: I18nUpdater) {
+        updaters.add(updater)
+    }
+
     /**
      * 初始化国际化支持
      */

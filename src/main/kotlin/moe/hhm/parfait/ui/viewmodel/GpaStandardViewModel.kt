@@ -16,13 +16,13 @@ import moe.hhm.parfait.dto.GpaStandardDTO
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
 import moe.hhm.parfait.ui.state.VMState
-import moe.hhm.parfait.ui.viewmodel.common.PaginationDataViewModel
+import moe.hhm.parfait.ui.viewmodel.common.DataViewModel
 import moe.hhm.parfait.ui.viewmodel.common.VMErrorHandlerChooser
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.*
 
-class GpaStandardViewModel : PaginationDataViewModel<List<GpaStandardDTO>>(emptyList()), KoinComponent {
+class GpaStandardViewModel : DataViewModel<List<GpaStandardDTO>>(emptyList()), KoinComponent {
     private val service: GpaStandardService by inject()
 
     // 选中的GPA标准
@@ -50,7 +50,6 @@ class GpaStandardViewModel : PaginationDataViewModel<List<GpaStandardDTO>>(empty
                     is DatabaseConnectionState.Disconnected -> {
                         logger.info("数据库已断开连接")
                         _vmState.value = VMState.DISCONNECTED
-                        resetPaginationState()
                         _selectedStandard.value = null
                     }
 

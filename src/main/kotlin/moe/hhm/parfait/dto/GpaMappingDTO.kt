@@ -43,9 +43,9 @@ class GpaMappingDTO(val data: List<SingleGpaMapping>) {
     }?.third ?: 0.0
 
     fun getGpa(scores: List<ScoreDTO>): Double {
-        val totalCredit = scores.sumOf { it.credit }
+        val totalCredit = scores.filter { it.gpa }.sumOf { it.credit }
         if (totalCredit == 0) return 0.0
-        return scores.sumOf {
+        return scores.filter { it.gpa }.sumOf {
             it.credit * getGpa(it.score)
         }.castTo(2) / totalCredit
     }
