@@ -6,10 +6,14 @@
 
 package moe.hhm.parfait.di
 
+import moe.hhm.parfait.app.service.CertificateDataService
+import moe.hhm.parfait.app.service.CertificateTemplateService
 import moe.hhm.parfait.app.service.GpaStandardService
 import moe.hhm.parfait.app.service.StudentSearchService
 import moe.hhm.parfait.app.service.StudentService
 import moe.hhm.parfait.app.service.TermService
+import moe.hhm.parfait.app.service.impl.CertificateDataServiceImpl
+import moe.hhm.parfait.app.service.impl.CertificateTemplateServiceImpl
 import moe.hhm.parfait.app.service.impl.GpaStandardServiceImpl
 import moe.hhm.parfait.app.service.impl.StudentSearchServiceImpl
 import moe.hhm.parfait.app.service.impl.StudentServiceImpl
@@ -24,4 +28,6 @@ val appModule = module {
     single<StudentService> { StudentServiceImpl(get()) }
     single<StudentSearchService> { StudentSearchServiceImpl() }
     single<TermService> { TermServiceImpl(get()) }
+    single<CertificateTemplateService> { CertificateTemplateServiceImpl(get()) }
+    single<CertificateDataService> { CertificateDataServiceImpl(get()) }
 }

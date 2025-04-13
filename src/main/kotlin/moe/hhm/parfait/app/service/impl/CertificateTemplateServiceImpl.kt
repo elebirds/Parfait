@@ -23,13 +23,13 @@ class CertificateTemplateServiceImpl(private val rep:CertificateTemplateReposito
     override suspend fun getCertificateTemplateByName(name: String): CertificateTemplate? {
         return rep.findByName(name)
     }
-    override suspend fun addGpaStandard(certificateTemplate: CertificateTemplateDTO): EntityID<UUID>? {
+    override suspend fun add(certificateTemplate: CertificateTemplateDTO): EntityID<UUID>? {
         return rep.add(certificateTemplate)
     }
-    override suspend fun deleteGpaStandard(uuid: UUID): Boolean {
+    override suspend fun delete(uuid: UUID): Boolean {
         return rep.delete(uuid)
     }
-    override suspend fun updateGpaStandard(certificateTemplate: CertificateTemplateDTO): Boolean {
+    override suspend fun update(certificateTemplate: CertificateTemplateDTO): Boolean {
         return rep.update(certificateTemplate)
     }
 }
