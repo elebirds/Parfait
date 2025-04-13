@@ -62,7 +62,7 @@ class ScoresTableModel : AbstractTableModel() {
             2 -> score.exam
             3 -> score.credit
             4 -> score.score
-            5 -> if (score.gpa) I18nUtils.getText("score.dialog.yes") else I18nUtils.getText("score.dialog.no")
+            5 -> if (score.gpa) I18nUtils.getText("score.gpa.yes") else I18nUtils.getText("score.gpa.no")
             else -> ""
         }
     }

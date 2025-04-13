@@ -66,6 +66,15 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
                 this@StudentDataTable.updateData(students)
             }
         }
+        I18nUtils.addUpdater(object : I18nUtils.I18nUpdater {
+            override fun update() {
+                onLanguageChanged()
+            }
+
+            override fun isValid(): Boolean {
+                return this@StudentDataTable.studentList.isNotEmpty()
+            }
+        })
         // TODO: 监听选中学生变化?
     }
 
@@ -82,19 +91,19 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
             student.studentId,
             student.name,
             when (student.gender) {
-                StudentDTO.Gender.MALE -> "男"
-                StudentDTO.Gender.FEMALE -> "女"
-                else -> "未知"
+                StudentDTO.Gender.MALE -> I18nUtils.getText("student.gender.male")
+                StudentDTO.Gender.FEMALE -> I18nUtils.getText("student.gender.female")
+                else -> I18nUtils.getText("student.gender.unknown")
             },
             student.department,
             student.major,
             student.grade,
             student.classGroup,
             when (student.status) {
-                StudentDTO.Status.ENROLLED -> "在籍"
-                StudentDTO.Status.SUSPENDED -> "休学"
-                StudentDTO.Status.GRADUATED -> "毕业"
-                StudentDTO.Status.ABNORMAL -> "异常"
+                StudentDTO.Status.ENROLLED -> I18nUtils.getText("student.status.enrolled")
+                StudentDTO.Status.SUSPENDED -> I18nUtils.getText("student.status.suspended")
+                StudentDTO.Status.GRADUATED -> I18nUtils.getText("student.status.graduated")
+                StudentDTO.Status.ABNORMAL -> I18nUtils.getText("student.status.abnormal")
             }
         )
     }
@@ -109,6 +118,15 @@ class StudentDataTable(parent: CoroutineComponent? = null) : JTable(), KoinCompo
 
         // 添加新数据
         students.forEach { student ->
+            tableModel.addRow(studentToRow(student))
+        }
+    }
+
+    fun onLanguageChanged() {
+        tableModel.rowCount = 0
+
+        // 添加新数据
+        studentList.forEach { student ->
             tableModel.addRow(studentToRow(student))
         }
     }
