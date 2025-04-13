@@ -6,8 +6,6 @@
 
 package moe.hhm.parfait.ui.component.dialog
 
-import com.formdev.flatlaf.FlatClientProperties
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.app.service.CertificateTemplateService
 import moe.hhm.parfait.app.service.GpaStandardService
@@ -27,11 +25,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.awt.Dimension
 import java.awt.Window
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.swing.*
 import java.io.File
-import javax.swing.filechooser.FileNameExtensionFilter
 
 /**
  * 证书生成对话框
@@ -55,8 +50,6 @@ class CertificateGenerateDialog(
     private val comboGpaStandard = JComboBox<GpaStandardDTO>()
     private val checkboxUseGpa = JCheckBox(I18nUtils.getText("certificate.use.gpa"))
     private val textIssuer = JTextField()
-    private val dateExpiry = JTextField()
-    private val checkboxNeverExpire = JCheckBox(I18nUtils.getText("certificate.never.expire"))
     private val textPurpose = JTextField()
     
     // 选择的模板和GPA标准
@@ -142,22 +135,6 @@ class CertificateGenerateDialog(
         contentPane.add(createLabel("certificate.issuer"), "grow")
         contentPane.add(textIssuer, "grow, wrap")
         
-        // 过期时间
-        contentPane.add(createLabel("certificate.expiry"), "grow")
-        dateExpiry.apply {
-            text = LocalDate.now().plusYears(1).format(DateTimeFormatter.ISO_LOCAL_DATE)
-            isEnabled = true
-        }
-        contentPane.add(dateExpiry, "grow, wrap")
-        
-        // 永不过期复选框
-        checkboxNeverExpire.apply {
-            addActionListener {
-                dateExpiry.isEnabled = !isSelected
-            }
-        }
-        contentPane.add(checkboxNeverExpire, "span 2, grow, wrap")
-        
         // 用途
         contentPane.add(createLabel("certificate.purpose"), "grow")
         contentPane.add(textPurpose, "grow, wrap")
@@ -237,16 +214,6 @@ class CertificateGenerateDialog(
             return
         }
         
-        if (!checkboxNeverExpire.isSelected && dateExpiry.text.isBlank()) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("certificate.error.no.expiry"),
-                I18nUtils.getText("dialog.error"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return
-        }
-        
         // 选择保存目录
         val fileChooser = JFileChooser().apply {
             fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
@@ -254,51 +221,19 @@ class CertificateGenerateDialog(
         }
         
         val result = fileChooser.showSaveDialog(this)
-        if (result == JFileChooser.APPROVE_OPTION) {
-            val selectedDir = fileChooser.selectedFile
+        if (result != JFileChooser.APPROVE_OPTION) return
+        val selectedDir = fileChooser.selectedFile
             
-            // 收集生成证书所需的参数
-            val params = CertificateGenerationParams(
-                students = selectedStudents,
-                template = selectedTemplate!!,
-                gpaStandard = if (checkboxUseGpa.isSelected) selectedGpaStandard else null,
-                issuer = textIssuer.text,
-                expiry = if (checkboxNeverExpire.isSelected) null 
-                         else LocalDate.parse(dateExpiry.text, DateTimeFormatter.ISO_LOCAL_DATE),
-                purpose = textPurpose.text,
-                outputDirectory = selectedDir
-            )
-            
-            // 执行生成
-            scope.launch {
-                try {
-                    val generatedFiles = viewModel.generateCertificates(params)
-                    
-                    SwingUtilities.invokeLater {
-                        JOptionPane.showMessageDialog(
-                            this@CertificateGenerateDialog,
-                            I18nUtils.getFormattedText(
-                                "certificate.generation.success", 
-                                generatedFiles.size,
-                                selectedDir.absolutePath
-                            ),
-                            I18nUtils.getText("dialog.success"),
-                            JOptionPane.INFORMATION_MESSAGE
-                        )
-                        dispose()
-                    }
-                } catch (e: Exception) {
-                    SwingUtilities.invokeLater {
-                        JOptionPane.showMessageDialog(
-                            this@CertificateGenerateDialog,
-                            I18nUtils.getFormattedText("certificate.generation.error", e.message ?: ""),
-                            I18nUtils.getText("dialog.error"),
-                            JOptionPane.ERROR_MESSAGE
-                        )
-                    }
-                }
-            }
-        }
+        // 收集生成证书所需的参数
+        val params = CertificateGenerationParams(
+            students = selectedStudents,
+            template = selectedTemplate!!,
+            gpaStandard = if (checkboxUseGpa.isSelected) selectedGpaStandard else null,
+            issuer = textIssuer.text,
+            purpose = textPurpose.text,
+            outputDirectory = selectedDir
+        )
+        viewModel.generateCertificates(params)
     }
     
     // 显示对话框
@@ -317,7 +252,6 @@ class CertificateGenerateDialog(
         val template: CertificateTemplateDTO,
         val gpaStandard: GpaStandardDTO?,
         val issuer: String,
-        val expiry: LocalDate?,
         val purpose: String,
         val outputDirectory: File
     )

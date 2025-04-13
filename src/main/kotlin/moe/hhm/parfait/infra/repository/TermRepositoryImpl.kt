@@ -11,7 +11,7 @@ import moe.hhm.parfait.domain.repository.TermRepository
 import moe.hhm.parfait.dto.TermDTO
 import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.infra.db.DatabaseUtils
-import moe.hhm.parfait.infra.db.certificate.Terms
+import moe.hhm.parfait.infra.db.term.Terms
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
 import java.time.LocalDateTime

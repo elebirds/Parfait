@@ -16,9 +16,7 @@ import java.time.LocalDateTime
 object CertificateRecords : UUIDTable("certificate_records") {
     val studentId = reference("student_id", Students) // 学生ID
     val templateId = reference("template_id", CertificateTemplates) // 模板ID
-    val certificateNumber = varchar("certificate_number", 50).uniqueIndex() // 证书编号
     val issuedDate = date("issued_date").clientDefault { LocalDate.now() } // 签发日期
-    val expiryDate = date("expiry_date").nullable() // 过期日期
     val issuedBy = varchar("issued_by", 100) // 签发人
     val content = varchar("content", 255) // 证书内容
     val purpose = varchar("purpose", 255).nullable() // 用途

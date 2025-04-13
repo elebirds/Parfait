@@ -7,11 +7,21 @@
 package moe.hhm.parfait.app.term
 
 /**
+ * 术语表达式数据类
+ */
+data class TermExpression(
+    val oriKey: String,
+    val field: String,
+    val context: String?,
+    val language: String?,
+    val defaultValue: String?
+)
+
+/**
  * 术语解析器
  * 解析term::field[/lang][::default]格式的术语
  */
 class TermParser {
-
     companion object {
         private const val TERM_PREFIX = "term::"
         private const val DEFAULT_SEPARATOR = "::"
@@ -49,7 +59,7 @@ class TermParser {
             contextParts.subList(1, contextParts.size).joinToString("_")
         } else null
         
-        return TermExpression(field, context, language, defaultValue)
+        return TermExpression(expression, field, context, language, defaultValue)
     }
     
     /**
@@ -87,13 +97,3 @@ class TermParser {
         return sb.toString()
     }
 }
-
-/**
- * 术语表达式数据类
- */
-data class TermExpression(
-    val field: String,
-    val context: String?,
-    val language: String?,
-    val defaultValue: String?
-) 

@@ -7,11 +7,10 @@
 package moe.hhm.parfait.domain.model.certificate
 
 import moe.hhm.parfait.dto.TermDTO
-import moe.hhm.parfait.infra.db.certificate.Terms
+import moe.hhm.parfait.infra.db.term.Terms
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import java.time.LocalDateTime
 import java.util.*
 
 class Term(id: EntityID<UUID>) : UUIDEntity(id) {

@@ -226,18 +226,14 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
      * @param params 证书生成参数
      * @return 生成的证书文件列表
      */
-    suspend fun generateCertificates(params: CertificateGenerateDialog.CertificateGenerationParams): List<File> {
+    fun generateCertificates(params: CertificateGenerateDialog.CertificateGenerationParams)
+        = suspendProcessWithErrorHandling(
+        VMErrorHandlerChooser.Process){
         _vmState.value = VMState.PROCESSING
-        
-        try {
-            // 调用证书生成服务生成证书
-            val generatedFiles = StudentAction.generateCertificates(params)
-            _vmState.value = VMState.DONE
-            return generatedFiles
-        } catch (e: Exception) {
-            _vmState.value = VMState.ERROR
-            throw e
-        }
+        StudentAction.generateCertificates(params)
+        //TODO: 提示成功
+        _vmState.value = VMState.DONE
+        true
     }
 
     /**

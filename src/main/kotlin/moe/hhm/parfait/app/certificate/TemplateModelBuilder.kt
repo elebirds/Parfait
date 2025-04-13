@@ -6,19 +6,23 @@
 
 package moe.hhm.parfait.app.certificate
 
-import com.deepoove.poi.data.TextRenderData
+import moe.hhm.parfait.app.term.StudentContextProvider
+import moe.hhm.parfait.app.term.TermExpression
 import moe.hhm.parfait.app.term.TermProcessor
 import moe.hhm.parfait.dto.GpaStandardDTO
 import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.dto.simpleMean
 import moe.hhm.parfait.dto.weightedMean
-import moe.hhm.parfait.ui.component.dialog.CertificateGenerateDialog
+import moe.hhm.parfait.infra.i18n.I18nManager
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.utils.HanziUtils
+import moe.hhm.parfait.utils.round2Decimal
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.util.HashMap
+import java.util.Locale
 
 /**
  * 模板数据模型构建器
@@ -26,35 +30,36 @@ import java.util.HashMap
  * 负责构建POI-TL模板引擎使用的数据模型
  */
 class TemplateModelBuilder : KoinComponent {
-    private val termProcessor : TermProcessor by inject()
+    private val termProcessor: TermProcessor by inject()
     
     /**
      * 构建完整的数据模型
      */
-    fun buildModel(
-        params: CertificateGenerateDialog.CertificateGenerationParams,
+    suspend fun buildModel(
         student: StudentDTO,
-        variableNames: Set<String>
-    ): Map<String, Any> {
-        val model = HashMap<String, Any>()
-        
-        // 添加各类数据到模型中
-        addStudentInfo(model, student)
-        addCertificateInfo(model, params)
-        
-        if (params.gpaStandard != null) {
-            addGpaInfo(model, student, params.gpaStandard)
+        gpaStandard: GpaStandardDTO?,
+        remainingTags: Set<String>,
+        termExpressions: List<TermExpression>
+    ): HashMap<String, Any> {
+        val res = HashMap<String, Any>()
+
+        (termProcessor.contextProvider as? StudentContextProvider)?.setStudent(student)
+
+        // 添加基本信息
+        res.putAll(basicInfo().filter { it.key in remainingTags })
+        res.putAll(getStudentInfo(student).filter { it.key in remainingTags })
+        if (gpaStandard != null) res.putAll(getGpaInfo(student, gpaStandard).filter { it.key in remainingTags })
+        termExpressions.forEach {
+            res[it.oriKey] = termProcessor.findTermReplacement(it, I18nManager.currentLanguage.value.code)
         }
-        
-        addTerms(model, variableNames)
-        
-        return model
+        return res
     }
 
     private fun basicInfo() = hashMapOf(
         "year" to LocalDate.now().year,
         "month" to LocalDate.now().monthValue,
         "day" to LocalDate.now().dayOfMonth,
+        "month_en" to LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.ENGLISH),
         "source" to "Parfait",
         "version" to "1.0.0"
     )
@@ -62,63 +67,28 @@ class TemplateModelBuilder : KoinComponent {
     /**
      * 添加学生信息
      */
-    private fun addStudentInfo(model: HashMap<String, Any>, student: StudentDTO) {
-        model["studentId"] = student.studentId
-        model["name"] = student.name
-        model["name_en"] = HanziUtils.hanzi2English(student.name)
-        model["department"] = student.department
-        model["major"] = student.major
-        model["classGroup"] = student.classGroup
-        model["grade"] = student.grade.toString()
-        model["gender"] = student.gender.toString()
-        model["status"] = student.status.toString()
-        model["score_weight"] = student.scores.weightedMean()
-        model["score_simple"] = student.scores.simpleMean()
-    }
-    
-    /**
-     * 添加证书信息
-     */
-    private fun addCertificateInfo(
-        model: HashMap<String, Any>,
-        params: CertificateGenerateDialog.CertificateGenerationParams
-    ) {
-        model["issuer"] = TextRenderData(params.issuer)
-        model["purpose"] = TextRenderData(params.purpose)
-        model["date"] = TextRenderData(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
-        
-        // 处理过期时间
-        val expiryText = params.expiry?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "永久有效"
-        model["expiry"] = TextRenderData(expiryText)
-        
-        // 证书模板信息
-        model["templateName"] = TextRenderData(params.template.name)
-        model["templateCategory"] = TextRenderData(params.template.category)
-    }
+    private fun getStudentInfo(student: StudentDTO) = hashMapOf(
+        "id" to student.studentId,
+        "name" to student.name,
+        "name_en" to HanziUtils.hanzi2English(student.name),
+        "department" to student.department,
+        "major" to student.major,
+        "classGroup" to student.classGroup,
+        "grade" to student.grade.toString(),
+        "gender" to student.gender.toString(),
+        "status" to student.status.toString(),
+        "score_weighted" to student.scores.weightedMean(),
+        "score_simple" to student.scores.simpleMean()
+    )
     
     /**
      * 添加GPA信息
      */
-    private fun addGpaInfo(
-        model: HashMap<String, Any>,
+    private fun getGpaInfo(
         student: StudentDTO,
         gpaStandard: GpaStandardDTO
-    ) {
-        model["gpa"] = TextRenderData(String.format("%.2f", gpaStandard.mapping.getGpa(student.scores)))
-        model["gpaStandard"] = TextRenderData(gpaStandard.name)
-    }
-    
-    /**
-     * 添加术语
-     */
-    private fun addTerms(model: HashMap<String, Any>, variableNames: Set<String>) {
-        // 查找所有以"term_"开头的变量
-        val termVariables = variableNames.filter { it.startsWith("term_") }
-        
-        // 添加术语翻译
-        for (termVariable in termVariables) {
-            val termKey = termVariable.substring(5) // 移除"term_"前缀
-            model[termVariable] = TextRenderData("a")
-        }
-    }
+    ) = hashMapOf(
+        "gpa" to gpaStandard.mapping.getGpa(student.scores).round2Decimal(),
+        "gpa_standard" to gpaStandard.name
+    )
 } 

@@ -27,10 +27,6 @@ class TermServiceImpl(private val rep: TermRepository) : TermService {
     ): List<TermDTO> {
         return rep.findPage(page, size).map { it.toDTO() }
     }
-
-    override suspend fun getByKey(key: String): Term? {
-        return rep.findByKey(key)
-    }
     
     override suspend fun getTerm(field: String, context: String?, language: String?): Term? {
         return rep.findTerm(field, context, language)
@@ -43,22 +39,6 @@ class TermServiceImpl(private val rep: TermRepository) : TermService {
     
     override suspend fun getByLanguage(language: String): List<Term> {
         return rep.findByLanguage(language)
-    }
-    
-    override suspend fun preloadTerms(language: String?) {
-        try {
-            if (language != null) {
-                // 预加载特定语言的术语
-                val terms = rep.findByLanguage(language)
-                logger.info("预加载了 ${terms.size} 个 $language 语言的术语")
-            } else {
-                // 预加载所有术语
-                val terms = rep.findAll()
-                logger.info("预加载了 ${terms.size} 个术语")
-            }
-        } catch (e: Exception) {
-            logger.error("预加载术语失败", e)
-        }
     }
 
     override suspend fun getByUUID(uuid: UUID): Term? {

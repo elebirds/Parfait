@@ -1,10 +1,12 @@
 import com.deepoove.poi.XWPFTemplate
 import com.deepoove.poi.config.Configure
 import com.deepoove.poi.util.RegexUtils
+import moe.hhm.parfait.dto.StudentDTO
 import java.io.FileOutputStream
 
 
 fun main() {
+    println(StudentDTO.Gender.UNKNOWN.name)
     val fileName = "C:\\Users\\hhmcn\\Desktop\\在读证明文档.docx"
     val builder = Configure.builder()
     builder.buildGrammerRegex(RegexUtils.createGeneral("{{", "}}"));
