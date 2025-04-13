@@ -96,14 +96,6 @@ class AdvancedFilterDialog(
         override fun isDefaultButton(): Boolean = true
     }.apply {
         bindText(this, "button.filter")
-        putClientProperty(
-            FlatClientProperties.STYLE, "" +
-                    "background:$#2196F3;" +
-                    "foreground:$#FFFFFF;" +
-                    "borderWidth:0;" +
-                    "focusWidth:1;" +
-                    "arc:10"
-        )
         addActionListener { submitForm() }
     }
 
@@ -143,7 +135,7 @@ class AdvancedFilterDialog(
         // 进一步优化宽度，确保所有内容都能显示
         val dialogWidth = 750
         // 高度适当调整，避免超出屏幕，但保证足够的显示空间
-        val dialogHeight = (screenHeight * 0.65).toInt().coerceAtMost(620).coerceAtLeast(500)
+        val dialogHeight = (screenHeight * 0.85).toInt().coerceAtMost(800).coerceAtLeast(650)
 
         // 设置对话框大小
         size = Dimension(dialogWidth, dialogHeight)
@@ -339,7 +331,7 @@ class AdvancedFilterDialog(
         // 第三行：班级（增大显示区域为1.5倍）
         val classGroupPanel = JPanel(MigLayout("wrap 1, fillx, insets 0", "[fill]"))
         classGroupPanel.add(JLabel(I18nUtils.getText("student.property.classGroup")))
-        classGroupPanel.add(JScrollPane(lstClassGroup), "height 68:68:68") // 原来的45 * 1.5 ≈ 68
+        classGroupPanel.add(JScrollPane(lstClassGroup), "height 100:120:150") // 增加班级列表的高度
         panel.add(classGroupPanel, "growx, gapy 10 0")
 
         return panel
@@ -463,7 +455,7 @@ class AdvancedFilterDialog(
         setLocationRelativeTo(owner)
         
         // 确保对话框不会被缩得太小
-        minimumSize = Dimension(700, 500)
+        minimumSize = Dimension(750, 650)
         
         isVisible = true
     }
