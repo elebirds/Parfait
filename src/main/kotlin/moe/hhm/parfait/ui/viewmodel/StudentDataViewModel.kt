@@ -225,8 +225,8 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
 
                 // 更新学生列表，不应用为筛选条件
                 _data.value = searchResults
-                _filterState.value = FilterState.NO_FILTER
-                _currentFilterCriteria.value = null
+                _filterState.value = FilterState.FILTERED
+                _currentFilterCriteria.value = criteria
 
                 // 更新分页状态（搜索结果不分页）
                 _paginationState.update {
