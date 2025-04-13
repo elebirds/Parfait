@@ -17,12 +17,17 @@ import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.awt.BorderLayout
+import java.awt.Color
+import java.awt.Component
 import java.awt.Dimension
 import java.awt.Font
+import java.awt.Insets
 import java.awt.Toolkit
 import java.awt.Window
 import javax.swing.*
 import javax.swing.border.TitledBorder
+import javax.swing.plaf.basic.BasicComboBoxRenderer
 
 /**
  * 高级筛选对话框
@@ -63,15 +68,8 @@ class AdvancedFilterDialog(
     private val chkUnknown = JCheckBox(I18nUtils.getText("student.gender.unknown"))
 
     // 组织信息筛选组件
-    private val lstDepartment = JList<String>().apply {
-        model = DefaultListModel<String>()
-        selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
-    }
-
-    private val lstMajor = JList<String>().apply {
-        model = DefaultListModel<String>()
-        selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
-    }
+    private val cboDepartment = MultiSelectionComboBox()
+    private val cboMajor = MultiSelectionComboBox()
 
     private val textGrade = JTextField()
     private val rdoGradeExact = JRadioButton(I18nUtils.getText("filter.exactMatch"))
@@ -88,16 +86,10 @@ class AdvancedFilterDialog(
         selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
     }
 
-    private val lstStatus = JList<String>().apply {
-        model = DefaultListModel<String>().apply {
-            addElement("")  // 空选项
-            StudentDTO.Status.entries.forEach {
-                addElement(I18nUtils.getText(it.i18nKey))
-            }
-        }
-        selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
-        selectedIndex = 0
-    }
+    // 状态改为复选框
+    private val chkEnrolled = JCheckBox(I18nUtils.getText("student.status.enrolled"))
+    private val chkGraduated = JCheckBox(I18nUtils.getText("student.status.graduated"))
+    private val chkAbnormal = JCheckBox(I18nUtils.getText("student.status.abnormal"))
 
     // 按钮
     private val buttonSubmit = object : JButton() {
@@ -295,11 +287,19 @@ class AdvancedFilterDialog(
             TitledBorder.TOP
         )
 
-        // 将JList高度减小，适应小屏幕
-        val listHeight = "height 45:45:45"
-
-        // 年级和学院放在同一行
-        val gradeDeptPanel = JPanel(MigLayout("insets 0, fillx", "[fill, 48%][grow 5][fill, 48%]"))
+        // 第一行：状态和年级放在同一行
+        val statusGradePanel = JPanel(MigLayout("insets 0, fillx", "[fill, 48%][grow 5][fill, 48%]"))
+        
+        // 状态区域（多选按钮）
+        val statusPanel = JPanel(MigLayout("fillx, insets 0", "[80!][fill][fill][fill]"))
+        statusPanel.add(JLabel(I18nUtils.getText("student.property.status")), "gapright 10")
+        statusPanel.add(chkEnrolled, "sg status")
+        statusPanel.add(chkGraduated, "sg status, gapx 5 5")
+        statusPanel.add(chkAbnormal, "sg status")
+        statusGradePanel.add(statusPanel, "growx")
+        
+        // 中间间隔
+        statusGradePanel.add(Box.createHorizontalStrut(8), "")
         
         // 年级区域
         val gradePanel = JPanel(MigLayout("wrap 1, fillx, insets 0", "[fill]"))
@@ -312,44 +312,35 @@ class AdvancedFilterDialog(
         gradeInputPanel.add(rdoGradeLess)
         
         gradePanel.add(gradeInputPanel, "growx")
-        gradeDeptPanel.add(gradePanel, "growx")
+        statusGradePanel.add(gradePanel, "growx")
         
-        // 中间间隔
-        gradeDeptPanel.add(Box.createHorizontalStrut(8), "")
+        panel.add(statusGradePanel, "growx")
+
+        // 第二行：学院和专业放在同一行（改为下拉框）
+        val deptMajorPanel = JPanel(MigLayout("insets 0, fillx", "[fill, 48%][grow 5][fill, 48%]"))
         
         // 学院区域
         val deptPanel = JPanel(MigLayout("wrap 1, fillx, insets 0", "[fill]"))
         deptPanel.add(JLabel(I18nUtils.getText("student.property.department")))
-        deptPanel.add(JScrollPane(lstDepartment), listHeight)
-        gradeDeptPanel.add(deptPanel, "growx")
+        deptPanel.add(cboDepartment, "growx, h 30!")
+        deptMajorPanel.add(deptPanel, "growx")
         
-        panel.add(gradeDeptPanel, "growx")
-
-        // 专业和班级放在同一行
-        val majorClassPanel = JPanel(MigLayout("insets 0, fillx", "[fill, 48%][grow 5][fill, 48%]"))
+        // 中间间隔
+        deptMajorPanel.add(Box.createHorizontalStrut(8), "")
         
         // 专业区域
         val majorPanel = JPanel(MigLayout("wrap 1, fillx, insets 0", "[fill]"))
         majorPanel.add(JLabel(I18nUtils.getText("student.property.major")))
-        majorPanel.add(JScrollPane(lstMajor), listHeight)
-        majorClassPanel.add(majorPanel, "growx")
+        majorPanel.add(cboMajor, "growx, h 30!")
+        deptMajorPanel.add(majorPanel, "growx")
         
-        // 中间间隔
-        majorClassPanel.add(Box.createHorizontalStrut(8), "")
-        
-        // 班级区域
+        panel.add(deptMajorPanel, "growx, gapy 10 0")
+
+        // 第三行：班级（增大显示区域为1.5倍）
         val classGroupPanel = JPanel(MigLayout("wrap 1, fillx, insets 0", "[fill]"))
         classGroupPanel.add(JLabel(I18nUtils.getText("student.property.classGroup")))
-        classGroupPanel.add(JScrollPane(lstClassGroup), listHeight)
-        majorClassPanel.add(classGroupPanel, "growx")
-        
-        panel.add(majorClassPanel, "growx, gapy 5 0")
-
-        // 状态
-        val statusPanel = JPanel(MigLayout("wrap 1, fillx, insets 0", "[fill]"))
-        statusPanel.add(JLabel(I18nUtils.getText("student.property.status")))
-        statusPanel.add(JScrollPane(lstStatus), listHeight)
-        panel.add(statusPanel, "growx, gapy 5 0")
+        classGroupPanel.add(JScrollPane(lstClassGroup), "height 68:68:68") // 原来的45 * 1.5 ≈ 68
+        panel.add(classGroupPanel, "growx, gapy 10 0")
 
         return panel
     }
@@ -365,26 +356,18 @@ class AdvancedFilterDialog(
 
                 // 提取所有不重复的院系
                 val departments = students.map { it.department }.distinct().sorted()
-                (lstDepartment.model as DefaultListModel<String>).apply {
-                    clear()
-                    // 如果为空，添加一个提示项
-                    if (departments.isEmpty()) {
-                        addElement("-- 无可用数据 --")
-                    } else {
-                        departments.forEach { addElement(it) }
-                    }
+                if (departments.isEmpty()) {
+                    cboDepartment.setItems(listOf("-- 无可用数据 --"))
+                } else {
+                    cboDepartment.setItems(departments)
                 }
 
                 // 提取所有不重复的专业
                 val majors = students.map { it.major }.distinct().sorted()
-                (lstMajor.model as DefaultListModel<String>).apply {
-                    clear()
-                    // A如果为空，添加提示项
-                    if (majors.isEmpty()) {
-                        addElement("-- 无可用数据 --")
-                    } else {
-                        majors.forEach { addElement(it) }
-                    }
+                if (majors.isEmpty()) {
+                    cboMajor.setItems(listOf("-- 无可用数据 --"))
+                } else {
+                    cboMajor.setItems(majors)
                 }
 
                 // 提取所有不重复的班级
@@ -423,9 +406,9 @@ class AdvancedFilterDialog(
         if (chkUnknown.isSelected) genders.add(StudentDTO.Gender.UNKNOWN)
 
         // 获取组织信息筛选条件
-        val departments = lstDepartment.selectedValuesList
-
-        val majors = lstMajor.selectedValuesList
+        val departments = cboDepartment.getSelectedItems()
+        
+        val majors = cboMajor.getSelectedItems()
 
         val grade = textGrade.text.trim().toIntOrNull()
         val gradeMatchType = when {
@@ -436,12 +419,11 @@ class AdvancedFilterDialog(
 
         val classGroups = lstClassGroup.selectedValuesList
 
-        val statusIndices = lstStatus.selectedIndices
-        val statuses = if (statusIndices.isEmpty() || statusIndices.contains(0)) {
-            emptyList()
-        } else {
-            statusIndices.map { index -> StudentDTO.Status.entries[index - 1] }
-        }
+        // 获取状态（多选按钮）
+        val statuses = mutableListOf<StudentDTO.Status>()
+        if (chkEnrolled.isSelected) statuses.add(StudentDTO.Status.ENROLLED)
+        if (chkGraduated.isSelected) statuses.add(StudentDTO.Status.GRADUATED)
+        if (chkAbnormal.isSelected) statuses.add(StudentDTO.Status.ABNORMAL)
 
         // 创建高级筛选条件
         val criteria = AdvancedFilterCriteria(
@@ -520,4 +502,122 @@ data class AdvancedFilterCriteria(
     val gradeMatchType: MatchType = MatchType.EXACT,
     val classGroups: List<String> = emptyList(),
     val statuses: List<StudentDTO.Status> = emptyList()
-) 
+)
+
+/**
+ * 多选组合框
+ * 
+ * 支持多选的下拉组合框组件
+ */
+class MultiSelectionComboBox : JPanel() {
+    private val selection = mutableSetOf<String>()
+    private val checkBoxes = mutableMapOf<String, JCheckBox>()
+    private val items = mutableListOf<String>()
+    private val popupMenu = JPopupMenu()
+    private val selectionPanel = JPanel()
+    private val displayLabel = JLabel("请选择")
+    private val dropDownButton = JButton("▼")
+
+    init {
+        layout = BorderLayout(5, 0)
+        
+        // 设置显示标签
+        displayLabel.border = BorderFactory.createEmptyBorder(0, 5, 0, 0)
+        add(displayLabel, BorderLayout.CENTER)
+        
+        // 设置下拉按钮
+        dropDownButton.preferredSize = Dimension(25, 25)
+        dropDownButton.isFocusPainted = false
+        dropDownButton.margin = Insets(0, 0, 0, 0)
+        add(dropDownButton, BorderLayout.EAST)
+        
+        // 设置下拉面板
+        selectionPanel.layout = BoxLayout(selectionPanel, BoxLayout.Y_AXIS)
+        JScrollPane(selectionPanel).let { 
+            it.preferredSize = Dimension(250, 200)
+            popupMenu.add(it)
+        }
+        
+        // 设置点击事件
+        dropDownButton.addActionListener {
+            if (popupMenu.isVisible) {
+                popupMenu.isVisible = false
+            } else {
+                // 只有在组件显示时才显示弹出菜单
+                if (isShowing) {
+                    popupMenu.show(this, 0, height)
+                }
+            }
+        }
+        
+        // 设置边框和最小尺寸
+        border = BorderFactory.createLineBorder(Color.LIGHT_GRAY)
+        preferredSize = Dimension(200, 30)
+        minimumSize = Dimension(100, 30)
+    }
+
+    /**
+     * 设置可选项列表
+     */
+    fun setItems(newItems: List<String>) {
+        items.clear()
+        checkBoxes.clear()
+        selection.clear()
+        selectionPanel.removeAll()
+        items.addAll(newItems)
+        
+        for (item in items) {
+            val checkBox = JCheckBox(item)
+            checkBox.addActionListener {
+                if (checkBox.isSelected) {
+                    selection.add(item)
+                } else {
+                    selection.remove(item)
+                }
+                updateDisplayText()
+            }
+            checkBoxes[item] = checkBox
+            selectionPanel.add(checkBox)
+        }
+        
+        // 添加全选/取消全选选项
+        if (items.size > 1) {
+            val selectAllCheckBox = JCheckBox("全选/取消全选")
+            selectAllCheckBox.addActionListener {
+                val selectAll = selectAllCheckBox.isSelected
+                checkBoxes.values.forEach { it.isSelected = selectAll }
+                if (selectAll) {
+                    selection.addAll(items)
+                } else {
+                    selection.clear()
+                }
+                updateDisplayText()
+            }
+            selectionPanel.add(Box.createVerticalStrut(5))
+            selectionPanel.add(JSeparator())
+            selectionPanel.add(selectAllCheckBox)
+        }
+        
+        updateDisplayText()
+    }
+
+    /**
+     * 获取选中的项列表
+     */
+    fun getSelectedItems(): List<String> {
+        return selection.toList()
+    }
+
+    /**
+     * 更新显示文本
+     */
+    private fun updateDisplayText() {
+        val text = when {
+            selection.isEmpty() -> "请选择"
+            selection.size == 1 -> selection.first()
+            selection.size == items.size -> "已全选"
+            else -> "已选择 ${selection.size} 项"
+        }
+        displayLabel.text = text
+    }
+} 
