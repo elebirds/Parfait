@@ -42,6 +42,10 @@ class CertificateTemplateRepositoryImpl : CertificateTemplateRepository {
         CertificateTemplate.all().toList()
     }
 
+    override suspend fun findActiveAll(): List<CertificateTemplate> = DatabaseUtils.dbQuery {
+        CertificateTemplate.find { CertificateTemplates.isActive eq true }.toList()
+    }
+
     override suspend fun findByUUID(uuid:UUID): CertificateTemplate? = DatabaseUtils.dbQuery {
         CertificateTemplate.findById(uuid)
 

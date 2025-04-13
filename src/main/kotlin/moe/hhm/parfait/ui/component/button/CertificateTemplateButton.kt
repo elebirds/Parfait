@@ -18,7 +18,6 @@ import javax.swing.JToggleButton
 class CertificateTemplateButton(
     private val title: String,
     private val category: String,
-    private val type: String,
     private val description: String,
     private val isLike: Boolean,
     private val isActive: Boolean

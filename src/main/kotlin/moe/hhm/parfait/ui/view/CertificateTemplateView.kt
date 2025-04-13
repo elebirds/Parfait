@@ -15,6 +15,7 @@ import moe.hhm.parfait.infra.i18n.I18nUtils.createLabel
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.button.CertificateTemplateButton
+import moe.hhm.parfait.ui.component.dialog.CertificateTemplateDialog
 import moe.hhm.parfait.ui.state.VMState
 import moe.hhm.parfait.ui.viewmodel.CertificateTemplateViewModel
 import net.miginfocom.swing.MigLayout
@@ -144,7 +145,6 @@ class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPane
             val button = CertificateTemplateButton(
                 title = template.name,
                 category = template.category,
-                type = template.type,
                 description = template.description,
                 isLike = template.isLike,
                 isActive = template.isActive
@@ -189,10 +189,7 @@ class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPane
         // 添加模板按钮
         private val buttonAdd = createButton("certificate.action.add").apply {
             addActionListener {
-                // 打开添加证明模板对话框
-                val owner = SwingUtilities.getWindowAncestor(this@CertificateTemplateView)
-                // 使用新的证明模板对话框
-                moe.hhm.parfait.ui.component.dialog.CertificateTemplateDialog.show(null, owner)
+                CertificateTemplateDialog.show(null, SwingUtilities.getWindowAncestor(this@CertificateTemplateView))
             }
         }
 
@@ -200,26 +197,24 @@ class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPane
         private val buttonDelete = createButton("certificate.action.delete").apply {
             addActionListener {
                 val template = viewModel.selectedTemplate.value
-                if (template != null) {
-                    // 确认删除
-                    val result = JOptionPane.showConfirmDialog(
-                        SwingUtilities.getWindowAncestor(this@CertificateTemplateView),
-                        I18nUtils.getFormattedText("certificate.dialog.delete.confirm", template.name),
-                        I18nUtils.getText("term.dialog.delete.title"),
-                        JOptionPane.YES_NO_OPTION
-                    )
-
-                    if (result == JOptionPane.YES_OPTION) {
-                        template.uuid?.let { viewModel.deleteTemplate(it) }
-                    }
-                } else {
+                if (template == null) {
                     JOptionPane.showMessageDialog(
                         SwingUtilities.getWindowAncestor(this@CertificateTemplateView),
                         I18nUtils.getText("certificate.error.select.template"),
                         I18nUtils.getText("error.business.title"),
                         JOptionPane.WARNING_MESSAGE
                     )
+                    return@addActionListener
                 }
+                // 确认删除
+                val result = JOptionPane.showConfirmDialog(
+                    SwingUtilities.getWindowAncestor(this@CertificateTemplateView),
+                    I18nUtils.getFormattedText("certificate.dialog.delete.confirm", template.name),
+                    I18nUtils.getText("term.dialog.delete.title"),
+                    JOptionPane.YES_NO_OPTION
+                )
+                if (result != JOptionPane.YES_OPTION) return@addActionListener
+                template.uuid?.let { viewModel.deleteTemplate(it) }
             }
         }
 
@@ -227,19 +222,16 @@ class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPane
         private val buttonEdit = createButton("certificate.action.edit").apply {
             addActionListener {
                 val template = viewModel.selectedTemplate.value
-                if (template != null) {
-                    // 打开编辑证明模板对话框
-                    val owner = SwingUtilities.getWindowAncestor(this@CertificateTemplateView)
-                    // 使用新的证明模板对话框
-                    moe.hhm.parfait.ui.component.dialog.CertificateTemplateDialog.show(template, owner)
-                } else {
+                if (template == null) {
                     JOptionPane.showMessageDialog(
                         SwingUtilities.getWindowAncestor(this@CertificateTemplateView),
                         I18nUtils.getText("certificate.error.select.template"),
                         I18nUtils.getText("error.business.title"),
                         JOptionPane.WARNING_MESSAGE
                     )
+                    return@addActionListener
                 }
+                CertificateTemplateDialog.show(template, SwingUtilities.getWindowAncestor(this@CertificateTemplateView))
             }
         }
 
@@ -284,7 +276,7 @@ class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPane
                 if (template != null && template.uuid != null) {
                     // 查看该模板的导出记录
                     val owner = SwingUtilities.getWindowAncestor(this@CertificateTemplateView)
-                    // 这里需要实现证明记录查看对话框
+                    // TODO: 这里需要实现证明记录查看对话框
                     // CertificateRecordsDialog.show(template.uuid, owner)
                     JOptionPane.showMessageDialog(
                         owner, 

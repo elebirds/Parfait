@@ -13,6 +13,7 @@ import java.util.*
 
 interface CertificateTemplateService {
     suspend fun getCertificates(): List<CertificateTemplateDTO>
+    suspend fun getActiveCertificates(): List<CertificateTemplateDTO>
     suspend fun count(): Long
     suspend fun getCertificateTemplateByName(name : String): CertificateTemplate?
     suspend fun add(certificateTemplate: CertificateTemplateDTO): EntityID<UUID>?

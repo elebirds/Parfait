@@ -47,7 +47,6 @@ class CertificateTemplateDialog(
 
     // 表单组件 - 基础信息
     private val textName = JTextField()
-    private val textType = JTextField()
     private val textCategory = JTextField()
     private val textAreaDescription = JTextArea(3, 20).apply {
         lineWrap = true
@@ -108,7 +107,6 @@ class CertificateTemplateDialog(
         // 如果存在证明模板，则设置信息
         if (existingTemplate != null) {
             textName.text = existingTemplate.name
-            textType.text = existingTemplate.type
             textCategory.text = existingTemplate.category
             textAreaDescription.text = existingTemplate.description
             textPriority.value = existingTemplate.priority
@@ -146,10 +144,6 @@ class CertificateTemplateDialog(
             FlatClientProperties.PLACEHOLDER_TEXT,
             I18nUtils.getText("certificate.dialog.placeholder.name")
         )
-        textType.putClientProperty(
-            FlatClientProperties.PLACEHOLDER_TEXT,
-            I18nUtils.getText("certificate.dialog.placeholder.type")
-        )
         textCategory.putClientProperty(
             FlatClientProperties.PLACEHOLDER_TEXT,
             I18nUtils.getText("certificate.dialog.placeholder.category")
@@ -168,11 +162,9 @@ class CertificateTemplateDialog(
         basicInfoLabel.putClientProperty(FlatClientProperties.STYLE, "font:bold +2;")
         add(basicInfoLabel, "gapy 10 10, span 2")
 
-        // 名称和类型（同一行）
-        add(createLabel("certificate.property.name"))
-        add(createLabel("certificate.property.type"))
-        add(textName)
-        add(textType)
+        // 名称（单独一行）
+        add(createLabel("certificate.property.name"), "span 2")
+        add(textName, "gapy n 5,span 2")
 
         // 分类和优先级（同一行）
         add(createLabel("certificate.property.category"))
@@ -369,13 +361,12 @@ class CertificateTemplateDialog(
     private fun submitForm() {
         // 获取表单数据
         val name = textName.text
-        val type = textType.text
         val category = textCategory.text
         val description = textAreaDescription.text
         val priority = textPriority.value as Int
 
         // 验证表单数据
-        if (name.isEmpty() || type.isEmpty() || category.isEmpty() || description.isEmpty() || selectedContentPath.isEmpty()) {
+        if (name.isEmpty() || category.isEmpty() || description.isEmpty() || selectedContentPath.isEmpty()) {
             JOptionPane.showMessageDialog(
                 this,
                 I18nUtils.getText("certificate.dialog.validation.required"),
@@ -389,7 +380,6 @@ class CertificateTemplateDialog(
         val templateDTO = CertificateTemplateDTO(
             uuid = existsUUID,
             name = name,
-            type = type,
             category = category,
             description = description,
             contentPath = selectedContentPath,

@@ -17,7 +17,6 @@ class CertificateTemplate(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<CertificateTemplate>(CertificateTemplates)
 
     var name by CertificateTemplates.name
-    var type by CertificateTemplates.type
     var category by CertificateTemplates.category
     var description by CertificateTemplates.description
     var contentPath by CertificateTemplates.contentPath
@@ -32,7 +31,6 @@ class CertificateTemplate(id: EntityID<UUID>) : UUIDEntity(id) {
     fun toDTO() = CertificateTemplateDTO(
         uuid = this.id.value,
         name = this.name,
-        type = this.type,
         category = this.category,
         description = this.description,
         contentPath = this.contentPath,

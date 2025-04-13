@@ -13,8 +13,7 @@ import java.time.LocalDateTime
 
 object CertificateTemplates : UUIDTable("certificate_templates") {
     val name = varchar("name", 100).uniqueIndex() // 模板名称
-    val type = varchar("type", 50) // 模板类型（成绩单、在读证明等）
-    val category = varchar("category", 50) // 语言（中文、英文等）
+    val category = varchar("category", 50) // 模板类型（成绩单、在读证明等）
     val description = text("description") // 描述
 
     val contentPath = text("content_path") // 内容模板
@@ -31,10 +30,9 @@ object CertificateTemplates : UUIDTable("certificate_templates") {
             // 创建默认证书模板
             CertificateTemplate.new {
                 name = "默认模板"
-                type = "成绩证明"
                 contentPath = "jar::score_default.docx"
-                category = "中英双语"
-                description = "默认成绩证明模板，显示学生的基本信息与加权平均分"
+                category = "成绩证明"
+                description = "中英双语对照成绩证明，显示学生的基本信息与加权平均分"
                 isActive = true
             }
         }

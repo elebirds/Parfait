@@ -17,6 +17,11 @@ class CertificateTemplateServiceImpl(private val rep:CertificateTemplateReposito
     override suspend fun getCertificates(): List<CertificateTemplateDTO> {
         return rep.findAll().map { it.toDTO() }
     }
+
+    override suspend fun getActiveCertificates(): List<CertificateTemplateDTO> {
+        return rep.findActiveAll().map { it.toDTO() }
+    }
+
     override suspend fun count(): Long {
         return rep.count()
     }

@@ -13,7 +13,6 @@ import java.util.UUID
 data class CertificateTemplateDTO(
     val uuid: UUID? = null,
     val name: String,
-    val type: String,
     val category: String,
     val description: String,
     val contentPath: String,
@@ -24,7 +23,6 @@ data class CertificateTemplateDTO(
 ) {
     fun <T : Any> into(it: UpdateBuilder<T>) {
         it[CertificateTemplates.name] = name
-        it[CertificateTemplates.type] = type
         it[CertificateTemplates.category] = category
         it[CertificateTemplates.description] = description
         it[CertificateTemplates.contentPath] = contentPath
