@@ -36,4 +36,26 @@ object ErrorHandler {
     fun pause(e: Exception) {
         logger.warn("出现需终结的错误, Parfait冻结, 等待用户手动重载", e)
     }
+
+    fun showError(error: Throwable) {
+        when (error) {
+            is BusinessException -> {
+                JOptionPane.showMessageDialog(
+                    null,
+                    I18nUtils.getFormattedText("error.business.detail", error.message ?: ""),
+                    I18nUtils.getText("error.business.title"),
+                    JOptionPane.WARNING_MESSAGE
+                )
+            }
+            else -> {
+                error.printStackTrace()
+                JOptionPane.showMessageDialog(
+                    null,
+                    I18nUtils.getFormattedText("error.generic.detail", error.message ?: ""),
+                    I18nUtils.getText("error.generic.title"),
+                    JOptionPane.ERROR_MESSAGE
+                )
+            }
+        }
+    }
 }

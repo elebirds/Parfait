@@ -10,11 +10,14 @@ import com.deepoove.poi.XWPFTemplate
 import com.deepoove.poi.config.Configure
 import com.deepoove.poi.util.RegexUtils
 import moe.hhm.parfait.app.service.CertificateDataService
+import moe.hhm.parfait.app.service.CertificateRecordService
 import moe.hhm.parfait.app.term.TermParser
 import moe.hhm.parfait.app.term.TermProcessor
+import moe.hhm.parfait.dto.CertificateRecordDTO
 import moe.hhm.parfait.dto.CertificateTemplateDTO
 import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.exception.BusinessException
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.ui.component.dialog.CertificateGenerateDialog
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -25,6 +28,7 @@ import java.io.InputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
+import javax.swing.JOptionPane
 
 /**
  * 证书生成器
@@ -33,6 +37,7 @@ import java.util.UUID
  */
 class CertificateGenerator : KoinComponent {
     private val dataService: CertificateDataService by inject()
+    private val recordService: CertificateRecordService by inject()
     private val termParser: TermParser by inject()
     private val modelBuilder: TemplateModelBuilder by inject()
     private val builder = Configure.builder().apply {
@@ -63,26 +68,28 @@ class CertificateGenerator : KoinComponent {
         
         // 2. 使用第一个模板分析获取变量
         val analysisTemplate = XWPFTemplate.compile(templateBytes.inputStream(), builder.build())
-        
-        try {
-            // 3. 收集模板中的变量标签 并分离{{和}}生成术语标签
-            val variableNames = analysisTemplate.elementTemplates.map { it.variable().replace("{{", "").replace("}}", "") }.toSet()
-            val termPairs = variableNames.mapNotNull {
-                val res = termParser.parse(it)
-                if(res != null) {
-                    it to res
-                } else {
-                    null
-                }
+
+        // 3. 收集模板中的变量标签 并分离{{和}}生成术语标签
+        val variableNames = analysisTemplate.elementTemplates.map { it.variable().replace("{{", "").replace("}}", "") }.toSet()
+        val termPairs = variableNames.mapNotNull {
+            val res = termParser.parse(it)
+            if(res != null) {
+                it to res
+            } else {
+                null
             }
-            val remainingTags = variableNames - termPairs.map { it.first }
-            val termExpressions = termPairs.map { it.second }
-            
-            // 关闭分析模板
-            analysisTemplate.close()
-            
-            // 4. 为每个学生单独生成证书
-            params.students.forEach { student ->
+        }
+        val remainingTags = variableNames - termPairs.map { it.first }
+        val termExpressions = termPairs.map { it.second }
+        
+        // 关闭分析模板
+        analysisTemplate.close()
+
+        var successCount = 0
+        val errorList = mutableListOf<String>()
+        // 4. 为每个学生单独生成证书
+        params.students.forEach { student ->
+            try {
                 // 为每个学生从字节数组重新创建模板（不需要重新读取文件）
                 val studentTemplateStream = templateBytes.inputStream()
                 val template = XWPFTemplate.compile(studentTemplateStream, builder.build())
@@ -97,16 +104,28 @@ class CertificateGenerator : KoinComponent {
                     )
                     
                     // 6. 渲染并写入文件
-                    template.render(models).writeToFile(params.outputDirectory.absolutePath + buildCertificateFileName(student, params.template))
+                    val outputFilePath = params.outputDirectory.absolutePath + buildCertificateFileName(student, params.template)
+                    template.render(models).writeToFile(outputFilePath)
+                    
+                    // 7. 记录证书生成信息
+                    recordCertificateGeneration(student, params)
+
+                    successCount++
                 } finally {
                     // 确保关闭资源
                     template.close()
                     studentTemplateStream.close()
                 }
+            } catch (e: Exception) {
+                errorList.add("${student.studentId}-${student.name}：" + (e.message ?: "未知错误"))
             }
-        } catch (e: Exception) {
-            throw BusinessException("生成证书过程中发生错误: ${e.message}", e)
         }
+        JOptionPane.showMessageDialog(
+            null, 
+            I18nUtils.getFormattedText("certificate.generate.result.detail", successCount, errorList.size, "\n${errorList.joinToString("\n")}"), 
+            I18nUtils.getFormattedText("certificate.generate.result.title"), 
+            JOptionPane.INFORMATION_MESSAGE
+        )
     }
     
     /**
@@ -137,6 +156,28 @@ class CertificateGenerator : KoinComponent {
                 }
                 FileInputStream(file)
             }
+        }
+    }
+
+    /**
+     * 记录证书生成信息
+     */
+    private suspend fun recordCertificateGeneration(
+        student: StudentDTO,
+        params: CertificateGenerateDialog.CertificateGenerationParams
+    ) {
+        try {
+            val record = CertificateRecordDTO(
+                templateId = params.template.uuid!!,
+                issuedDate = LocalDate.now(),
+                issuedBy = params.issuer,
+                content = "${student.studentId}-${student.name}-${params.template.name}",
+                purpose = params.purpose
+            )
+            recordService.add(record)
+        } catch (e: Exception) {
+            // 记录错误但不中断主流程
+            println("记录证书生成信息失败: ${e.message}")
         }
     }
 } 

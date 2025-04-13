@@ -9,12 +9,14 @@ package moe.hhm.parfait.di
 import moe.hhm.parfait.app.certificate.CertificateGenerator
 import moe.hhm.parfait.app.certificate.TemplateModelBuilder
 import moe.hhm.parfait.app.service.CertificateDataService
+import moe.hhm.parfait.app.service.CertificateRecordService
 import moe.hhm.parfait.app.service.CertificateTemplateService
 import moe.hhm.parfait.app.service.GpaStandardService
 import moe.hhm.parfait.app.service.StudentSearchService
 import moe.hhm.parfait.app.service.StudentService
 import moe.hhm.parfait.app.service.TermService
 import moe.hhm.parfait.app.service.impl.CertificateDataServiceImpl
+import moe.hhm.parfait.app.service.impl.CertificateRecordServiceImpl
 import moe.hhm.parfait.app.service.impl.CertificateTemplateServiceImpl
 import moe.hhm.parfait.app.service.impl.GpaStandardServiceImpl
 import moe.hhm.parfait.app.service.impl.StudentSearchServiceImpl
@@ -37,6 +39,7 @@ val appModule = module {
     single<TermService> { TermServiceImpl(get()) }
     single<CertificateTemplateService> { CertificateTemplateServiceImpl(get()) }
     single<CertificateDataService> { CertificateDataServiceImpl(get()) }
+    single<CertificateRecordService> { CertificateRecordServiceImpl() }
 
     ///业务逻辑
     // 术语处理相关

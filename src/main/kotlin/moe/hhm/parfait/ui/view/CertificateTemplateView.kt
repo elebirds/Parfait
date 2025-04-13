@@ -16,6 +16,7 @@ import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.button.CertificateTemplateButton
 import moe.hhm.parfait.ui.component.dialog.CertificateTemplateDialog
+import moe.hhm.parfait.ui.component.dialog.CertificateRecordsDialog
 import moe.hhm.parfait.ui.state.VMState
 import moe.hhm.parfait.ui.viewmodel.CertificateTemplateViewModel
 import net.miginfocom.swing.MigLayout
@@ -276,14 +277,7 @@ class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPane
                 if (template != null && template.uuid != null) {
                     // 查看该模板的导出记录
                     val owner = SwingUtilities.getWindowAncestor(this@CertificateTemplateView)
-                    // TODO: 这里需要实现证明记录查看对话框
-                    // CertificateRecordsDialog.show(template.uuid, owner)
-                    JOptionPane.showMessageDialog(
-                        owner, 
-                        I18nUtils.getText("certificate.records.not.implemented"),
-                        I18nUtils.getText("term.dialog.message.title"),
-                        JOptionPane.INFORMATION_MESSAGE
-                    )
+                    CertificateRecordsDialog.show(template.uuid!!, template.name, owner)
                 } else {
                     JOptionPane.showMessageDialog(
                         SwingUtilities.getWindowAncestor(this@CertificateTemplateView),

@@ -64,23 +64,23 @@ class CertificateTemplateButton(
         // 特殊标记（优先显示收藏，未收藏则显示活跃状态）
         if (isLike) {
             val lbLike = createLabel("certificate.status.like")
-            lbLike.setIcon(FlatSVGIcon("ui/nwicons/love_pink.svg"))
+            lbLike.setIcon(FlatSVGIcon("ui/nwicons/star.svg"))
             lbLike.putClientProperty(
-                FlatClientProperties.STYLE, "foreground:#d4237a"
+                FlatClientProperties.STYLE, "foreground:#feb432;font:bold;"
             )
             panel.add(lbLike)
         } else if (isActive) {
             val lbActive = createLabel("certificate.status.active")
-            lbActive.setIcon(FlatSVGIcon("ui/nwicons/check_circle.svg"))
+            lbActive.setIcon(FlatSVGIcon("ui/nwicons/active.svg"))
             lbActive.putClientProperty(
-                FlatClientProperties.STYLE, "foreground:#22b65a"
+                FlatClientProperties.STYLE, "foreground:#22b65a;font:bold;"
             )
             panel.add(lbActive)
         } else {
             val lbInactive = createLabel("certificate.status.inactive")
-            lbInactive.setIcon(FlatSVGIcon("ui/nwicons/error_circle.svg"))
+            lbInactive.setIcon(FlatSVGIcon("ui/nwicons/ban.svg"))
             lbInactive.putClientProperty(
-                FlatClientProperties.STYLE, "foreground:#d45c5c"
+                FlatClientProperties.STYLE, "foreground:#d45c5c;font:bold;"
             )
             panel.add(lbInactive)
         }

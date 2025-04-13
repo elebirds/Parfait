@@ -231,7 +231,6 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
         VMErrorHandlerChooser.Process){
         _vmState.value = VMState.PROCESSING
         StudentAction.generateCertificates(params)
-        //TODO: 提示成功
         _vmState.value = VMState.DONE
         true
     }

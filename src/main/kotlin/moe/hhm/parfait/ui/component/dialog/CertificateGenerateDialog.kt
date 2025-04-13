@@ -6,14 +6,17 @@
 
 package moe.hhm.parfait.ui.component.dialog
 
+import com.formdev.flatlaf.FlatClientProperties
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.app.service.CertificateTemplateService
 import moe.hhm.parfait.app.service.GpaStandardService
 import moe.hhm.parfait.dto.CertificateTemplateDTO
 import moe.hhm.parfait.dto.GpaStandardDTO
 import moe.hhm.parfait.dto.StudentDTO
+import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
+import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
 import moe.hhm.parfait.infra.i18n.I18nUtils.createLabel
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
@@ -48,7 +51,7 @@ class CertificateGenerateDialog(
     // 表单组件
     private val comboCertificateTemplate = JComboBox<CertificateTemplateDTO>()
     private val comboGpaStandard = JComboBox<GpaStandardDTO>()
-    private val checkboxUseGpa = JCheckBox(I18nUtils.getText("certificate.use.gpa"))
+    private val checkboxUseGpa = JCheckBox(I18nUtils.getText("certificate.dialog.use.gpa"))
     private val textIssuer = JTextField()
     private val textPurpose = JTextField()
     
@@ -56,19 +59,15 @@ class CertificateGenerateDialog(
     private var selectedTemplate: CertificateTemplateDTO? = null
     private var selectedGpaStandard: GpaStandardDTO? = null
     
-    // 状态标签
-    private val labelStudentCount = JLabel()
-    
     // 按钮
     private val buttonGenerate = object : JButton() {
         override fun isDefaultButton(): Boolean = true
     }.apply {
-        bindText(this, "button.generate")
+        bindText(this, "button.ok")
         addActionListener { generateCertificate() }
     }
     
-    private val buttonCancel = JButton().apply {
-        bindText(this, "button.cancel")
+    private val buttonCancel = createButton("button.cancel").apply {
         addActionListener { dispose() }
     }
 
@@ -79,8 +78,8 @@ class CertificateGenerateDialog(
     }
 
     private fun initDialog() {
+        title = I18nUtils.getFormattedText("certificate.dialog.generate.title", selectedStudents.size)
         // 设置对话框基本属性
-        title = I18nUtils.getText("certificate.dialog.title")
         isModal = true
         defaultCloseOperation = DISPOSE_ON_CLOSE
 
@@ -88,22 +87,17 @@ class CertificateGenerateDialog(
         isResizable = false
 
         // 固定大小
-        preferredSize = Dimension(550, 620)
-        minimumSize = Dimension(550, 620)
-        maximumSize = Dimension(550, 620)
+        preferredSize = Dimension(500, 280)
+        minimumSize = Dimension(500, 280)
+        maximumSize = Dimension(500, 280)
 
         // 使用单一布局面板
         contentPane = JPanel(MigLayout("wrap 2, fillx, insets n 35 n 35", "[fill, 200]"))
     }
 
     private fun initComponents() {
-        // 设置学生数量标签
-        labelStudentCount.text = I18nUtils.getFormattedText("certificate.selected.students", selectedStudents.size)
-        contentPane.add(labelStudentCount, "span 2, grow")
-        contentPane.add(JSeparator(), "span 2, grow, gaptop 10, gapbottom 10")
-        
         // 证书模板选择
-        contentPane.add(createLabel("certificate.template"), "grow")
+        contentPane.add(createLabel("certificate.property.name"), "grow")
         comboCertificateTemplate.apply {
             renderer = CertificateTemplateListCellRenderer()
             addActionListener {
@@ -113,7 +107,7 @@ class CertificateGenerateDialog(
         contentPane.add(comboCertificateTemplate, "grow, wrap")
         
         // GPA标准选择
-        contentPane.add(createLabel("certificate.gpa.standard"), "grow")
+        contentPane.add(createLabel("certificate.dialog.generate.gpa.standard"), "grow")
         comboGpaStandard.apply {
             renderer = GpaStandardListCellRenderer()
             addActionListener {
@@ -132,20 +126,18 @@ class CertificateGenerateDialog(
         contentPane.add(checkboxUseGpa, "span 2, grow, wrap")
         
         // 签发人
-        contentPane.add(createLabel("certificate.issuer"), "grow")
+        contentPane.add(createLabel("certificate.property.issuer"), "grow")
         contentPane.add(textIssuer, "grow, wrap")
         
         // 用途
-        contentPane.add(createLabel("certificate.purpose"), "grow")
+        contentPane.add(createLabel("certificate.property.purpose"), "grow")
         contentPane.add(textPurpose, "grow, wrap")
-        
-        // 底部按钮
-        contentPane.add(JSeparator(), "span 2, grow, gaptop 10, gapbottom 10")
         
         val buttonPanel = JPanel(MigLayout("insets 0, gap 10", "[fill, 50%][fill, 50%]"))
         buttonPanel.add(buttonCancel, "grow")
         buttonPanel.add(buttonGenerate, "grow")
-        
+
+        // 20px的间距
         contentPane.add(buttonPanel, "span 2, grow")
     }
     
@@ -184,40 +176,15 @@ class CertificateGenerateDialog(
     
     private fun generateCertificate() {
         // 验证必填项
-        if (selectedTemplate == null) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("certificate.error.no.template"),
-                I18nUtils.getText("dialog.error"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return
-        }
+        if (selectedTemplate == null) throw BusinessException("certificate.error.no.template")
         
-        if (checkboxUseGpa.isSelected && selectedGpaStandard == null) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("certificate.error.no.gpa.standard"),
-                I18nUtils.getText("dialog.error"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return
-        }
-        
-        if (textIssuer.text.isBlank()) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("certificate.error.no.issuer"),
-                I18nUtils.getText("dialog.error"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return
-        }
+        if (checkboxUseGpa.isSelected && selectedGpaStandard == null) throw BusinessException("certificate.error.no.gpa.standard")
+        if (textIssuer.text.isBlank()) throw BusinessException("certificate.error.no.issuer")
         
         // 选择保存目录
         val fileChooser = JFileChooser().apply {
             fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
-            dialogTitle = I18nUtils.getText("certificate.save.directory")
+            dialogTitle = I18nUtils.getText("certificate.dialog.generate.save.directory")
         }
         
         val result = fileChooser.showSaveDialog(this)
@@ -234,6 +201,7 @@ class CertificateGenerateDialog(
             outputDirectory = selectedDir
         )
         viewModel.generateCertificates(params)
+        dispose()
     }
     
     // 显示对话框
@@ -259,16 +227,7 @@ class CertificateGenerateDialog(
     companion object {
         // 静态方法便于在其他地方调用
         fun show(selectedStudents: List<StudentDTO>, owner: Window? = null) {
-            if (selectedStudents.isEmpty()) {
-                JOptionPane.showMessageDialog(
-                    owner,
-                    I18nUtils.getText("certificate.error.no.students"),
-                    I18nUtils.getText("dialog.error"),
-                    JOptionPane.ERROR_MESSAGE
-                )
-                return
-            }
-            
+            if (selectedStudents.isEmpty()) throw BusinessException("certificate.error.needStudents")
             val dialog = CertificateGenerateDialog(selectedStudents, owner)
             dialog.showDialog()
         }

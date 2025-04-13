@@ -77,8 +77,8 @@ class TemplateModelBuilder : KoinComponent {
         "grade" to student.grade.toString(),
         "gender" to student.gender.toString(),
         "status" to student.status.toString(),
-        "score_weighted" to student.scores.weightedMean(),
-        "score_simple" to student.scores.simpleMean()
+        "score_weighted" to student.scores.weightedMean().round2Decimal(),
+        "score_simple" to student.scores.simpleMean().round2Decimal()
     )
     
     /**

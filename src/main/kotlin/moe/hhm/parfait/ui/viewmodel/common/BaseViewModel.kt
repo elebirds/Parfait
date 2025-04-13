@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.exception.ErrorHandler
+import moe.hhm.parfait.exception.ErrorHandler.showError
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
@@ -64,26 +65,7 @@ abstract class BaseViewModel : CoroutineComponent by DefaultCoroutineComponent()
 
     fun observeError() {
         scope.launch {
-            _error.collectLatest { error ->
-                when (error) {
-                    is BusinessException -> {
-                        JOptionPane.showMessageDialog(
-                            null,
-                            I18nUtils.getFormattedText("error.business.detail", error.message ?: ""),
-                            I18nUtils.getText("error.business.title"),
-                            JOptionPane.WARNING_MESSAGE
-                        )
-                    }
-                    else -> {
-                        JOptionPane.showMessageDialog(
-                            null,
-                            I18nUtils.getFormattedText("error.generic.detail", error.message ?: ""),
-                            I18nUtils.getText("error.generic.title"),
-                            JOptionPane.ERROR_MESSAGE
-                        )
-                    }
-                }
-            }
+            _error.collectLatest { error -> showError(error) }
         }
     }
 
