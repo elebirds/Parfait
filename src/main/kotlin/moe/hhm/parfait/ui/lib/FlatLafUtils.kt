@@ -51,7 +51,7 @@ object FlatLafUtils {
     }
 
     fun preferenceInit() {
-        FlatLafPrefs.init("ParfaitMOE")
+        FlatLafPrefs.init("Parfait2")
         FlatLafPrefs.initSystemScale()
     }
 

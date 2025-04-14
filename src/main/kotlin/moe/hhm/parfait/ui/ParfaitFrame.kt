@@ -6,6 +6,7 @@
 
 package moe.hhm.parfait.ui
 
+import com.formdev.flatlaf.extras.FlatSVGIcon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -37,6 +38,8 @@ class ParfaitFrame : JFrame() {
         size = Dimension(1250, 750)
         setLocationRelativeTo(null)
         jMenuBar = menuBar
+
+        iconImage = FlatSVGIcon("ui/nwicons/logo.svg", 1.5f).image
 
         // 设置国际化标题
         bindTitle(this, "app.title")

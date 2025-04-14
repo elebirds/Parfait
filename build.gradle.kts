@@ -100,6 +100,6 @@ runtime {
         skipInstaller = false
         installerName = "Parfait"
         installerType = "msi"
-        installerOptions = listOf("--win-menu", "--win-shortcut")
+        installerOptions = listOf("--win-menu", "--win-shortcut", "--win-dir-chooser")
     }
 }

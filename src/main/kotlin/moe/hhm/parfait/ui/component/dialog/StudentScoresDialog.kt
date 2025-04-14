@@ -321,7 +321,7 @@ class StudentScoresDialog(
             JOptionPane.showMessageDialog(
                 null,
                 I18nUtils.getFormattedText("score.dialog.action.import.success", successCount, failCount, msg),
-                I18nUtils.getText("score.dialog.title"),
+                I18nUtils.getFormattedText("score.dialog.title", studentDTO.name),
                 JOptionPane.INFORMATION_MESSAGE
             )
         }
