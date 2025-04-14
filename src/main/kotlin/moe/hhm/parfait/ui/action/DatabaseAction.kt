@@ -74,12 +74,21 @@ object DatabaseAction {
         // 密码允许为空
     }
 
+    /**
+     * 连接到在线数据库
+     *
+     * @param address 服务器地址，格式为 "host:port"
+     * @param user 用户名
+     * @param password 密码
+     * @param databaseName 数据库名称
+     * @return 连接是否成功
+     */
     fun connectOnline(
         address: String,
         user: String,
         password: String,
         databaseName: String
-    ) {
+    ): Boolean {
         try {
             validateOnlineParams(address, user, password, databaseName)
             val a = address.split(":")
@@ -91,6 +100,7 @@ object DatabaseAction {
                 databaseName = databaseName
             )
             DatabaseFactory.connect(config)
+            return true  // 连接成功
         } catch (e: Exception) {
             JOptionPane.showMessageDialog(
                 null,
@@ -98,6 +108,7 @@ object DatabaseAction {
                 I18nUtils.getText("database.connect.error.title"),
                 JOptionPane.ERROR_MESSAGE
             )
+            return false  // 连接失败
         }
     }
 }

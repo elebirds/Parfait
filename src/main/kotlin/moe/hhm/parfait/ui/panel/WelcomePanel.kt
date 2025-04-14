@@ -11,7 +11,9 @@ import com.formdev.flatlaf.extras.FlatSVGIcon
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
+import moe.hhm.parfait.infra.i18n.I18nUtils.createCheckBox
 import moe.hhm.parfait.infra.i18n.I18nUtils.createLabel
+import moe.hhm.parfait.infra.persist.LoginPrefsManager
 import moe.hhm.parfait.ui.action.DatabaseAction
 import net.miginfocom.swing.MigLayout
 import javax.swing.*
@@ -43,12 +45,24 @@ class WelcomePanel : JPanel() {
         )
         this.setHorizontalTextPosition(JButton.LEADING)
         this.addActionListener {
-            DatabaseAction.connectOnline(
+            // 连接数据库
+            val success = DatabaseAction.connectOnline(
                 address = txtAddress.text,
                 user = txtUser.text,
                 password = String(txtPassword.password),
                 databaseName = txtDatabaseName.text
             )
+            
+            // 如果连接成功，保存登录信息
+            if (success) {
+                LoginPrefsManager.saveLoginInfo(
+                    address = txtAddress.text,
+                    database = txtDatabaseName.text,
+                    username = txtUser.text,
+                    password = String(txtPassword.password),
+                    remember = rememberCheckBox.isSelected
+                )
+            }
         }
     }
     private val txtAddress = JTextField().apply {
@@ -105,9 +119,22 @@ class WelcomePanel : JPanel() {
             FlatSVGIcon("ui/nwicons/database.svg", 0.068f)
         )
     }
+    
+    // 记住密码复选框
+    private val rememberCheckBox = createCheckBox("welcome.remember").apply {
+        addActionListener {
+            // 如果取消勾选，可以选择清除已保存的凭据
+            if (!isSelected) {
+                // 可选：添加确认对话框，询问是否要清除已保存的凭据
+                // 此处简化处理，不添加确认步骤
+            }
+        }
+    }
 
     init {
         init()
+        // 尝试加载保存的登录信息
+        loadSavedLoginInfo()
     }
 
     private fun init() {
@@ -159,24 +186,48 @@ class WelcomePanel : JPanel() {
             putClientProperty(FlatClientProperties.STYLE, "font:bold;")
         }
         add(lbPassword, "gapy 10 5")
-        createNoBorderButton("button.forgot")
+        //val cmdForgotPassword = createNoBorderButton("button.forgot")
         //add(cmdForgotPassword, "grow 0,gapy 10 5")
 
         add(txtPassword)
 
-
-        //add(createCheckBox("welcome.remember"), "gapy 10 10")
-        // marginTop = 10，不知道在java怎么实现
+        // 使用记住密码复选框
+        add(rememberCheckBox, "gapy 10 10")
         add(cmdSignIn, "gapy n 10")
 
-        createLabel("welcome.noaccount").apply {
+        val lbNoAccount = createLabel("welcome.needAdvice").apply {
             putClientProperty(FlatClientProperties.STYLE, "foreground:\$Label.disabledForeground;")
         }
-        //add(lbNoAccount, "split 2,gapx push n")
+        add(lbNoAccount, "split 2,gapx push n")
 
-        createNoBorderButton("button.create")
+        val cmdCreateAccount = createNoBorderButton("welcome.advice").apply {
+            addActionListener {
+                JOptionPane.showMessageDialog(
+                    null,
+                    I18nUtils.getText("database.mode.tip"),
+                    I18nUtils.getText("welcome.advice"),
+                    JOptionPane.INFORMATION_MESSAGE
+                )
+            }
+        }
 
-        //add(cmdCreateAccount, "gapx n push")
+        add(cmdCreateAccount, "gapx n push")
+    }
+    
+    /**
+     * 从保存的首选项中加载登录信息
+     */
+    private fun loadSavedLoginInfo() {
+        val loginInfo = LoginPrefsManager.getLoginInfo()
+        
+        // 如果有保存的登录信息，则填充表单
+        if (loginInfo != null) {
+            txtAddress.text = loginInfo.address
+            txtDatabaseName.text = loginInfo.database
+            txtUser.text = loginInfo.username
+            txtPassword.text = loginInfo.password
+            rememberCheckBox.isSelected = loginInfo.remember
+        }
     }
 
     private fun createSeparator(): JSeparator = JSeparator().apply {
