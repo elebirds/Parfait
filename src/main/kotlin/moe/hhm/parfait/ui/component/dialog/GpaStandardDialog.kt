@@ -232,26 +232,10 @@ class GpaStandardDialog(
         val mappingData = mappingTable.getMappingData()
 
         // 验证表单数据
-        if (name.isEmpty() || category.isEmpty() || description.isEmpty() || purpose.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("gpa.dialog.validation.required"),
-                I18nUtils.getText("error.generic"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return
-        }
+        if (name.isEmpty() || category.isEmpty() || description.isEmpty() || purpose.isEmpty())
+            throw BusinessException("gpa.dialog.validation.required")
 
-        if (mappingData.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("gpa.dialog.validation.mapping.empty"),
-                I18nUtils.getText("error.generic"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return
-        }
-
+        if (mappingData.isEmpty()) throw BusinessException("gpa.dialog.validation.mapping.empty")
         // 验证映射表数据有效性
         val mapping = GpaMappingDTO(mappingData)
         val vCode = mapping.validCode()
@@ -259,16 +243,8 @@ class GpaStandardDialog(
             GpaMappingValidState.VALID -> {
                 // 映射表数据有效
             }
-
-            else -> {
-                JOptionPane.showMessageDialog(
-                    this,
-                    I18nUtils.getText("gpa.dialog.validation.mapping.invalid"),
-                    I18nUtils.getText("error.generic"),
-                    JOptionPane.ERROR_MESSAGE
-                )
-                return
-            }
+            GpaMappingValidState.OVERLAP -> throw BusinessException("gpa.dialog.validation.mapping.overlap")
+            GpaMappingValidState.UNCOVERED -> throw BusinessException("gpa.dialog.validation.mapping.uncovered")
         }
 
         // 创建GPA标准DTO
