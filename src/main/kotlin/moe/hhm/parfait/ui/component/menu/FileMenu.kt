@@ -81,8 +81,8 @@ class FileMenu : JMenu() {
         add(open)
         add(close)
         add(detail)
-        addSeparator()
-        add(setting)
+        //addSeparator()
+        //add(setting)
         addSeparator()
         add(exit)
     }

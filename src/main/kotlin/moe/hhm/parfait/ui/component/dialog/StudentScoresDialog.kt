@@ -292,8 +292,8 @@ class StudentScoresDialog(
                                 credit = data[3]?.toIntOrNull() ?: 0,
                                 score = data[4]?.toDoubleOrNull() ?: 0.0,
                                 gpa = when (data[5]) {
-                                    I18nUtils.getText("score.gpa.yes"), "Y", "是", "对", "Oui", "T" -> true
-                                    else -> false
+                                    I18nUtils.getText("score.gpa.no"), "N", "否", "Non", "F" -> false
+                                    else -> true
                                 }
                             )
                             scoreList.add(score)
