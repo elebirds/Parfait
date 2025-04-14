@@ -433,7 +433,7 @@ class AdvancedFilterDialog(
                 JOptionPane.showMessageDialog(
                     this@AdvancedFilterDialog,
                     e.message,
-                    I18nUtils.getText("error.generic"),
+                    I18nUtils.getText("error.generic.title"),
                     JOptionPane.ERROR_MESSAGE
                 )
             }

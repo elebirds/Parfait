@@ -9,6 +9,7 @@ package moe.hhm.parfait.ui.component.dialog
 import com.formdev.flatlaf.FlatClientProperties
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.dto.StudentDTO
+import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
 import moe.hhm.parfait.ui.base.CoroutineComponent
@@ -195,23 +196,11 @@ class StudentModifyDialog(
 
         // 验证表单数据
         if (studentId.isEmpty() || name.isEmpty() || department.isEmpty() || major.isEmpty() || classGroup.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("student.dialog.validation.required"),
-                I18nUtils.getText("error.generic"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return
+            throw BusinessException("student.dialog.validation.required")
         }
 
         if (grade == null) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("student.dialog.validation.grade.needInteger"),
-                I18nUtils.getText("error.generic"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return
+            throw BusinessException("student.dialog.validation.grade.needInteger")
         }
 
         // 创建学生DTO
@@ -236,14 +225,8 @@ class StudentModifyDialog(
                 } else {
                     viewModel.addStudent(student)
                 }
+            } finally {
                 dispose()
-            } catch (e: Exception) {
-                JOptionPane.showMessageDialog(
-                    this@StudentModifyDialog,
-                    e.message,
-                    I18nUtils.getText("error.generic"),
-                    JOptionPane.ERROR_MESSAGE
-                )
             }
         }
     }

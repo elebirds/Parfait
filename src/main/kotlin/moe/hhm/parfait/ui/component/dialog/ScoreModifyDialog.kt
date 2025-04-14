@@ -9,6 +9,7 @@ package moe.hhm.parfait.ui.component.dialog
 import com.formdev.flatlaf.FlatClientProperties
 import moe.hhm.parfait.dto.CourseType
 import moe.hhm.parfait.dto.ScoreDTO
+import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import net.miginfocom.swing.MigLayout
 import java.awt.Window
@@ -123,13 +124,7 @@ class ScoreModifyDialog(owner: Window, existingScore: ScoreDTO? = null) : JDialo
 
         // 检查必填字段
         if (name.isEmpty() || exam.isEmpty() || creditText.isEmpty() || scoreText.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("score.dialog.validation.required"),
-                I18nUtils.getText("error.generic"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return false
+            throw BusinessException("score.dialog.validation.required")
         }
 
         // 检查数字格式
@@ -149,13 +144,7 @@ class ScoreModifyDialog(owner: Window, existingScore: ScoreDTO? = null) : JDialo
 
             return true
         } catch (e: NumberFormatException) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("score.dialog.validation.numeric"),
-                I18nUtils.getText("error.generic"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return false
+            throw BusinessException("score.dialog.validation.numeric", e)
         }
     }
 }
