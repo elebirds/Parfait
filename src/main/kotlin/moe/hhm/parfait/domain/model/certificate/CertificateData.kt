@@ -24,6 +24,6 @@ class CertificateData(id: EntityID<UUID>) : UUIDEntity(id) {
         uuid = this.id.value,
         filename = this.filename,
         used = this.used,
-        data = this.data
+        data = this.data.bytes
     )
 }

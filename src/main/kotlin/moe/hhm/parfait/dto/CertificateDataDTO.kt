@@ -8,6 +8,7 @@ package moe.hhm.parfait.dto
 
 import moe.hhm.parfait.infra.db.certificate.CertificateDatas
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import java.util.UUID
 
 data class CertificateDataDTO (
@@ -18,7 +19,7 @@ data class CertificateDataDTO (
 ) {
     fun <T : Any> into(it: UpdateBuilder<T>) {
         it[CertificateDatas.filename] = filename
-        it[CertificateDatas.data] = data
+        it[CertificateDatas.data] = ExposedBlob(data)
         it[CertificateDatas.used] = used
     }
 

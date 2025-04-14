@@ -71,7 +71,7 @@ data class DatabaseConnectionConfig(
     fun checkValid(): Boolean {
         return when (mode) {
             DatabaseFactoryMode.STANDALONE -> host.isNotEmpty()
-            DatabaseFactoryMode.ONLINE -> host.isNotEmpty() && port > 0 && user.isNotEmpty() && password.isNotEmpty() && databaseName.isNotEmpty()
+            DatabaseFactoryMode.ONLINE -> host.isNotEmpty() && port > 0 && user.isNotEmpty() && databaseName.isNotEmpty()
         }
     }
 }
