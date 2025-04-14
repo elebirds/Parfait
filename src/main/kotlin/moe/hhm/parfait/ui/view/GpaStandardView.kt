@@ -29,7 +29,7 @@ import javax.swing.border.EmptyBorder
 class GpaStandardView(parent: DefaultCoroutineComponent? = null) : JPanel(), KoinComponent,
     CoroutineComponent by DefaultCoroutineComponent(parent) {
     // 通过Koin获取ViewModel
-    private val viewModel: GpaStandardViewModel by inject()
+    val viewModel: GpaStandardViewModel by inject()
 
     // 按钮组件
     private val buttonPanel = GpaStandardButtonPanel()

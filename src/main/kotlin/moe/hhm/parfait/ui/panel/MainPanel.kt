@@ -18,11 +18,16 @@ import javax.swing.JPanel
 import javax.swing.JTabbedPane
 
 class MainPanel : JPanel() {
-    private val toolBar = MainToolBar()
     private val studentData = StudentDataView()
     private val gpaStandard = GpaStandardView()
     private val certificateTemplate = CertificateTemplateView()
     private val termView = TermView()
+    private val toolBar = MainToolBar(
+        studentData.viewModel,
+        gpaStandard.viewModel,
+        certificateTemplate.viewModel,
+        termView.viewModel
+    )
     private val contentPane = JTabbedPane().apply {
         addTab("", studentData)
         I18nUtils.bindProperty(this, "main.students") { c, v -> setTitleAt(0, v) }
@@ -42,5 +47,10 @@ class MainPanel : JPanel() {
         this.layout = BorderLayout()
         this.add(toolBar, BorderLayout.NORTH)
         this.add(contentPanel, BorderLayout.CENTER)
+        
+        contentPane.addChangeListener {
+            // 更新当前选中的标签页索引
+            toolBar.setCurrentIndex(contentPane.selectedIndex)
+        }
     }
 }

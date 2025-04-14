@@ -28,7 +28,7 @@ import javax.swing.border.EmptyBorder
 class StudentDataView(parent: DefaultCoroutineComponent? = null) : JPanel(), KoinComponent,
     CoroutineComponent by DefaultCoroutineComponent(parent) {
     // 通过Koin获取ViewModel
-    private val viewModel: StudentDataViewModel by inject()
+    val viewModel: StudentDataViewModel by inject()
 
     // 按钮组件
     private val buttonPanel = StudentDataButtonPanel()

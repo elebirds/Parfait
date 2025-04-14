@@ -22,4 +22,9 @@ abstract class DataViewModel<T>(defaultState: T) : BaseViewModel() {
         _vmState.value = VMState.PRELOADING
         loadData()
     }
+
+    fun forceReload() {
+        _vmState.value = VMState.PRELOADING
+        loadData()
+    }
 }

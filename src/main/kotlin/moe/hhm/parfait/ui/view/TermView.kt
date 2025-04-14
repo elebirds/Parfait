@@ -31,7 +31,7 @@ import javax.swing.border.EmptyBorder
 class TermView(parent: DefaultCoroutineComponent? = null) : JPanel(), KoinComponent,
     CoroutineComponent by DefaultCoroutineComponent(parent) {
     // 通过Koin获取ViewModel
-    private val viewModel: TermViewModel by inject()
+    val viewModel: TermViewModel by inject()
 
     // 按钮组件
     private val buttonPanel = TermButtonPanel(this)

@@ -15,17 +15,22 @@ import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.dialog.AdvancedFilterDialog
 import moe.hhm.parfait.ui.component.dialog.SearchFilterDialog
 import moe.hhm.parfait.ui.state.FilterState
-import moe.hhm.parfait.ui.state.VMState
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
+import moe.hhm.parfait.ui.viewmodel.TermViewModel
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import javax.swing.JButton
 import javax.swing.JToolBar
 import javax.swing.SwingUtilities
+import moe.hhm.parfait.ui.viewmodel.CertificateTemplateViewModel
+import moe.hhm.parfait.ui.viewmodel.GpaStandardViewModel
 
-class MainToolBar : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoroutineComponent() {
-
-    private val viewModel: StudentDataViewModel by inject()
+class MainToolBar(
+    private val studentViewModel: StudentDataViewModel,
+    private val gpaViewModel: GpaStandardViewModel,
+    private val certificateViewModel: CertificateTemplateViewModel,
+    private val termViewModel: TermViewModel
+) : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoroutineComponent() {
+    private var currentIndex: Int = 0
 
     private val searchButton = JButton(FlatSVGIcon("ui/nwicons/search.svg")).apply {
         bindToolTipText(this, "toolbar.search")
@@ -49,7 +54,9 @@ class MainToolBar : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoro
         bindToolTipText(this, "toolbar.clearFilter")
         isEnabled = false // 初始状态下禁用
         addActionListener {
-            viewModel.clearFilter()
+            when(currentIndex) {
+                0 -> studentViewModel.clearFilter()
+            }
         }
     }
 
@@ -77,29 +84,63 @@ class MainToolBar : JToolBar(), KoinComponent, CoroutineComponent by DefaultCoro
         addSeparator()
 
         // 监听筛选状态变化
-        observeFilterState()
+        scope.launch {
+            studentViewModel.filterState.collectLatest { state ->
+                if (currentIndex == 0) {
+                    cleanFilterButton.isEnabled = state == FilterState.FILTERED
+                }
+            }
+        }
+    }
+
+    /**
+     * 设置当前选中的标签页索引
+     */
+    fun setCurrentIndex(index: Int) {
+        currentIndex = index
+        updateButtonStates()
+    }
+
+    /**
+     * 更新按钮状态
+     */
+    private fun updateButtonStates() {
+        when (currentIndex) {
+            0 -> { // 学生数据
+                searchButton.isEnabled = true
+                filterButton.isEnabled = true
+                refreshButton.isEnabled = true
+                redrawButton.isEnabled = true
+                studentViewModel.let { vm ->
+                    cleanFilterButton.isEnabled = vm.filterState.value == FilterState.FILTERED
+                }
+            }
+            1, 2 -> { // GPA标准, 证明模板
+                searchButton.isEnabled = false
+                filterButton.isEnabled = false
+                cleanFilterButton.isEnabled = false
+                refreshButton.isEnabled = true
+                redrawButton.isEnabled = true
+            }
+            3 -> { // 术语
+                searchButton.isEnabled = true
+                filterButton.isEnabled = true
+                cleanFilterButton.isEnabled = false
+                refreshButton.isEnabled = true
+                redrawButton.isEnabled = true
+            }
+        }
     }
 
     /**
      * 刷新数据
      */
     private fun refreshData() {
-        // 如果当前是DONE状态，先设置为PRELOADING再执行loadData
-        if (viewModel.vmState.value == VMState.DONE) {
-            viewModel.prepareForReload()
-        } else {
-            viewModel.loadData()
-        }
-    }
-
-    /**
-     * 监听筛选状态变化
-     */
-    private fun observeFilterState() {
-        scope.launch {
-            viewModel.filterState.collectLatest { state ->
-                cleanFilterButton.isEnabled = state == FilterState.FILTERED
-            }
+        when (currentIndex) {
+            0 -> studentViewModel.forceReload()
+            1 -> gpaViewModel.forceReload()
+            2 -> certificateViewModel.forceReload()
+            3 -> termViewModel.forceReload()
         }
     }
 }

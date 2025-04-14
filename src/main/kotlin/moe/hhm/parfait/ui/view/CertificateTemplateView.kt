@@ -31,7 +31,7 @@ class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPane
     CoroutineComponent by DefaultCoroutineComponent(parent) {
 
     // 通过Koin获取ViewModel
-    private val viewModel: CertificateTemplateViewModel by inject()
+    val viewModel: CertificateTemplateViewModel by inject()
 
     // 按钮组件
     private val buttonPanel = TemplateButtonPanel()

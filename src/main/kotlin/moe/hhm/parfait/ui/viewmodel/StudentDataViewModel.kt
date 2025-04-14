@@ -516,18 +516,5 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
             }
         }
     }
-
-    /**
-     * 准备重新加载数据
-     * 当前状态为DONE时，将状态设置为PRELOADING，然后加载数据
-     */
-    fun prepareForReload() {
-        if (_vmState.value == VMState.DONE) {
-            _vmState.value = VMState.PRELOADING
-            loadData()
-        } else {
-            logger.warn("无法准备重新加载数据，当前状态：${_vmState.value.name}")
-        }
-    }
 }
 
