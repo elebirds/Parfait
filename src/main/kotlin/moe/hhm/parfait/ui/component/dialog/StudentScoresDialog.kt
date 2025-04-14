@@ -6,13 +6,15 @@
 
 package moe.hhm.parfait.ui.component.dialog
 
+import com.alibaba.excel.EasyExcel
+import com.alibaba.excel.context.AnalysisContext
+import com.alibaba.excel.event.AnalysisEventListener
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import moe.hhm.parfait.app.service.GpaStandardService
-import moe.hhm.parfait.dto.CourseType
-import moe.hhm.parfait.dto.ScoreDTO
-import moe.hhm.parfait.dto.StudentDTO
-import moe.hhm.parfait.dto.simpleMean
-import moe.hhm.parfait.dto.weightedMean
+import moe.hhm.parfait.dto.*
+import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
 import moe.hhm.parfait.ui.action.ScoreAction
@@ -27,13 +29,7 @@ import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Window
 import javax.swing.*
-import java.io.File
 import javax.swing.filechooser.FileNameExtensionFilter
-import com.alibaba.excel.EasyExcel
-import com.alibaba.excel.context.AnalysisContext
-import com.alibaba.excel.event.AnalysisEventListener
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 /**
  * 学生成绩管理对话框
@@ -76,12 +72,12 @@ class StudentScoresDialog(
     }
 
     private val importButton = JButton().apply {
-        bindText(this, "button.import")
+        bindText(this, "score.dialog.action.import")
         addActionListener { importScoresFromExcel() }
     }
 
     private val exportButton = JButton().apply {
-        bindText(this, "button.export")
+        bindText(this, "score.dialog.action.export")
         addActionListener { exportScoresToExcel() }
     }
 
@@ -210,15 +206,7 @@ class StudentScoresDialog(
 
     private fun editGrade() {
         val selectedRow = table.selectedRow
-        if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("score.dialog.validation.needSelect"),
-                I18nUtils.getText("error.business.title"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return
-        }
+        if (selectedRow < 0) throw BusinessException("score.dialog.validation.needSelect")
 
         val selectedScore = tableModel.getData()[selectedRow]
         val dialog = ScoreModifyDialog(this, selectedScore)
@@ -233,15 +221,7 @@ class StudentScoresDialog(
 
     private fun deleteGrade() {
         val selectedRow = table.selectedRow
-        if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(
-                this,
-                I18nUtils.getText("score.dialog.validation.needSelect"),
-                I18nUtils.getText("error.business.title"),
-                JOptionPane.ERROR_MESSAGE
-            )
-            return
-        }
+        if (selectedRow < 0) throw BusinessException("score.dialog.validation.needSelect")
 
         val confirm = JOptionPane.showConfirmDialog(
             this,
@@ -270,30 +250,15 @@ class StudentScoresDialog(
                     I18nUtils.getText("button.save"),
                     JOptionPane.INFORMATION_MESSAGE
                 )
+            } finally {
                 dispose()
-            } catch (e: Exception) {
-                JOptionPane.showMessageDialog(
-                    this@StudentScoresDialog,
-                    e.message,
-                    I18nUtils.getText("error.generic"),
-                    JOptionPane.ERROR_MESSAGE
-                )
             }
         }
     }
 
     private fun exportScoresToExcel() {
         scope.launch {
-            try {
-                ScoreAction.exportToExcel(tableModel.getData(), this@StudentScoresDialog)
-            } catch (e: Exception) {
-                JOptionPane.showMessageDialog(
-                    this@StudentScoresDialog,
-                    e.message,
-                    I18nUtils.getText("error.generic"),
-                    JOptionPane.ERROR_MESSAGE
-                )
-            }
+            ScoreAction.exportToExcel(tableModel.getData(), this@StudentScoresDialog)
         }
     }
 
@@ -302,78 +267,63 @@ class StudentScoresDialog(
         fileChooser.fileFilter = FileNameExtensionFilter("Excel Files", "xlsx")
 
         if (fileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return
-        
+
         val filePath = fileChooser.selectedFile.absolutePath
-        
+
         scope.launch {
-            try {
-                val result = withContext(Dispatchers.IO) {
-                    val scoreList = mutableListOf<ScoreDTO>()
-                    
-                    val listener = object : AnalysisEventListener<Map<Int, String>>() {
-                        // 处理每一行数据
-                        override fun invoke(data: Map<Int, String>, context: AnalysisContext) {
-                            // 修正：应该是 data 而不是 this.data
-                            
-                            try {
-                                // 跳过可能的标题行（第一行）
-                                if (context.readRowHolder().rowIndex == 0) return
-                                
-                                val score = ScoreDTO(
-                                    name = data[0] ?: "",
-                                    type = CourseType.entries.find { it.toString() == data[1] } ?: CourseType.DEFAULT, 
-                                    exam = data[2] ?: "",
-                                    credit = data[3]?.toIntOrNull() ?: 0,
-                                    score = data[4]?.toDoubleOrNull() ?: 0.0,
-                                    gpa = when (data[5]) {
-                                        I18nUtils.getText("score.gpa.yes") -> true
-                                        else -> false
-                                    }
-                                )
-                                scoreList.add(score)
-                            } catch (e: Exception) {
-                                // 忽略格式错误的行
-                            }
-                        }
-                        
-                        override fun doAfterAllAnalysed(context: AnalysisContext) {
-                            // 完成解析
+            var successCount = 0
+            var failCount = 0
+            var msg = ""
+            withContext(Dispatchers.IO) {
+                val scoreList = mutableListOf<ScoreDTO>()
+
+                val listener = object : AnalysisEventListener<Map<Int, String>>() {
+                    // 处理每一行数据
+                    override fun invoke(data: Map<Int, String>, context: AnalysisContext) {
+                        // 修正：应该是 data 而不是 this.data
+                        try {
+                            // 跳过可能的标题行（第一行）
+                            if (context.readRowHolder().rowIndex == 0) return
+
+                            val score = ScoreDTO(
+                                name = data[0] ?: "",
+                                type = CourseType.entries.find { it.toString() == data[1] } ?: CourseType.DEFAULT,
+                                exam = data[2] ?: "",
+                                credit = data[3]?.toIntOrNull() ?: 0,
+                                score = data[4]?.toDoubleOrNull() ?: 0.0,
+                                gpa = when (data[5]) {
+                                    I18nUtils.getText("score.gpa.yes"), "Y", "是", "对", "Oui", "T" -> true
+                                    else -> false
+                                }
+                            )
+                            scoreList.add(score)
+                            successCount++
+                        } catch (e: Exception) {
+                            // 忽略格式错误的行
+                            msg += e.localizedMessage
+                            failCount++
                         }
                     }
-                    
-                    EasyExcel.read(filePath)
-                        .sheet()
-                        .registerReadListener(listener)
-                        .doRead()
-                    
-                    scoreList
+
+                    override fun doAfterAllAnalysed(context: AnalysisContext) {
+                        // 完成解析
+                    }
                 }
-                
-                if (result.isNotEmpty()) {
-                    tableModel.setData(result)
-                    updateStatistics()
-                    JOptionPane.showMessageDialog(
-                        this@StudentScoresDialog,
-                        I18nUtils.getText("score.dialog.import.success"),
-                        I18nUtils.getText("button.import"),
-                        JOptionPane.INFORMATION_MESSAGE
-                    )
-                } else {
-                    JOptionPane.showMessageDialog(
-                        this@StudentScoresDialog,
-                        I18nUtils.getText("score.dialog.import.empty"),
-                        I18nUtils.getText("button.import"),
-                        JOptionPane.WARNING_MESSAGE
-                    )
-                }
-            } catch (e: Exception) {
-                JOptionPane.showMessageDialog(
-                    this@StudentScoresDialog,
-                    e.message ?: I18nUtils.getText("score.dialog.import.error"),
-                    I18nUtils.getText("error.generic"),
-                    JOptionPane.ERROR_MESSAGE
-                )
+
+                EasyExcel.read(filePath)
+                    .sheet()
+                    .registerReadListener(listener)
+                    .doRead()
+
+                tableModel.setData(scoreList + tableModel.getData())
+                updateStatistics()
             }
+            JOptionPane.showMessageDialog(
+                null,
+                I18nUtils.getFormattedText("score.dialog.action.import.success", successCount, failCount, msg),
+                I18nUtils.getText("score.dialog.title"),
+                JOptionPane.INFORMATION_MESSAGE
+            )
         }
     }
 
