@@ -30,7 +30,7 @@ class StudentExportDialog private constructor(owner: Window?) : JDialog(owner, "
     
     // 文本格式输入
     private val textFormatField = JTextArea(3, 40).apply { 
-        text = "{id},{name},{gender},{department},{major},{grade},{class}"
+        text = "{id},{name},{gender},{status},{department},{major},{grade},{class}"
         lineWrap = true
         wrapStyleWord = true
         border = BorderFactory.createCompoundBorder(

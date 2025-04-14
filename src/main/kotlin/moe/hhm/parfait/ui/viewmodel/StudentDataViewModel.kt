@@ -6,6 +6,8 @@
 
 package moe.hhm.parfait.ui.viewmodel
 
+import com.alibaba.excel.EasyExcel
+import com.alibaba.excel.read.listener.PageReadListener
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.SwingDispatcher
@@ -29,8 +31,10 @@ import org.koin.core.component.inject
 import java.util.*
 import java.io.File
 import moe.hhm.parfait.ui.component.dialog.CertificateGenerateDialog
+import moe.hhm.parfait.utils.excel.SimpleReadStudent
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
+import kotlin.collections.map
 
 /**
  * 学生数据视图模型
@@ -277,6 +281,46 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
             } catch (e: Exception) {
                 throw BusinessException("student.import.text.format.error.at.line", e, index + 1)
             }
+        }.apply {
+            _vmState.value = VMState.LOADING
+            studentService.addAllStudents(this)
+            SwingUtilities.invokeLater {
+                JOptionPane.showMessageDialog(
+                    null,
+                    I18nUtils.getFormattedText("student.import.all.success", this.size),
+                    I18nUtils.getText("button.success"),
+                    JOptionPane.INFORMATION_MESSAGE
+                )
+            }
+        }
+        true
+    }
+
+    fun importStudentFromExcel(file: File) = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Modify) {
+        EasyExcel.read(file, SimpleReadStudent::class.java, PageReadListener<SimpleReadStudent> {
+            it
+        }).sheet().doReadSync<SimpleReadStudent>().map { excelStudent ->
+            StudentDTO(
+                studentId = excelStudent.studentId,
+                name = excelStudent.name,
+                gender = when (excelStudent.gender) {
+                    I18nUtils.getText("student.gender.male"), "男", "M", "1" -> StudentDTO.Gender.MALE
+                    I18nUtils.getText("student.gender.female"), "女", "F", "2" -> StudentDTO.Gender.FEMALE
+                    else -> StudentDTO.Gender.UNKNOWN
+                },
+                status = when (excelStudent.status) {
+                    I18nUtils.getText("student.status.enrolled"), "在籍" -> StudentDTO.Status.ENROLLED
+                    I18nUtils.getText("student.status.suspended"), "休学" -> StudentDTO.Status.SUSPENDED
+                    I18nUtils.getText("student.status.graduated"), "毕业" -> StudentDTO.Status.GRADUATED
+                    I18nUtils.getText("student.status.abnormal"), "异常" -> StudentDTO.Status.ABNORMAL
+                    else -> StudentDTO.Status.ENROLLED
+                },
+                department = excelStudent.department,
+                major = excelStudent.major,
+                grade = excelStudent.grade,
+                classGroup = excelStudent.classGroup,
+                scores = emptyList()
+            )
         }.apply {
             _vmState.value = VMState.LOADING
             studentService.addAllStudents(this)

@@ -89,7 +89,7 @@ class StudentImportDialog private constructor(owner: Window?) : JDialog(owner, "
         I18nUtils.bindText(cancelButton, "button.cancel")
         
         // 设置帮助文本HTML格式
-        textFormatHelpLabel.text = "<html>要求格式: 每行一条记录，字段顺序为：<br>学号,姓名,性别(0未知/1男/2女),状态(0在读/1休学/2毕业/3异常),学院,专业,年级,班级<br>例如: 20250101,张三,1,0,计算机学院,计算机科学与技术,2025,计科1班</html>"
+        textFormatHelpLabel.text = "<html>要求格式: 每行一条记录，字段顺序为：<br>学号,姓名,性别(男/女/未知),状态(在籍/休学/毕业/异常),学院,专业,年级,班级<br>例如: 20250101,张三,男,在籍,计算机学院,计算机科学与技术,2025,计科1班</html>"
         
         // 按钮组
         val buttonGroup = ButtonGroup()
@@ -103,10 +103,14 @@ class StudentImportDialog private constructor(owner: Window?) : JDialog(owner, "
         textFormatPanel.add(textFormatHelpLabel, "grow, wrap")
         
         // 准备Excel面板
-        val excelPanel = JPanel(MigLayout("insets 0, fillx", "[grow][]", "[]10[]"))
+        val excelPanel = JPanel(MigLayout("insets 0, fillx", "[grow][]", "[]10[]10[]"))
         excelPanel.add(excelImportLabel, "span, grow, wrap")
         excelPanel.add(excelPathField, "grow")
-        excelPanel.add(excelBrowseButton)
+        excelPanel.add(excelBrowseButton, "wrap")
+        excelPanel.add(JLabel("<html>Excel表格必须包含以下表头：<br>学号 姓名 性别 状态 学院 专业 年级 班级<br>每行代表一个学生记录</html>").apply {
+            font = font.deriveFont(font.size2D - 1f)
+            foreground = Color.DARK_GRAY
+        }, "span, grow")
         
         // 添加到卡片面板
         cardPanel.add(textFormatPanel, TEXT_PANEL)
@@ -198,90 +202,7 @@ class StudentImportDialog private constructor(owner: Window?) : JDialog(owner, "
     private fun importFromExcel(filePath: String) {
         val file = File(filePath)
         if (!file.exists() || !file.canRead()) throw BusinessException("student.import.excel.file.error")
-        
-        val excelData = EasyExcel.read(file)
-            .sheet().doReadSync<SimpleReadStudent>()
-        
-        if (excelData.isEmpty()) throw BusinessException("student.import.excel.empty")
-
-        val students = excelData.map { excelStudent ->
-            StudentDTO(
-                uuid = null,
-                studentId = excelStudent.studentId,
-                name = excelStudent.name,
-                gender = when (excelStudent.gender) {
-                    I18nUtils.getText("student.gender.male"),"男","M","1" -> StudentDTO.Gender.MALE
-                    I18nUtils.getText("student.gender.female"),"女","F","2" -> StudentDTO.Gender.FEMALE
-                    else -> StudentDTO.Gender.UNKNOWN
-                },
-                status = when (excelStudent.status) {
-                    I18nUtils.getText("student.status.enrolled"),"在籍" -> StudentDTO.Status.ENROLLED
-                    I18nUtils.getText("student.status.suspended"),"休学" -> StudentDTO.Status.SUSPENDED
-                    I18nUtils.getText("student.status.graduated"),"毕业" -> StudentDTO.Status.GRADUATED
-                    I18nUtils.getText("student.status.abnormal"),"异常" -> StudentDTO.Status.ABNORMAL
-                    else -> StudentDTO.Status.ENROLLED
-                },
-                department = excelStudent.department,
-                major = excelStudent.major,
-                grade = excelStudent.grade,
-                classGroup = excelStudent.classGroup,
-                scores = emptyList()
-            )
-        }
-        
-        // importStudents(students)
-    }
-    
-    /**
-     * 导入学生列表
-     */
-    private suspend fun importStudents(students: List<StudentDTO>) {
-        if (students.isEmpty()) {
-            throw BusinessException("student.import.empty")
-        }
-        
-        var successCount = 0
-        var failCount = 0
-        
-        for (student in students) {
-            try {
-                viewModel.addStudent(student)
-                successCount++
-            } catch (e: Exception) {
-                failCount++
-                // 继续导入其他学生
-            }
-        }
-        
-        if (successCount == 0) {
-            throw BusinessException("student.import.all.failed")
-        }
-        
-        // 显示导入结果
-        SwingUtilities.invokeLater {
-            if (failCount > 0) {
-                JOptionPane.showMessageDialog(
-                    this,
-                    I18nUtils.getFormattedText(
-                        "student.import.partial.success",
-                        successCount.toString(),
-                        failCount.toString()
-                    ),
-                    I18nUtils.getText("dialog.message.title"),
-                    JOptionPane.INFORMATION_MESSAGE
-                )
-            } else {
-                JOptionPane.showMessageDialog(
-                    this,
-                    I18nUtils.getFormattedText(
-                        "student.import.all.success",
-                        successCount.toString()
-                    ),
-                    I18nUtils.getText("dialog.message.title"),
-                    JOptionPane.INFORMATION_MESSAGE
-                )
-            }
-        }
+        viewModel.importStudentFromExcel(file)
     }
     
     companion object {

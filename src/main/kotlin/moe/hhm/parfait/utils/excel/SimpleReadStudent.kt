@@ -8,21 +8,21 @@ package moe.hhm.parfait.utils.excel
 
 import com.alibaba.excel.annotation.ExcelProperty
 
-data class SimpleReadStudent(
+class SimpleReadStudent {
     @ExcelProperty("学号")
-    val studentId: String,
+    var studentId: String = ""
     @ExcelProperty("姓名")
-    val name: String,
+    var name: String = ""
     @ExcelProperty("性别")
-    val gender: String,
+    var gender: String = "未知"
     @ExcelProperty("状态")
-    val status: String,
+    var status: String = "在籍"
     @ExcelProperty("学院")
-    val department: String,
+    var department: String = ""
     @ExcelProperty("专业")
-    val major: String,
+    var major: String = ""
     @ExcelProperty("年级")
-    val grade: Int,
+    var grade: Int = 2022
     @ExcelProperty("班级")
-    val classGroup: String
-)
+    var classGroup: String = ""
+}
