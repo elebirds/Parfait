@@ -23,6 +23,7 @@ object I18nManager {
     // 支持的语言
     enum class Language(val code: String, val displayName: String) {
         ENGLISH("en", "English"),
+        FRENCH("fr", "Français"),
         CHINESE("zh", "中文")
     }
 
@@ -47,6 +48,7 @@ object I18nManager {
         // 根据系统语言设置初始语言
         val initialLanguage = when (systemLocale.language) {
             "zh" -> Language.CHINESE
+            "fr" -> Language.FRENCH
             else -> Language.ENGLISH
         }
 
@@ -111,6 +113,7 @@ object I18nManager {
         val locale = when (language) {
             Language.ENGLISH -> Locale.ENGLISH
             Language.CHINESE -> Locale.CHINESE
+            Language.FRENCH -> Locale.FRENCH
         }
         return try {
             ResourceBundle.getBundle(RESOURCE_BUNDLE_BASE_NAME, locale)

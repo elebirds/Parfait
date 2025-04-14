@@ -6,6 +6,7 @@
 
 package moe.hhm.parfait.ui.action
 
+import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.infra.db.DatabaseConnectionConfig
 import moe.hhm.parfait.infra.db.DatabaseFactory
 import moe.hhm.parfait.infra.db.STANDALONE_DB_SUFFIX
@@ -33,6 +34,10 @@ object DatabaseAction {
         // 确保文件名以 .pardb 结尾
         var path = fc.selectedFile.absolutePath
         if (!fc.selectedFile.absolutePath.endsWith(STANDALONE_DB_SUFFIX)) path += STANDALONE_DB_SUFFIX
+        val file = File(path)
+        if (!file.canWrite() || !file.canRead()) {
+            throw BusinessException("database.connect.error.permissionDenied", path)
+        }
         DatabaseFactory.connect(DatabaseConnectionConfig.standalone(path))
     }
 

@@ -27,6 +27,7 @@ class LanguageMenu : JMenu() {
         // 添加语言选项
         addLanguageItem(I18nManager.Language.ENGLISH)
         addLanguageItem(I18nManager.Language.CHINESE)
+        addLanguageItem(I18nManager.Language.FRENCH)
 
         // 设置当前语言选中
         updateSelectedLanguage(I18nManager.currentLanguage.value)
@@ -41,6 +42,7 @@ class LanguageMenu : JMenu() {
         val key = when (language) {
             I18nManager.Language.ENGLISH -> "menu.language.english"
             I18nManager.Language.CHINESE -> "menu.language.chinese"
+            I18nManager.Language.FRENCH -> "menu.language.french"
         }
 
         val item = JRadioButtonMenuItem()
@@ -67,6 +69,7 @@ class LanguageMenu : JMenu() {
             item.isSelected = when (i) {
                 0 -> language == I18nManager.Language.ENGLISH
                 1 -> language == I18nManager.Language.CHINESE
+                2 -> language == I18nManager.Language.FRENCH
                 else -> false
             }
         }
