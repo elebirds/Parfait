@@ -14,6 +14,7 @@ import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.dialog.AdvancedFilterDialog
 import moe.hhm.parfait.ui.component.dialog.SearchFilterDialog
+import moe.hhm.parfait.ui.component.dialog.TermSearchFilterDialog
 import moe.hhm.parfait.ui.state.FilterState
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import moe.hhm.parfait.ui.viewmodel.TermViewModel
@@ -23,8 +24,10 @@ import javax.swing.JToolBar
 import javax.swing.SwingUtilities
 import moe.hhm.parfait.ui.viewmodel.CertificateTemplateViewModel
 import moe.hhm.parfait.ui.viewmodel.GpaStandardViewModel
+import javax.swing.JPanel
 
 class MainToolBar(
+    private val parent: JPanel,
     private val studentViewModel: StudentDataViewModel,
     private val gpaViewModel: GpaStandardViewModel,
     private val certificateViewModel: CertificateTemplateViewModel,
@@ -36,7 +39,10 @@ class MainToolBar(
         bindToolTipText(this, "toolbar.search")
         addActionListener {
             SwingUtilities.getWindowAncestor(this)?.let { window ->
-                SearchFilterDialog.showSearch(window)
+                when (currentIndex) {
+                    0 -> SearchFilterDialog.showSearch(window)  // 学生搜索
+                    3 -> TermSearchFilterDialog.showSearch(window)  // 术语搜索
+                }
             }
         }
     }
@@ -45,21 +51,23 @@ class MainToolBar(
         bindToolTipText(this, "toolbar.filter")
         addActionListener {
             SwingUtilities.getWindowAncestor(this)?.let { window ->
-                AdvancedFilterDialog.show(window)
+                when (currentIndex) {
+                    0 -> AdvancedFilterDialog.show(window)  // 学生高级筛选
+                }
             }
         }
     }
 
-    private val cleanFilterButton = JButton(FlatSVGIcon("ui/nwicons/filter-cancel-16.svg")).apply {
+    private val clearFilterButton = JButton(FlatSVGIcon("ui/nwicons/filter-cancel-16.svg")).apply {
         bindToolTipText(this, "toolbar.clearFilter")
         isEnabled = false // 初始状态下禁用
         addActionListener {
-            when(currentIndex) {
+            when (currentIndex) {
                 0 -> studentViewModel.clearFilter()
+                3 -> termViewModel.clearFilter()
             }
         }
     }
-
     private val refreshButton = JButton(FlatSVGIcon("ui/nwicons/refresh.svg")).apply {
         bindToolTipText(this, "toolbar.refresh")
         addActionListener {
@@ -70,64 +78,47 @@ class MainToolBar(
     private val redrawButton = JButton(FlatSVGIcon("ui/nwicons/redraw.svg")).apply {
         bindToolTipText(this, "toolbar.redraw")
         addActionListener {
-            // TODO: 实现重绘功能
+            parent.repaint()
         }
     }
 
     init {
         add(searchButton)
         add(filterButton)
-        add(cleanFilterButton)
+        add(clearFilterButton)
         addSeparator()
         add(refreshButton)
         add(redrawButton)
         addSeparator()
-
-        // 监听筛选状态变化
+        
+        // 初始状态下禁用搜索和筛选按钮
+        searchButton.isEnabled = false
+        filterButton.isEnabled = false
+        clearFilterButton.isEnabled = false
+        
+        observer()
+        setCurrentIndex(0) // 默认设置为学生视图
+    }
+    
+    override fun observer() {
+        // 监听术语视图模型的筛选状态变化
         scope.launch {
-            studentViewModel.filterState.collectLatest { state ->
-                if (currentIndex == 0) {
-                    cleanFilterButton.isEnabled = state == FilterState.FILTERED
+            termViewModel.filterState.collectLatest { filterState ->
+                if (currentIndex == 3) {
+                    clearFilterButton.isEnabled = filterState == FilterState.FILTERED
+                    searchButton.isEnabled = filterState != FilterState.FILTERED
                 }
             }
         }
-    }
-
-    /**
-     * 设置当前选中的标签页索引
-     */
-    fun setCurrentIndex(index: Int) {
-        currentIndex = index
-        updateButtonStates()
-    }
-
-    /**
-     * 更新按钮状态
-     */
-    private fun updateButtonStates() {
-        when (currentIndex) {
-            0 -> { // 学生数据
-                searchButton.isEnabled = true
-                filterButton.isEnabled = true
-                refreshButton.isEnabled = true
-                redrawButton.isEnabled = true
-                studentViewModel.let { vm ->
-                    cleanFilterButton.isEnabled = vm.filterState.value == FilterState.FILTERED
+        
+        // 监听学生视图模型的筛选状态变化
+        scope.launch {
+            studentViewModel.filterState.collectLatest { filterState ->
+                if (currentIndex == 0) {
+                    clearFilterButton.isEnabled = filterState == FilterState.FILTERED
+                    searchButton.isEnabled = filterState != FilterState.FILTERED
+                    filterButton.isEnabled = filterState != FilterState.FILTERED
                 }
-            }
-            1, 2 -> { // GPA标准, 证明模板
-                searchButton.isEnabled = false
-                filterButton.isEnabled = false
-                cleanFilterButton.isEnabled = false
-                refreshButton.isEnabled = true
-                redrawButton.isEnabled = true
-            }
-            3 -> { // 术语
-                searchButton.isEnabled = true
-                filterButton.isEnabled = true
-                cleanFilterButton.isEnabled = false
-                refreshButton.isEnabled = true
-                redrawButton.isEnabled = true
             }
         }
     }
@@ -141,6 +132,24 @@ class MainToolBar(
             1 -> gpaViewModel.forceReload()
             2 -> certificateViewModel.forceReload()
             3 -> termViewModel.forceReload()
+        }
+    }
+    
+    /**
+     * 设置当前视图索引，启用/禁用相应的搜索和筛选按钮
+     */
+    fun setCurrentIndex(index: Int) {
+        currentIndex = index
+        
+        // 学生视图和术语视图启用搜索和筛选按钮
+        searchButton.isEnabled = index == 0 || index == 3
+        filterButton.isEnabled = index == 0
+        
+        // 根据当前筛选状态启用/禁用清除筛选按钮
+        when (index) {
+            0 -> clearFilterButton.isEnabled = studentViewModel.filterState.value == FilterState.FILTERED
+            3 -> clearFilterButton.isEnabled = termViewModel.filterState.value == FilterState.FILTERED
+            else -> clearFilterButton.isEnabled = false
         }
     }
 }

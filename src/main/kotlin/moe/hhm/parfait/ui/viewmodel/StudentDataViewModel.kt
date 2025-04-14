@@ -52,7 +52,7 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
     val selectedStudents: StateFlow<List<StudentDTO>> = _selectedStudents.asStateFlow()
 
     // 筛选状态
-    private val _filterState = MutableStateFlow(FilterState.NO_FILTER)
+    private val _filterState = MutableStateFlow(FilterState.UNFILTERED)
     val filterState: StateFlow<FilterState> = _filterState.asStateFlow()
 
     // 当前使用的筛选条件
@@ -493,7 +493,7 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
         }
 
         // 如果当前没有筛选条件，不做任何操作
-        if (_filterState.value == FilterState.NO_FILTER) {
+        if (_filterState.value == FilterState.UNFILTERED) {
             return
         }
 
@@ -507,7 +507,7 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
                 // 清除筛选条件
                 _currentFilterCriteria.value = null
                 _currentAdvancedFilterCriteria.value = null
-                _filterState.value = FilterState.NO_FILTER
+                _filterState.value = FilterState.UNFILTERED
                 setCurrentPage(1, checkState = false)
             } catch (e: Exception) {
                 _vmState.value = VMState.ERROR

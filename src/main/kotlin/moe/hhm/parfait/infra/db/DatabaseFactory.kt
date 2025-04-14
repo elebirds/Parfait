@@ -74,12 +74,36 @@ data class DatabaseConnectionConfig(
             DatabaseFactoryMode.ONLINE -> host.isNotEmpty() && port > 0 && user.isNotEmpty() && databaseName.isNotEmpty()
         }
     }
+
+    override fun toString(): String {
+        return if (mode == DatabaseFactoryMode.STANDALONE) {
+            I18nUtils.getFormattedText(
+                "database.config.standalone.detail",
+                host
+            )
+        } else {
+            I18nUtils.getFormattedText(
+                "database.config.online.detail",
+                "$host:$port",
+                databaseName,
+                user,
+            )
+        }
+    }
 }
 
-sealed class DatabaseConnectionState {
-    class Connected(config: DatabaseConnectionConfig) : DatabaseConnectionState()
-    class Disconnected : DatabaseConnectionState()
-    class Connecting(config: DatabaseConnectionConfig) : DatabaseConnectionState()
+sealed class DatabaseConnectionState(val i18nKey: String) {
+    class Connected(val config: DatabaseConnectionConfig) : DatabaseConnectionState("database.state.connected")
+    class Disconnected : DatabaseConnectionState("database.state.disconnected")
+    class Connecting(val config: DatabaseConnectionConfig) : DatabaseConnectionState("database.state.connecting")
+}
+
+fun DatabaseConnectionState.toStr(): String {
+    return I18nUtils.getText(i18nKey) + when (this) {
+        is DatabaseConnectionState.Connected -> "\n" + config.toString()
+        is DatabaseConnectionState.Disconnected -> ""
+        is DatabaseConnectionState.Connecting -> "\n" + config.toString()
+    }
 }
 
 const val STANDALONE_DB_SUFFIX = ".pardb"

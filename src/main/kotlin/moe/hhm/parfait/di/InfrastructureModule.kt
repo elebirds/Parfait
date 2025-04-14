@@ -15,6 +15,7 @@ val infrastructureModule = module {
     single<StudentRepository> { StudentRepositoryImpl() }
     single<StudentSearchRepository> { StudentSearchRepositoryImpl() }
     single<TermRepository> { TermRepositoryImpl() }
+    single<TermSearchRepository> { TermSearchRepositoryImpl() }
     single<CertificateTemplateRepository> { CertificateTemplateRepositoryImpl() }
     single<CertificateDataRepository> { CertificateDataRepositoryImpl() }
     single<CertificateRecordRepository> { CertificateRecordRepositoryImpl() }

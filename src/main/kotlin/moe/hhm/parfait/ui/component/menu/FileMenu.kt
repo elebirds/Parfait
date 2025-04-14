@@ -8,6 +8,7 @@ package moe.hhm.parfait.ui.component.menu
 
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
+import moe.hhm.parfait.infra.db.toStr
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
 import moe.hhm.parfait.ui.action.DatabaseAction
@@ -50,10 +51,9 @@ class FileMenu : JMenu() {
         accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().menuShortcutKeyMask)
         setMnemonic('D')
         addActionListener {
-            // TODO: UI展示连接详情
             JOptionPane.showMessageDialog(
                 null,
-                "当前连接状态: ${DatabaseFactory.connectionState.value}",
+                I18nUtils.getFormattedText("menu.detail.content", DatabaseFactory.connectionState.value.toStr()),
                 I18nUtils.getText("menu.detail"),
                 JOptionPane.INFORMATION_MESSAGE
             )

@@ -25,6 +25,7 @@ val appModule = module {
     single<StudentService> { StudentServiceImpl(get()) }
     single<StudentSearchService> { StudentSearchServiceImpl() }
     single<TermService> { TermServiceImpl(get()) }
+    single<TermSearchService> { TermSearchServiceImpl() }
     single<CertificateTemplateService> { CertificateTemplateServiceImpl(get()) }
     single<CertificateDataService> { CertificateDataServiceImpl(get()) }
     single<CertificateRecordService> { CertificateRecordServiceImpl() }

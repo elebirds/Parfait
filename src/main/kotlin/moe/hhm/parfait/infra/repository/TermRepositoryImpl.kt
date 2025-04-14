@@ -19,7 +19,11 @@ import java.util.*
 
 class TermRepositoryImpl : TermRepository {
     override suspend fun findAll(): List<Term> = DatabaseUtils.dbQuery {
-        Term.all().toList()
+        Term.all()
+            .orderBy(Terms.field to SortOrder.ASC)
+            .orderBy(Terms.context to SortOrder.ASC_NULLS_FIRST)
+            .orderBy(Terms.language to SortOrder.ASC_NULLS_FIRST)
+            .toList()
     }
 
     override suspend fun findPage(
@@ -27,7 +31,10 @@ class TermRepositoryImpl : TermRepository {
         size: Int
     ): List<Term> = DatabaseUtils.dbQuery {
         Term.all()
-            .limit(size).offset((page - 1) * size.toLong())
+            .orderBy(Terms.field to SortOrder.ASC)
+            .orderBy(Terms.context to SortOrder.ASC_NULLS_FIRST)
+            .orderBy(Terms.language to SortOrder.ASC_NULLS_FIRST)
+            .limit(size).offset(((page - 1) * size).toLong())
             .toList()
     }
 
@@ -47,12 +54,20 @@ class TermRepositoryImpl : TermRepository {
     override suspend fun findByFields(fields: List<String>): Map<String, Term> = DatabaseUtils.dbQuery {
         if (fields.isEmpty()) return@dbQuery emptyMap<String, Term>()
 
-        val terms = Term.find { Terms.field inList fields }.toList()
+        val terms = Term.find { Terms.field inList fields }
+            .orderBy(Terms.field to SortOrder.ASC)
+            .orderBy(Terms.context to SortOrder.ASC_NULLS_FIRST)
+            .orderBy(Terms.language to SortOrder.ASC_NULLS_FIRST)
+            .toList()
         terms.associateBy { it.field }
     }
 
     override suspend fun findByLanguage(language: String): List<Term> = DatabaseUtils.dbQuery {
-        Term.find { Terms.language eq language }.toList()
+        Term.find { Terms.language eq language }
+            .orderBy(Terms.field to SortOrder.ASC)
+            .orderBy(Terms.context to SortOrder.ASC_NULLS_FIRST)
+            .orderBy(Terms.language to SortOrder.ASC_NULLS_FIRST)
+            .toList()
     }
 
     override suspend fun isExistByUUID(uuid: UUID): Boolean = DatabaseUtils.dbQuery {

@@ -23,6 +23,7 @@ class MainPanel : JPanel() {
     private val certificateTemplate = CertificateTemplateView()
     private val termView = TermView()
     private val toolBar = MainToolBar(
+        this,
         studentData.viewModel,
         gpaStandard.viewModel,
         certificateTemplate.viewModel,
@@ -47,7 +48,7 @@ class MainPanel : JPanel() {
         this.layout = BorderLayout()
         this.add(toolBar, BorderLayout.NORTH)
         this.add(contentPanel, BorderLayout.CENTER)
-        
+
         contentPane.addChangeListener {
             // 更新当前选中的标签页索引
             toolBar.setCurrentIndex(contentPane.selectedIndex)

@@ -10,11 +10,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import moe.hhm.parfait.app.service.TermSearchService
 import moe.hhm.parfait.app.service.TermService
 import moe.hhm.parfait.dto.TermDTO
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
+import moe.hhm.parfait.ui.component.dialog.TermSearchFilterCriteria
+import moe.hhm.parfait.ui.state.FilterState
 import moe.hhm.parfait.ui.state.PaginationState
 import moe.hhm.parfait.ui.state.VMState
 import moe.hhm.parfait.ui.viewmodel.common.PaginationDataViewModel
@@ -28,10 +32,19 @@ import java.util.*
  */
 class TermViewModel : PaginationDataViewModel<List<TermDTO>>(emptyList()), KoinComponent {
     private val service: TermService by inject()
+    private val searchService: TermSearchService by inject()
 
     // 当前选中的多个术语
     private val _selectedTerms = MutableStateFlow<List<TermDTO>>(emptyList())
     val selectedTerms: StateFlow<List<TermDTO>> = _selectedTerms.asStateFlow()
+
+    // 筛选状态
+    private val _filterState = MutableStateFlow(FilterState.UNFILTERED)
+    val filterState: StateFlow<FilterState> = _filterState.asStateFlow()
+
+    // 当前筛选条件
+    private val _currentFilterCriteria = MutableStateFlow<TermSearchFilterCriteria?>(null)
+    val currentFilterCriteria: StateFlow<TermSearchFilterCriteria?> = _currentFilterCriteria.asStateFlow()
 
     init {
         // 监听数据库连接状态
@@ -57,6 +70,8 @@ class TermViewModel : PaginationDataViewModel<List<TermDTO>>(emptyList()), KoinC
                         _data.value = emptyList()
                         _paginationState.value = PaginationState()
                         _selectedTerms.value = emptyList()
+                        _filterState.value = FilterState.UNFILTERED
+                        _currentFilterCriteria.value = TermSearchFilterCriteria()
                     }
 
                     is DatabaseConnectionState.Connecting -> _vmState.value = VMState.CONNECTING
@@ -75,12 +90,20 @@ class TermViewModel : PaginationDataViewModel<List<TermDTO>>(emptyList()), KoinC
         val selectedTermIds = _selectedTerms.value.mapNotNull { it.uuid }
 
         // 获取总术语数量
-        val totalCount = service.count()
+        val totalCount =
+            if(_currentFilterCriteria.value != null) searchService.countSearchResults(_currentFilterCriteria.value!!)
+            else service.count()
 
-        val terms = service.getPage(
-            paginationState.value.currentPage,
-            paginationState.value.pageSize
-        )
+        val terms =
+            if(_currentFilterCriteria.value != null) searchService.searchTermsPage(
+                _currentFilterCriteria.value!!,
+                paginationState.value.currentPage,
+                paginationState.value.pageSize
+            )
+            else service.getPage(
+                paginationState.value.currentPage,
+                paginationState.value.pageSize
+            )
 
         updatePaginationStateWithCount(totalCount)
 
@@ -95,6 +118,83 @@ class TermViewModel : PaginationDataViewModel<List<TermDTO>>(emptyList()), KoinC
 
         _vmState.value = VMState.DONE
         true
+    }
+
+    /**
+     * 搜索术语
+     * @param criteria 搜索条件
+     */
+    fun search(criteria: TermSearchFilterCriteria) {
+        // 检查数据库是否已连接
+        if (_vmState.value != VMState.DONE) {
+            logger.warn("在未初始化完毕时尝试搜索术语")
+            return
+        }
+
+        scope.launch {
+            try {
+                _vmState.value = VMState.PROCESSING
+
+                // 清空当前选中的术语
+                _selectedTerms.value = emptyList()
+
+                val searchResults = searchService.searchTerms(criteria)
+
+                // 更新术语列表，不应用为筛选条件
+                _data.value = searchResults
+                _filterState.value = FilterState.FILTERED
+                _currentFilterCriteria.value = criteria
+
+                // 更新分页状态（搜索结果不分页）
+                _paginationState.update {
+                    it.copy(
+                        currentPage = 1,
+                        totalCount = searchResults.size.toLong(),
+                        totalPages = 1
+                    )
+                }
+
+                _vmState.value = VMState.DONE
+            } catch (e: Exception) {
+                _vmState.value = VMState.ERROR
+                logger.error("搜索术语失败", e)
+                e.printStackTrace()
+            }
+        }
+    }
+
+    /**
+     * 清除筛选
+     */
+    fun clearFilter() {
+        // 检查数据库是否已连接
+        if (_vmState.value != VMState.DONE) {
+            logger.warn("在未初始化完毕时尝试清除筛选条件")
+            return
+        }
+
+        // 如果当前没有筛选条件，不做任何操作
+        if (_filterState.value == FilterState.UNFILTERED) {
+            return
+        }
+
+        scope.launch {
+            try {
+                _vmState.value = VMState.PROCESSING
+
+                // 清空当前选中的学生
+                _selectedTerms.value = emptyList()
+
+                // 清除筛选条件
+                _currentFilterCriteria.value = null
+                _filterState.value = FilterState.UNFILTERED
+                setCurrentPage(1, checkState = false)
+            } catch (e: Exception) {
+                _vmState.value = VMState.ERROR
+                logger.error("清除筛选条件失败", e)
+                e.printStackTrace()
+            }
+        }
     }
 
     /**
