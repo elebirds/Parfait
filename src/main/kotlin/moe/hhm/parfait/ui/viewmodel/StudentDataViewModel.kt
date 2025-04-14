@@ -210,17 +210,19 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
             true
         }
 
-    fun exportStudentToExcel() = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Process) {
+    suspend fun getPriorityStudents() = when {
+        _selectedStudents.value.isNotEmpty()-> _selectedStudents.value
+        _currentAdvancedFilterCriteria.value != null -> studentSearchService.searchAdvancedStudents(
+            _currentAdvancedFilterCriteria.value!!
+        )
+        _currentFilterCriteria.value != null -> studentSearchService.searchStudents(_currentFilterCriteria.value!!)
+        else -> studentService.getAllStudents()
+    }
+
+    fun exportStudentToExcel(selectedFilePath: String) = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Process) {
         _vmState.value = VMState.PROCESSING
-        val students = when {
-            _selectedStudents.value.isNotEmpty()-> _selectedStudents.value
-            _currentAdvancedFilterCriteria.value != null -> studentSearchService.searchAdvancedStudents(
-                _currentAdvancedFilterCriteria.value!!
-            )
-            _currentFilterCriteria.value != null -> studentSearchService.searchStudents(_currentFilterCriteria.value!!)
-            else -> studentService.getAllStudents()
-        }
-        StudentAction.exportToExcel(students, gpaService.getDefault())
+        val students = getPriorityStudents()
+        StudentAction.exportToExcel(students, gpaService.getDefault(), selectedFilePath)
         _vmState.value = VMState.DONE
         true
     }
@@ -231,14 +233,7 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
      */
     fun exportStudentToText(format: String) = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Process) {
         _vmState.value = VMState.PROCESSING
-        val students = when {
-            _selectedStudents.value.isNotEmpty()-> _selectedStudents.value
-            _currentAdvancedFilterCriteria.value != null -> studentSearchService.searchAdvancedStudents(
-                _currentAdvancedFilterCriteria.value!!
-            )
-            _currentFilterCriteria.value != null -> studentSearchService.searchStudents(_currentFilterCriteria.value!!)
-            else -> studentService.getAllStudents()
-        }
+        val students = getPriorityStudents()
         StudentAction.exportToText(students, gpaService.getDefault(), format)
         _vmState.value = VMState.DONE
         true

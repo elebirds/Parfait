@@ -6,6 +6,7 @@
 
 package moe.hhm.parfait.ui.component.dialog
 
+import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import org.koin.core.component.KoinComponent
@@ -66,18 +67,18 @@ class StudentExportDialog private constructor(owner: Window?) : JDialog(owner, "
         // 设置对话框属性
         defaultCloseOperation = DISPOSE_ON_CLOSE
         isResizable = true
-        preferredSize = Dimension(550, 350)
+        preferredSize = Dimension(550, 400)
         
         // 设置i18n
         I18nUtils.bindTitle(this, "student.export.dialog.title")
         I18nUtils.bindText(radioText, "student.export.option.text")
         I18nUtils.bindText(radioExcel, "student.export.option.excel")
         I18nUtils.bindText(excelBrowseButton, "student.export.excel.browse")
-        I18nUtils.bindText(okButton, "dialog.button.ok")
-        I18nUtils.bindText(cancelButton, "dialog.button.cancel")
+        I18nUtils.bindText(okButton, "button.ok")
+        I18nUtils.bindText(cancelButton, "button.cancel")
         
         // 设置帮助文本HTML格式
-        textFormatHelpLabel.text = "<html>支持变量: {id} - 学号, {name} - 姓名, {gender} - 性别<br>{department} - 学院, {major} - 专业, {grade} - 年级, {class} - 班级<br>{datetime} - 当前时间, {score_weighted} - 加权平均分, {score_simple} - 简单平均分, {gpa} - 绩点</html>"
+        textFormatHelpLabel.text = I18nUtils.getText("student.export.text.helper")
         
         // 按钮组
         val buttonGroup = ButtonGroup()
@@ -96,17 +97,17 @@ class StudentExportDialog private constructor(owner: Window?) : JDialog(owner, "
             addActionListener { 
                 textFormatField.text = "{id},{name},{gender},{department},{major},{grade},{class},{datetime},{score_weighted},{score_simple},{gpa}"
             }
-            toolTipText = "CSV逗号分隔"
+            toolTipText = I18nUtils.getText("student.export.text.format.csv.detail")
         }
         
-        val customButton = JButton("简洁").apply {
+        val customButton = JButton(I18nUtils.getText("student.export.text.format.simple")).apply {
             addActionListener { 
                 textFormatField.text = "学号:{id} 姓名:{name} 院系:{department} 专业:{major} 年级:{grade} 班级:{class} 导出时间:{datetime} 加权平均分:{score_weighted} 简单平均分:{score_simple} 绩点:{gpa}"
             }
-            toolTipText = "简洁格式"
+            toolTipText = I18nUtils.getText("student.export.text.format.simple.detail")
         }
         
-        presetPanel.add(JLabel("预设: "))
+        presetPanel.add(JLabel(I18nUtils.getText("student.export.text.format.preset")))
         presetPanel.add(csvButton)
         presetPanel.add(customButton)
         
@@ -125,6 +126,7 @@ class StudentExportDialog private constructor(owner: Window?) : JDialog(owner, "
         contentPane.layout = MigLayout("insets 15, fillx", "[grow]", "[]10[]10[]10[]")
         
         // 添加组件
+        contentPane.add(JLabel(I18nUtils.getText("student.export.dialog.tip")), "wrap")
         contentPane.add(JLabel(I18nUtils.getText("student.export.dialog.message")), "wrap")
         
         val optionsPanel = JPanel(MigLayout("insets 0", "[]20[]", "[]"))
@@ -178,28 +180,11 @@ class StudentExportDialog private constructor(owner: Window?) : JDialog(owner, "
         if (radioText.isSelected) {
             // 处理文本导出
             val format = textFormatField.text
-            if (format.isBlank()) {
-                JOptionPane.showMessageDialog(
-                    this,
-                    I18nUtils.getText("student.export.text.format.empty"),
-                    I18nUtils.getText("dialog.error"),
-                    JOptionPane.ERROR_MESSAGE
-                )
-                return
-            }
+            if (format.isBlank()) throw throw BusinessException("student.export.text.format.empty")
             exportToText(format)
         } else {
-            // 处理Excel导出
-            if (selectedFilePath == null) {
-                JOptionPane.showMessageDialog(
-                    this,
-                    I18nUtils.getText("student.export.excel.path.empty"),
-                    I18nUtils.getText("dialog.error"),
-                    JOptionPane.ERROR_MESSAGE
-                )
-                return
-            }
-            viewModel.exportStudentToExcel()
+            if (selectedFilePath == null) throw BusinessException("student.export.excel.path.empty")
+            viewModel.exportStudentToExcel(selectedFilePath!!)
         }
         dispose()
     }
