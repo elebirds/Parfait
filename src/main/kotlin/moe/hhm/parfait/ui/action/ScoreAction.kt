@@ -19,9 +19,8 @@ import javax.swing.filechooser.FileNameExtensionFilter
 
 object ScoreAction {
     private val scoresExcelHeader = arrayListOf(
-        "student.property.id", "score.type", "student.property.gender",
-        "student.property.status", "student.property.department", "student.property.major",
-        "student.property.grade", "student.property.classGroup"
+        "score.course", "score.type", "score.exam",
+        "score.credit", "score.score", "score.gpa"
     )
 
     suspend fun exportToExcel(students: List<ScoreDTO> = emptyList(), owner: Window? = null) {

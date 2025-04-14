@@ -8,11 +8,14 @@ package moe.hhm.parfait.ui.component.dialog
 
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.app.service.GpaStandardService
+import moe.hhm.parfait.dto.CourseType
+import moe.hhm.parfait.dto.ScoreDTO
 import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.dto.simpleMean
 import moe.hhm.parfait.dto.weightedMean
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
+import moe.hhm.parfait.ui.action.ScoreAction
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.table.model.ScoresTableModel
@@ -24,6 +27,13 @@ import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Window
 import javax.swing.*
+import java.io.File
+import javax.swing.filechooser.FileNameExtensionFilter
+import com.alibaba.excel.EasyExcel
+import com.alibaba.excel.context.AnalysisContext
+import com.alibaba.excel.event.AnalysisEventListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * 学生成绩管理对话框
@@ -63,6 +73,16 @@ class StudentScoresDialog(
     private val deleteButton = JButton().apply {
         bindText(this, "button.delete")
         addActionListener { deleteGrade() }
+    }
+
+    private val importButton = JButton().apply {
+        bindText(this, "button.import")
+        addActionListener { importScoresFromExcel() }
+    }
+
+    private val exportButton = JButton().apply {
+        bindText(this, "button.export")
+        addActionListener { exportScoresToExcel() }
     }
 
     private val saveButton = JButton().apply {
@@ -111,10 +131,12 @@ class StudentScoresDialog(
         tablePanel.add(scrollPane, BorderLayout.CENTER)
 
         // 表格操作按钮面板
-        val tableButtonPanel = JPanel(MigLayout("insets 5", "[][][grow]"))
+        val tableButtonPanel = JPanel(MigLayout("insets 5", "[][][][][grow]"))
         tableButtonPanel.add(addButton)
         tableButtonPanel.add(editButton)
         tableButtonPanel.add(deleteButton)
+        tableButtonPanel.add(importButton)
+        tableButtonPanel.add(exportButton)
 
         tablePanel.add(tableButtonPanel, BorderLayout.SOUTH)
 
@@ -253,6 +275,101 @@ class StudentScoresDialog(
                 JOptionPane.showMessageDialog(
                     this@StudentScoresDialog,
                     e.message,
+                    I18nUtils.getText("error.generic"),
+                    JOptionPane.ERROR_MESSAGE
+                )
+            }
+        }
+    }
+
+    private fun exportScoresToExcel() {
+        scope.launch {
+            try {
+                ScoreAction.exportToExcel(tableModel.getData(), this@StudentScoresDialog)
+            } catch (e: Exception) {
+                JOptionPane.showMessageDialog(
+                    this@StudentScoresDialog,
+                    e.message,
+                    I18nUtils.getText("error.generic"),
+                    JOptionPane.ERROR_MESSAGE
+                )
+            }
+        }
+    }
+
+    private fun importScoresFromExcel() {
+        val fileChooser = JFileChooser()
+        fileChooser.fileFilter = FileNameExtensionFilter("Excel Files", "xlsx")
+
+        if (fileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return
+        
+        val filePath = fileChooser.selectedFile.absolutePath
+        
+        scope.launch {
+            try {
+                val result = withContext(Dispatchers.IO) {
+                    val scoreList = mutableListOf<ScoreDTO>()
+                    
+                    val listener = object : AnalysisEventListener<Map<Int, String>>() {
+                        // 处理每一行数据
+                        override fun invoke(data: Map<Int, String>, context: AnalysisContext) {
+                            // 修正：应该是 data 而不是 this.data
+                            
+                            try {
+                                // 跳过可能的标题行（第一行）
+                                if (context.readRowHolder().rowIndex == 0) return
+                                
+                                val score = ScoreDTO(
+                                    name = data[0] ?: "",
+                                    type = CourseType.entries.find { it.toString() == data[1] } ?: CourseType.DEFAULT, 
+                                    exam = data[2] ?: "",
+                                    credit = data[3]?.toIntOrNull() ?: 0,
+                                    score = data[4]?.toDoubleOrNull() ?: 0.0,
+                                    gpa = when (data[5]) {
+                                        I18nUtils.getText("score.gpa.yes") -> true
+                                        else -> false
+                                    }
+                                )
+                                scoreList.add(score)
+                            } catch (e: Exception) {
+                                // 忽略格式错误的行
+                            }
+                        }
+                        
+                        override fun doAfterAllAnalysed(context: AnalysisContext) {
+                            // 完成解析
+                        }
+                    }
+                    
+                    EasyExcel.read(filePath)
+                        .sheet()
+                        .registerReadListener(listener)
+                        .doRead()
+                    
+                    scoreList
+                }
+                
+                if (result.isNotEmpty()) {
+                    tableModel.setData(result)
+                    updateStatistics()
+                    JOptionPane.showMessageDialog(
+                        this@StudentScoresDialog,
+                        I18nUtils.getText("score.dialog.import.success"),
+                        I18nUtils.getText("button.import"),
+                        JOptionPane.INFORMATION_MESSAGE
+                    )
+                } else {
+                    JOptionPane.showMessageDialog(
+                        this@StudentScoresDialog,
+                        I18nUtils.getText("score.dialog.import.empty"),
+                        I18nUtils.getText("button.import"),
+                        JOptionPane.WARNING_MESSAGE
+                    )
+                }
+            } catch (e: Exception) {
+                JOptionPane.showMessageDialog(
+                    this@StudentScoresDialog,
+                    e.message ?: I18nUtils.getText("score.dialog.import.error"),
                     I18nUtils.getText("error.generic"),
                     JOptionPane.ERROR_MESSAGE
                 )
