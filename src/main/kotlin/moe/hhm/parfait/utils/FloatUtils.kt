@@ -17,6 +17,7 @@ val nf: NumberFormat = NumberFormat.getInstance().apply {
     this.maximumFractionDigits = 2
     this.isGroupingUsed = false
 }
+
 fun Double.round2Decimal(): String {
     return nf.format(this)
 }

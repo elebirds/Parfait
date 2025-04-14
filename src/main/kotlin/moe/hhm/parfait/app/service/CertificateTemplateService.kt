@@ -15,8 +15,8 @@ interface CertificateTemplateService {
     suspend fun getCertificates(): List<CertificateTemplateDTO>
     suspend fun getActiveCertificates(): List<CertificateTemplateDTO>
     suspend fun count(): Long
-    suspend fun getCertificateTemplateByName(name : String): CertificateTemplate?
+    suspend fun getCertificateTemplateByName(name: String): CertificateTemplate?
     suspend fun add(certificateTemplate: CertificateTemplateDTO): EntityID<UUID>?
-    suspend fun delete(uuid:UUID): Boolean
+    suspend fun delete(uuid: UUID): Boolean
     suspend fun update(certificateTemplate: CertificateTemplateDTO): Boolean
 }

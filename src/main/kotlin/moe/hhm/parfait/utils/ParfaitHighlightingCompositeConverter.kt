@@ -9,7 +9,7 @@ package moe.hhm.parfait.utils
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.pattern.color.HighlightingCompositeConverter
 import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.pattern.color.ANSIConstants.*;
+import ch.qos.logback.core.pattern.color.ANSIConstants.*
 
 class ParfaitHighlightingCompositeConverter : HighlightingCompositeConverter() {
     override fun getForegroundColorCode(event: ILoggingEvent): String {

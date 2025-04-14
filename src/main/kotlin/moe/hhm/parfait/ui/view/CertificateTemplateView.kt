@@ -15,8 +15,8 @@ import moe.hhm.parfait.infra.i18n.I18nUtils.createLabel
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.component.button.CertificateTemplateButton
-import moe.hhm.parfait.ui.component.dialog.CertificateTemplateDialog
 import moe.hhm.parfait.ui.component.dialog.CertificateRecordsDialog
+import moe.hhm.parfait.ui.component.dialog.CertificateTemplateDialog
 import moe.hhm.parfait.ui.state.VMState
 import moe.hhm.parfait.ui.viewmodel.CertificateTemplateViewModel
 import net.miginfocom.swing.MigLayout
@@ -29,7 +29,7 @@ import javax.swing.border.EmptyBorder
 
 class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPanel(), KoinComponent,
     CoroutineComponent by DefaultCoroutineComponent(parent) {
-    
+
     // 通过Koin获取ViewModel
     private val viewModel: CertificateTemplateViewModel by inject()
 
@@ -252,7 +252,7 @@ class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPane
                 }
             }
         }
-        
+
         // 切换活跃状态按钮
         private val buttonToggleActive = createButton("certificate.action.toggleActive").apply {
             addActionListener {
@@ -269,7 +269,7 @@ class CertificateTemplateView(parent: DefaultCoroutineComponent? = null) : JPane
                 }
             }
         }
-        
+
         // 查看导出记录按钮
         private val buttonViewRecords = createButton("certificate.action.viewRecords").apply {
             addActionListener {

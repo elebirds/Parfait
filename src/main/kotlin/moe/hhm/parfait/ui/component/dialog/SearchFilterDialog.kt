@@ -120,7 +120,7 @@ class SearchFilterDialog(
 
         // 设置标题
         add(JLabel(I18nUtils.getText(if (isFilter) "search.dialog.filter.title" else "search.dialog.search.title")).apply {
-            putClientProperty(FlatClientProperties.STYLE, "font:+6");
+            putClientProperty(FlatClientProperties.STYLE, "font:+6")
         }, "span 2")
 
         // 基本信息组标题

@@ -16,7 +16,7 @@ import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.update
-import java.util.UUID
+import java.util.*
 
 class CertificateDataRepositoryImpl : CertificateDataRepository {
     override suspend fun count(): Long = DatabaseUtils.dbQuery {
@@ -41,7 +41,7 @@ class CertificateDataRepositoryImpl : CertificateDataRepository {
         CertificateDatas.deleteWhere { Op.build { id eq uuid } } > 0
     }
 
-    override suspend fun deleteUnused(): Int  = DatabaseUtils.dbQuery {
+    override suspend fun deleteUnused(): Int = DatabaseUtils.dbQuery {
         CertificateDatas.deleteWhere { Op.build { used eq false } }
     }
 

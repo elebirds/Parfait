@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.dto.CertificateContentType
 import moe.hhm.parfait.dto.CertificateTemplateDTO
-import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
@@ -22,13 +21,11 @@ import moe.hhm.parfait.ui.viewmodel.CertificateTemplateViewModel
 import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.awt.CardLayout
 import java.awt.Dimension
 import java.awt.Window
-import java.io.File
 import javax.swing.*
-import java.util.UUID
 import javax.swing.filechooser.FileNameExtensionFilter
-import java.awt.CardLayout
 
 /**
  * 证明模板添加与修改对话框
@@ -122,7 +119,8 @@ class CertificateTemplateDialog(
 
     private fun initDialog() {
         // 设置对话框基本属性
-        title = I18nUtils.getText(if (isAlreadyExists) "certificate.dialog.modify.title" else "certificate.dialog.add.title")
+        title =
+            I18nUtils.getText(if (isAlreadyExists) "certificate.dialog.modify.title" else "certificate.dialog.add.title")
         isModal = true
         defaultCloseOperation = DISPOSE_ON_CLOSE
 
@@ -267,11 +265,13 @@ class CertificateTemplateDialog(
                     selectedContentPath = "jar::${comboJarResources.selectedItem}"
                 }
             }
+
             radioFile.isSelected -> {
                 layout.show(contentSwitchPanel, CertificateContentType.LOCAL_FILE.name)
                 contentType = CertificateContentType.LOCAL_FILE
                 selectedContentPath = textFilePath.text
             }
+
             radioDB.isSelected -> {
                 layout.show(contentSwitchPanel, CertificateContentType.DATABASE.name)
                 contentType = CertificateContentType.DATABASE
@@ -294,12 +294,14 @@ class CertificateTemplateDialog(
                 contentType = CertificateContentType.JAR_RESOURCE
                 selectedContentPath = contentPath
             }
+
             contentPath.startsWith("db::") -> {
                 radioDB.isSelected = true
                 textDBFilePath.text = contentPath
                 contentType = CertificateContentType.DATABASE
                 selectedContentPath = contentPath
             }
+
             else -> {
                 radioFile.isSelected = true
                 textFilePath.text = contentPath
@@ -340,7 +342,7 @@ class CertificateTemplateDialog(
 
                 // 上传文件到数据库，不再传递templateUuid
                 val dbPathResult = viewModel.uploadFileToDb(selectedFile)
-                
+
                 // 更新界面
                 textDBFilePath.text = dbPathResult
                 selectedContentPath = dbPathResult
@@ -383,16 +385,16 @@ class CertificateTemplateDialog(
             category = category,
             description = description,
             contentPath = selectedContentPath,
-            isLike = existingTemplate?.isLike ?: false,
-            isActive = existingTemplate?.isActive ?: true,
+            isLike = existingTemplate?.isLike == true,
+            isActive = existingTemplate?.isActive != false,
             priority = priority
         )
 
         val beforePath = existingTemplate?.contentPath
         if (isAlreadyExists) {
-            if(beforePath != null && beforePath != selectedContentPath) {
+            if (beforePath != null && beforePath != selectedContentPath) {
                 viewModel.updateTemplateAndPath(templateDTO, beforePath)
-            }else viewModel.updateTemplate(templateDTO)
+            } else viewModel.updateTemplate(templateDTO)
         } else {
             viewModel.addTemplate(templateDTO)
         }

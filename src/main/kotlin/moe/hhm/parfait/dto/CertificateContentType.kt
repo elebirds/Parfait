@@ -14,17 +14,17 @@ enum class CertificateContentType {
      * JAR资源文件，内部资源文件
      */
     JAR_RESOURCE,
-    
+
     /**
      * 本地文件，存储文件路径
      */
     LOCAL_FILE,
-    
+
     /**
      * 数据库存储，将文件内容存储在数据库中
      */
     DATABASE;
-    
+
     companion object {
         /**
          * 从字符串转换为枚举类型
@@ -37,7 +37,7 @@ enum class CertificateContentType {
                 else -> LOCAL_FILE // 默认为本地文件
             }
         }
-        
+
         /**
          * 从前缀识别类型
          */
@@ -48,7 +48,7 @@ enum class CertificateContentType {
                 else -> LOCAL_FILE
             }
         }
-        
+
         /**
          * 生成路径
          */

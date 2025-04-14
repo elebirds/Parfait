@@ -51,8 +51,8 @@ object FlatLafUtils {
     }
 
     fun preferenceInit() {
-        FlatLafPrefs.init("ParfaitMOE");
-        FlatLafPrefs.initSystemScale();
+        FlatLafPrefs.init("ParfaitMOE")
+        FlatLafPrefs.initSystemScale()
     }
 
     fun setLookAndFeel() {
@@ -61,7 +61,7 @@ object FlatLafUtils {
     }
 
     fun installInspector() {
-        FlatInspector.install("ctrl shift alt X");
-        FlatUIDefaultsInspector.install("ctrl shift alt Y");
+        FlatInspector.install("ctrl shift alt X")
+        FlatUIDefaultsInspector.install("ctrl shift alt Y")
     }
 }

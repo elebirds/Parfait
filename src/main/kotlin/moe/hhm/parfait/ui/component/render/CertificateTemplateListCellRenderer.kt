@@ -23,12 +23,12 @@ class CertificateTemplateListCellRenderer : DefaultListCellRenderer() {
         cellHasFocus: Boolean
     ): Component {
         val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
-        
+
         if (value is CertificateTemplateDTO) {
             text = "${value.name} (${value.category})"
             toolTipText = value.description
         }
-        
+
         return component
     }
 } 

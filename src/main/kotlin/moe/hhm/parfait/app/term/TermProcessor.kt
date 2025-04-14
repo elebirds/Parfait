@@ -18,6 +18,7 @@ class TermProcessor(
     val contextProvider: ContextProvider,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
+
     /**
      * 查找术语替换值
      * @param expr 术语表达式

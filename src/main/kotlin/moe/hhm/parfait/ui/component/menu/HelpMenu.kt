@@ -9,13 +9,6 @@ package moe.hhm.parfait.ui.component.menu
 import com.formdev.flatlaf.FlatClientProperties
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
-import java.awt.Cursor
-import java.awt.Desktop
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
-import java.io.IOException
-import java.net.URI
-import java.net.URISyntaxException
 import java.time.Year
 import javax.swing.JLabel
 import javax.swing.JMenu

@@ -41,27 +41,27 @@ class TermParser {
 
         // 移除前缀
         val expressionWithoutPrefix = expression.substring(TERM_PREFIX.length)
-        
+
         // 处理默认值
         val parts = expressionWithoutPrefix.split(DEFAULT_SEPARATOR, limit = 2)
         val fieldWithLang = parts[0]
         val defaultValue = if (parts.size > 1) parts[1] else null
-        
+
         // 处理字段和语言
         val langParts = fieldWithLang.split(LANGUAGE_PREFIX, limit = 2)
         val fieldWithContext = langParts[0]
         val language = if (langParts.size > 1) langParts[1] else null
-        
+
         // 处理字段和上下文
         val contextParts = fieldWithContext.split("_")
         val field = contextParts[0]
         val context = if (contextParts.size > 1) {
             contextParts.subList(1, contextParts.size).joinToString("_")
         } else null
-        
+
         return TermExpression(expression, field, context, language, defaultValue)
     }
-    
+
     /**
      * 生成术语表达式
      * @param field 字段名
@@ -77,23 +77,23 @@ class TermParser {
         defaultValue: String? = null
     ): String {
         val sb = StringBuilder(TERM_PREFIX)
-        
+
         // 添加字段和上下文
         sb.append(field)
         if (!context.isNullOrBlank()) {
             sb.append("_").append(context)
         }
-        
+
         // 添加语言
         if (!language.isNullOrBlank()) {
             sb.append(LANGUAGE_PREFIX).append(language)
         }
-        
+
         // 添加默认值
         if (!defaultValue.isNullOrBlank()) {
             sb.append(DEFAULT_SEPARATOR).append(defaultValue)
         }
-        
+
         return sb.toString()
     }
 }

@@ -21,7 +21,7 @@ class CertificateRecord(id: EntityID<UUID>) : UUIDEntity(id) {
     var issuedBy by CertificateRecords.issuedBy
     var content by CertificateRecords.content
     var purpose by CertificateRecords.purpose
-    
+
     fun toDTO() = CertificateRecordDTO(
         uuid = this.id.value,
         templateId = this.template,

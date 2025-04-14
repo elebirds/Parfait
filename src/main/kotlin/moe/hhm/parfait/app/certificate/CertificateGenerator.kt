@@ -12,7 +12,6 @@ import com.deepoove.poi.util.RegexUtils
 import moe.hhm.parfait.app.service.CertificateDataService
 import moe.hhm.parfait.app.service.CertificateRecordService
 import moe.hhm.parfait.app.term.TermParser
-import moe.hhm.parfait.app.term.TermProcessor
 import moe.hhm.parfait.dto.CertificateRecordDTO
 import moe.hhm.parfait.dto.CertificateTemplateDTO
 import moe.hhm.parfait.dto.StudentDTO
@@ -23,17 +22,16 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.io.InputStream
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.UUID
+import java.util.*
 import javax.swing.JOptionPane
 
 /**
  * 证书生成器
- * 
+ *
  * 负责根据模板生成证书文档
  */
 class CertificateGenerator : KoinComponent {
@@ -42,7 +40,7 @@ class CertificateGenerator : KoinComponent {
     private val termParser: TermParser by inject()
     private val modelBuilder: TemplateModelBuilder by inject()
     private val builder = Configure.builder().apply {
-        buildGrammerRegex(RegexUtils.createGeneral("{{", "}}"));
+        buildGrammerRegex(RegexUtils.createGeneral("{{", "}}"))
     }
 
 
@@ -56,7 +54,7 @@ class CertificateGenerator : KoinComponent {
 
     /**
      * 生成证书
-     * 
+     *
      * @param params 证书生成参数
      */
     suspend fun generateCertificate(
@@ -66,15 +64,16 @@ class CertificateGenerator : KoinComponent {
         val templateInputStream = getTemplateInputStream(params.template.contentPath)
         val templateBytes = templateInputStream.readBytes()
         templateInputStream.close()
-        
+
         // 2. 使用第一个模板分析获取变量
         val analysisTemplate = XWPFTemplate.compile(templateBytes.inputStream(), builder.build())
 
         // 3. 收集模板中的变量标签 并分离{{和}}生成术语标签
-        val variableNames = analysisTemplate.elementTemplates.map { it.variable().replace("{{", "").replace("}}", "") }.toSet()
+        val variableNames =
+            analysisTemplate.elementTemplates.map { it.variable().replace("{{", "").replace("}}", "") }.toSet()
         val termPairs = variableNames.mapNotNull {
             val res = termParser.parse(it)
-            if(res != null) {
+            if (res != null) {
                 it to res
             } else {
                 null
@@ -82,7 +81,7 @@ class CertificateGenerator : KoinComponent {
         }
         val remainingTags = variableNames - termPairs.map { it.first }
         val termExpressions = termPairs.map { it.second }
-        
+
         // 关闭分析模板
         analysisTemplate.close()
 
@@ -94,7 +93,7 @@ class CertificateGenerator : KoinComponent {
                 // 为每个学生从字节数组重新创建模板（不需要重新读取文件）
                 val studentTemplateStream = templateBytes.inputStream()
                 val template = XWPFTemplate.compile(studentTemplateStream, builder.build())
-                
+
                 try {
                     // 5. 解析变量标签
                     val models = modelBuilder.buildModel(
@@ -103,11 +102,12 @@ class CertificateGenerator : KoinComponent {
                         remainingTags = remainingTags,
                         termExpressions = termExpressions
                     )
-                    
+
                     // 6. 渲染并写入文件
-                    val outputFilePath = params.outputDirectory.absolutePath + buildCertificateFileName(student, params.template)
+                    val outputFilePath =
+                        params.outputDirectory.absolutePath + buildCertificateFileName(student, params.template)
                     template.render(models).writeToFile(outputFilePath)
-                    
+
                     // 7. 记录证书生成信息
                     recordCertificateGeneration(student, params)
 
@@ -122,13 +122,18 @@ class CertificateGenerator : KoinComponent {
             }
         }
         JOptionPane.showMessageDialog(
-            null, 
-            I18nUtils.getFormattedText("certificate.generate.result.detail", successCount, errorList.size, "\n${errorList.joinToString("\n")}"), 
-            I18nUtils.getFormattedText("certificate.generate.result.title"), 
+            null,
+            I18nUtils.getFormattedText(
+                "certificate.generate.result.detail",
+                successCount,
+                errorList.size,
+                "\n${errorList.joinToString("\n")}"
+            ),
+            I18nUtils.getFormattedText("certificate.generate.result.title"),
             JOptionPane.INFORMATION_MESSAGE
         )
     }
-    
+
     /**
      * 获取模板输入流
      */
@@ -140,7 +145,7 @@ class CertificateGenerator : KoinComponent {
                 javaClass.classLoader.getResourceAsStream("certificate/$resourcePath")
                     ?: throw BusinessException("无法找到内置资源: $resourcePath")
             }
-            
+
             // 数据库中存储的模板
             contentPath.startsWith("db::") -> {
                 val uuid = UUID.fromString(contentPath.substring(4))
@@ -148,7 +153,7 @@ class CertificateGenerator : KoinComponent {
                     ?: throw BusinessException("无法找到数据库模板数据: $uuid")
                 templateData.getStream()
             }
-            
+
             // 本地文件
             else -> {
                 val file = File(contentPath)

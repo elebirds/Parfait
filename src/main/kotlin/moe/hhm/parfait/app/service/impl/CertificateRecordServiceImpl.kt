@@ -12,7 +12,7 @@ import moe.hhm.parfait.dto.CertificateRecordDTO
 import org.jetbrains.exposed.dao.id.EntityID
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.util.UUID
+import java.util.*
 
 class CertificateRecordServiceImpl : CertificateRecordService, KoinComponent {
     private val repository: CertificateRecordRepository by inject()

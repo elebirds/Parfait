@@ -18,6 +18,7 @@ import moe.hhm.parfait.dto.CertificateDataDTO
 import moe.hhm.parfait.dto.CertificateTemplateDTO
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.ui.state.VMState
 import moe.hhm.parfait.ui.viewmodel.common.DataViewModel
 import moe.hhm.parfait.ui.viewmodel.common.VMErrorHandlerChooser
@@ -28,7 +29,6 @@ import java.io.InputStream
 import java.nio.file.Files
 import java.util.*
 import javax.swing.JOptionPane
-import moe.hhm.parfait.infra.i18n.I18nUtils
 
 class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>(emptyList()), KoinComponent {
     private val templateService: CertificateTemplateService by inject()
@@ -37,7 +37,7 @@ class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>
     // 选中的证明模板
     private val _selectedTemplate = MutableStateFlow<CertificateTemplateDTO?>(null)
     val selectedTemplate: StateFlow<CertificateTemplateDTO?> = _selectedTemplate.asStateFlow()
-    
+
     // JAR资源文件列表
     private val _jarResources = MutableStateFlow<List<String>>(emptyList())
     val jarResources: StateFlow<List<String>> = _jarResources.asStateFlow()
@@ -73,33 +73,33 @@ class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>
             }
         }
     }
-    
+
     /**
      * 加载JAR资源文件列表
      */
     private fun loadJarResources() {
         // 扫描jar中的certificate目录
         val certificateFiles = mutableListOf<String>()
-        
+
         try {
             // 默认添加内置模板
             certificateFiles.add("score_default.docx")
-            
+
             // 获取资源URL
             val resourceUrl = this::class.java.classLoader.getResource("certificate")
-            
+
             if (resourceUrl != null) {
                 // 如果在JAR中运行
                 if (resourceUrl.protocol == "jar") {
                     val jarConnection = resourceUrl.openConnection() as java.net.JarURLConnection
                     val jarFile = jarConnection.jarFile
-                    
+
                     // 遍历JAR文件中的所有条目
                     val entries = jarFile.entries()
                     while (entries.hasMoreElements()) {
                         val entry = entries.nextElement()
                         val entryName = entry.name
-                        
+
                         // 检查是否是certificate目录下的文件
                         if (entryName.startsWith("certificate/") && !entry.isDirectory) {
                             // 移除前缀并添加到列表
@@ -121,7 +121,7 @@ class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>
                     }
                 }
             }
-            
+
             // 更新状态
             _jarResources.value = certificateFiles
         } catch (e: Exception) {
@@ -153,7 +153,7 @@ class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>
     }
 
     suspend fun updateDataState(contentPath: String, state: Boolean) {
-        if(!contentPath.startsWith("db::")) return
+        if (!contentPath.startsWith("db::")) return
         // 更新数据状态
         val uuidStr = contentPath.substringAfter("db::")
         val uuid = UUID.fromString(uuidStr)
@@ -187,21 +187,24 @@ class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>
     /**
      * 更新证明模板
      */
-    fun updateTemplate(template: CertificateTemplateDTO) = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Modify) {
-        _vmState.value = VMState.PROCESSING
-        // 更新证明模板
-        templateService.update(template)
-    }
-    fun updateTemplateAndPath(template: CertificateTemplateDTO, beforeContentPath: String) = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Modify) {
-        _vmState.value = VMState.PROCESSING
-        // 更新证明模板
-        val res = templateService.update(template)
-        if(res) {
-            updateDataState(beforeContentPath, false)
-            updateDataState(template.contentPath, true)
+    fun updateTemplate(template: CertificateTemplateDTO) =
+        suspendProcessWithErrorHandling(VMErrorHandlerChooser.Modify) {
+            _vmState.value = VMState.PROCESSING
+            // 更新证明模板
+            templateService.update(template)
         }
-        res
-    }
+
+    fun updateTemplateAndPath(template: CertificateTemplateDTO, beforeContentPath: String) =
+        suspendProcessWithErrorHandling(VMErrorHandlerChooser.Modify) {
+            _vmState.value = VMState.PROCESSING
+            // 更新证明模板
+            val res = templateService.update(template)
+            if (res) {
+                updateDataState(beforeContentPath, false)
+                updateDataState(template.contentPath, true)
+            }
+            res
+        }
 
     /**
      * 切换证明模板的收藏状态
@@ -219,13 +222,13 @@ class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>
             )
             return
         }
-        
+
         // 创建一个新的模板对象，切换isLike状态
         val updatedTemplate = template.copy(isLike = !template.isLike)
         // 更新模板
         updateTemplate(updatedTemplate)
     }
-    
+
     /**
      * 切换证明模板的活跃状态
      * 如果要设置为非活跃状态，则同时取消收藏
@@ -234,7 +237,7 @@ class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>
         // 如果要将模板设置为非活跃状态，则同时取消收藏
         val newActiveState = !template.isActive
         val newLikeState = if (newActiveState) template.isLike else false
-        
+
         // 创建一个新的模板对象，切换状态
         val updatedTemplate = template.copy(
             isActive = newActiveState,
@@ -243,7 +246,7 @@ class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>
         // 更新模板
         updateTemplate(updatedTemplate)
     }
-    
+
     /**
      * 将文件上传到数据库
      * @param file 要上传的文件
@@ -251,25 +254,25 @@ class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>
      */
     suspend fun uploadFileToDb(file: File): String {
         _vmState.value = VMState.PROCESSING
-        
+
         // 读取文件内容
         val fileData = Files.readAllBytes(file.toPath())
-        
+
         // 创建CertificateDataDTO对象并保存
         val dataDTO = CertificateDataDTO(
             uuid = null,
             filename = file.name,
             data = fileData
         )
-        
+
         // 添加到数据库
         val entityId = dataService.add(dataDTO)
-        
+
         // 返回数据库引用路径
         _vmState.value = VMState.DONE
         return CertificateContentType.generatePath(CertificateContentType.DATABASE, entityId.value.toString())
     }
-    
+
     /**
      * 从内容路径获取输入流
      * @param contentPath 内容路径
@@ -282,6 +285,7 @@ class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>
                 val resourcePath = contentPath.substringAfter("jar::")
                 Thread.currentThread().contextClassLoader.getResourceAsStream("certificate/$resourcePath")
             }
+
             contentPath.startsWith("db::") -> {
                 // 从数据库获取
                 val uuidStr = contentPath.substringAfter("db::")
@@ -289,6 +293,7 @@ class CertificateTemplateViewModel : DataViewModel<List<CertificateTemplateDTO>>
                 val data = dataService.getByUUID(uuid)
                 data?.data?.inputStream()
             }
+
             else -> {
                 // 从本地文件获取
                 try {

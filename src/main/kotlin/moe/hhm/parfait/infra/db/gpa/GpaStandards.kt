@@ -39,7 +39,7 @@ object GpaStandards : UUIDTable("gpa_standards") {
                     Triple("F", 0..<60, 0.0)
                 )
             )
-            val defaultGpaStandard = GpaStandard.new {
+            GpaStandard.new {
                 name = "默认标准"
                 description = "基础四分制标准"
                 category = "基础"
@@ -62,7 +62,7 @@ object GpaStandards : UUIDTable("gpa_standards") {
                     Triple("F", 0..<60, 0.0)
                 )
             )
-            val pekingUniversityStandard = GpaStandard.new {
+            GpaStandard.new {
                 name = "北京大学4.0标准"
                 description = "北京大学4.0标准"
                 category = "基础"
@@ -83,7 +83,7 @@ object GpaStandards : UUIDTable("gpa_standards") {
                     Triple("D", 0..<60, 0.0)
                 )
             )
-            val canadaStandard = GpaStandard.new {
+            GpaStandard.new {
                 name = "加拿大4.3标准"
                 description = "加拿大标准"
                 category = "留学"

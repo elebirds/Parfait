@@ -8,7 +8,10 @@ package moe.hhm.parfait.ui.panel
 
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.ui.component.tool.MainToolBar
-import moe.hhm.parfait.ui.view.*
+import moe.hhm.parfait.ui.view.CertificateTemplateView
+import moe.hhm.parfait.ui.view.GpaStandardView
+import moe.hhm.parfait.ui.view.StudentDataView
+import moe.hhm.parfait.ui.view.TermView
 import net.miginfocom.swing.MigLayout
 import java.awt.BorderLayout
 import javax.swing.JPanel

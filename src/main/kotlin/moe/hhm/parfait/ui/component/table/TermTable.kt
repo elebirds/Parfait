@@ -117,14 +117,14 @@ class TermTable(parent: CoroutineComponent? = null) : JTable(), KoinComponent,
     // 初始化表格列
     private fun initColumns() {
         tableModel.setColumnIdentifiers(columnKeys.toTypedArray())
-        
+
         // 设置列宽
         columnModel.getColumn(0).preferredWidth = 0  // UUID列（隐藏）
         columnModel.getColumn(1).preferredWidth = 150 // 字段名
         columnModel.getColumn(2).preferredWidth = 150 // 上下文
         columnModel.getColumn(3).preferredWidth = 80  // 语言
         columnModel.getColumn(4).preferredWidth = 300 // 术语值
-        
+
         // 隐藏UUID列
         columnModel.getColumn(0).minWidth = 0
         columnModel.getColumn(0).maxWidth = 0

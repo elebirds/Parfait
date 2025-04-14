@@ -15,7 +15,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insertAndGetId
-import java.util.UUID
+import java.util.*
 
 class CertificateRecordRepositoryImpl : CertificateRecordRepository {
     override suspend fun count(): Long = DatabaseUtils.dbQuery {

@@ -10,7 +10,7 @@ import moe.hhm.parfait.app.service.CertificateDataService
 import moe.hhm.parfait.domain.repository.CertificateDataRepository
 import moe.hhm.parfait.dto.CertificateDataDTO
 import org.jetbrains.exposed.dao.id.EntityID
-import java.util.UUID
+import java.util.*
 
 class CertificateDataServiceImpl(private val rep: CertificateDataRepository) : CertificateDataService {
     override suspend fun count(): Long = rep.count()
@@ -22,7 +22,7 @@ class CertificateDataServiceImpl(private val rep: CertificateDataRepository) : C
     override suspend fun add(data: CertificateDataDTO): EntityID<UUID> = rep.add(data)
 
     override suspend fun delete(uuid: UUID): Boolean = rep.delete(uuid)
-    
+
     override suspend fun updateUsed(uuid: UUID, used: Boolean): Boolean {
         return rep.updateUsed(uuid, used)
     }

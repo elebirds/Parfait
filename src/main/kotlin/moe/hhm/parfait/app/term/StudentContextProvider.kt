@@ -7,7 +7,6 @@
 package moe.hhm.parfait.app.term
 
 import moe.hhm.parfait.dto.StudentDTO
-import java.util.*
 
 /**
  * 学生上下文提供者
@@ -15,6 +14,7 @@ import java.util.*
  */
 class StudentContextProvider : ContextProvider {
     private var student: StudentDTO? = null
+
     /**
      * 设置学生对象
      * @param studentDTO 学生数据传输对象
@@ -22,7 +22,7 @@ class StudentContextProvider : ContextProvider {
     fun setStudent(studentDTO: StudentDTO?) {
         this.student = studentDTO
     }
-    
+
     /**
      * 根据字段名从学生对象中获取上下文信息
      * @param field 字段名
@@ -30,7 +30,7 @@ class StudentContextProvider : ContextProvider {
      */
     override fun getContext(field: String): String? {
         if (student == null) return null
-        
+
         return when (field) {
             "gender" -> student?.gender?.name
             "status" -> student?.status?.name

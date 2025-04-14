@@ -47,6 +47,7 @@ object ErrorHandler {
                     JOptionPane.WARNING_MESSAGE
                 )
             }
+
             else -> {
                 error.printStackTrace()
                 JOptionPane.showMessageDialog(

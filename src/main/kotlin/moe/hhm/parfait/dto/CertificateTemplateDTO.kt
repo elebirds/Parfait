@@ -8,7 +8,7 @@ package moe.hhm.parfait.dto
 
 import moe.hhm.parfait.infra.db.certificate.CertificateTemplates
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import java.util.UUID
+import java.util.*
 
 data class CertificateTemplateDTO(
     val uuid: UUID? = null,

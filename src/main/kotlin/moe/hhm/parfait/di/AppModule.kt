@@ -8,20 +8,8 @@ package moe.hhm.parfait.di
 
 import moe.hhm.parfait.app.certificate.CertificateGenerator
 import moe.hhm.parfait.app.certificate.TemplateModelBuilder
-import moe.hhm.parfait.app.service.CertificateDataService
-import moe.hhm.parfait.app.service.CertificateRecordService
-import moe.hhm.parfait.app.service.CertificateTemplateService
-import moe.hhm.parfait.app.service.GpaStandardService
-import moe.hhm.parfait.app.service.StudentSearchService
-import moe.hhm.parfait.app.service.StudentService
-import moe.hhm.parfait.app.service.TermService
-import moe.hhm.parfait.app.service.impl.CertificateDataServiceImpl
-import moe.hhm.parfait.app.service.impl.CertificateRecordServiceImpl
-import moe.hhm.parfait.app.service.impl.CertificateTemplateServiceImpl
-import moe.hhm.parfait.app.service.impl.GpaStandardServiceImpl
-import moe.hhm.parfait.app.service.impl.StudentSearchServiceImpl
-import moe.hhm.parfait.app.service.impl.StudentServiceImpl
-import moe.hhm.parfait.app.service.impl.TermServiceImpl
+import moe.hhm.parfait.app.service.*
+import moe.hhm.parfait.app.service.impl.*
 import moe.hhm.parfait.app.term.MapBasedContextProvider
 import moe.hhm.parfait.app.term.StudentContextProvider
 import moe.hhm.parfait.app.term.TermParser

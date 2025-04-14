@@ -13,7 +13,7 @@ import moe.hhm.parfait.dto.CertificateTemplateDTO
 import org.jetbrains.exposed.dao.id.EntityID
 import java.util.*
 
-class CertificateTemplateServiceImpl(private val rep:CertificateTemplateRepository) : CertificateTemplateService{
+class CertificateTemplateServiceImpl(private val rep: CertificateTemplateRepository) : CertificateTemplateService {
     override suspend fun getCertificates(): List<CertificateTemplateDTO> {
         return rep.findAll().map { it.toDTO() }
     }
@@ -25,15 +25,19 @@ class CertificateTemplateServiceImpl(private val rep:CertificateTemplateReposito
     override suspend fun count(): Long {
         return rep.count()
     }
+
     override suspend fun getCertificateTemplateByName(name: String): CertificateTemplate? {
         return rep.findByName(name)
     }
+
     override suspend fun add(certificateTemplate: CertificateTemplateDTO): EntityID<UUID>? {
         return rep.add(certificateTemplate)
     }
+
     override suspend fun delete(uuid: UUID): Boolean {
         return rep.delete(uuid)
     }
+
     override suspend fun update(certificateTemplate: CertificateTemplateDTO): Boolean {
         return rep.update(certificateTemplate)
     }

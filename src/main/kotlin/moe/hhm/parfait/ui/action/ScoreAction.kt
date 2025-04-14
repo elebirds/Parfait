@@ -37,17 +37,19 @@ object ScoreAction {
                 .head(scoresExcelHeader.map { arrayListOf(I18nUtils.getText(it)) })
                 .registerWriteHandler(LongestMatchColumnWidthStyleStrategy())
                 .sheet("模板")
-                .doWrite(students.map { SimpleWriteScore(
-                    name = it.name,
-                    type = it.type.toString(),
-                    exam = it.exam,
-                    credit = it.credit,
-                    score = it.score,
-                    gpa = when(it.gpa) {
-                        true -> I18nUtils.getText("score.gpa.yes")
-                        false -> I18nUtils.getText("score.gpa.no")
-                    },
-                ) })
+                .doWrite(students.map {
+                    SimpleWriteScore(
+                        name = it.name,
+                        type = it.type.toString(),
+                        exam = it.exam,
+                        credit = it.credit,
+                        score = it.score,
+                        gpa = when (it.gpa) {
+                            true -> I18nUtils.getText("score.gpa.yes")
+                            false -> I18nUtils.getText("score.gpa.no")
+                        },
+                    )
+                })
         }
     }
 }

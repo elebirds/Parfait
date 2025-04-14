@@ -129,7 +129,7 @@ class StudentModifyDialog(
         )
 
         add(JLabel(I18nUtils.getText(if (isAlreadyExists) "student.dialog.modify.title" else "student.dialog.add.title")).apply {
-            putClientProperty(FlatClientProperties.STYLE, "font:+6");
+            putClientProperty(FlatClientProperties.STYLE, "font:+6")
         }, "span 2")
 
         // 个人信息组标题

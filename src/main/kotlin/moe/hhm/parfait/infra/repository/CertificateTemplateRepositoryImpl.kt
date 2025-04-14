@@ -32,12 +32,16 @@ class CertificateTemplateRepositoryImpl : CertificateTemplateRepository {
             } > 0
         }
     }
+
     override suspend fun isExistByName(name: String): Boolean = DatabaseUtils.dbQuery {
         CertificateTemplate.find { CertificateTemplates.name eq name }.count() > 0
     }
+
     override suspend fun isExistByNameExceptMe(name: String, uuid: UUID): Boolean = DatabaseUtils.dbQuery {
-        CertificateTemplate.find { (CertificateTemplates.name eq name) and (CertificateTemplates.id neq uuid) }.count() > 0
+        CertificateTemplate.find { (CertificateTemplates.name eq name) and (CertificateTemplates.id neq uuid) }
+            .count() > 0
     }
+
     override suspend fun findAll(): List<CertificateTemplate> = DatabaseUtils.dbQuery {
         CertificateTemplate.all().toList()
     }
@@ -46,7 +50,7 @@ class CertificateTemplateRepositoryImpl : CertificateTemplateRepository {
         CertificateTemplate.find { CertificateTemplates.isActive eq true }.toList()
     }
 
-    override suspend fun findByUUID(uuid:UUID): CertificateTemplate? = DatabaseUtils.dbQuery {
+    override suspend fun findByUUID(uuid: UUID): CertificateTemplate? = DatabaseUtils.dbQuery {
         CertificateTemplate.findById(uuid)
 
     }
@@ -56,7 +60,7 @@ class CertificateTemplateRepositoryImpl : CertificateTemplateRepository {
     }
 
     override suspend fun add(data: CertificateTemplateDTO): EntityID<UUID> {
-        if(isExistByName((data.name))) throw BusinessException("certificate.error.name.exist")
+        if (isExistByName((data.name))) throw BusinessException("certificate.error.name.exist")
         return DatabaseUtils.dbQuery {
             CertificateTemplates.insertAndGetId {
                 data.into(it)
@@ -64,7 +68,7 @@ class CertificateTemplateRepositoryImpl : CertificateTemplateRepository {
         }
     }
 
-    override suspend fun delete(uuid: UUID)= DatabaseUtils.dbQuery {
-        CertificateTemplates.deleteWhere { Op.build {id eq uuid } }
+    override suspend fun delete(uuid: UUID) = DatabaseUtils.dbQuery {
+        CertificateTemplates.deleteWhere { Op.build { id eq uuid } }
     } > 0
 }

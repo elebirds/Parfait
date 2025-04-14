@@ -14,24 +14,22 @@ import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.dto.simpleMean
 import moe.hhm.parfait.dto.weightedMean
 import moe.hhm.parfait.infra.i18n.I18nManager
-import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.utils.HanziUtils
 import moe.hhm.parfait.utils.round2Decimal
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.time.LocalDate
 import java.time.format.TextStyle
-import java.util.HashMap
-import java.util.Locale
+import java.util.*
 
 /**
  * 模板数据模型构建器
- * 
+ *
  * 负责构建POI-TL模板引擎使用的数据模型
  */
 class TemplateModelBuilder : KoinComponent {
     private val termProcessor: TermProcessor by inject()
-    
+
     /**
      * 构建完整的数据模型
      */
@@ -63,7 +61,7 @@ class TemplateModelBuilder : KoinComponent {
         "source" to "Parfait",
         "version" to "1.0.0"
     )
-    
+
     /**
      * 添加学生信息
      */
@@ -80,7 +78,7 @@ class TemplateModelBuilder : KoinComponent {
         "score_weighted" to student.scores.weightedMean().round2Decimal(),
         "score_simple" to student.scores.simpleMean().round2Decimal()
     )
-    
+
     /**
      * 添加GPA信息
      */

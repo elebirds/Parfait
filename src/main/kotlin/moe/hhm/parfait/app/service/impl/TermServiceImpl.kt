@@ -16,7 +16,7 @@ import java.util.*
 
 class TermServiceImpl(private val rep: TermRepository) : TermService {
     private val logger = LoggerFactory.getLogger(this::class.java)
-    
+
     override suspend fun getAll(): List<TermDTO> {
         return rep.findAll().map { it.toDTO() }
     }
@@ -27,16 +27,16 @@ class TermServiceImpl(private val rep: TermRepository) : TermService {
     ): List<TermDTO> {
         return rep.findPage(page, size).map { it.toDTO() }
     }
-    
+
     override suspend fun getTerm(field: String, context: String?, language: String?): Term? {
         return rep.findTerm(field, context, language)
     }
-    
+
     override suspend fun getByFields(fields: List<String>): Map<String, Term> {
         if (fields.isEmpty()) return emptyMap()
         return rep.findByFields(fields)
     }
-    
+
     override suspend fun getByLanguage(language: String): List<Term> {
         return rep.findByLanguage(language)
     }

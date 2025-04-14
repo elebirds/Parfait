@@ -9,7 +9,7 @@ package moe.hhm.parfait.domain.repository
 import moe.hhm.parfait.domain.model.certificate.CertificateRecord
 import moe.hhm.parfait.dto.CertificateRecordDTO
 import org.jetbrains.exposed.dao.id.EntityID
-import java.util.UUID
+import java.util.*
 
 interface CertificateRecordRepository {
     suspend fun count(): Long

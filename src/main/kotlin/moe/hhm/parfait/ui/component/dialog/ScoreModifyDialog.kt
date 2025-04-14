@@ -12,15 +12,7 @@ import moe.hhm.parfait.dto.ScoreDTO
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import net.miginfocom.swing.MigLayout
 import java.awt.Window
-import javax.swing.Box
-import javax.swing.JButton
-import javax.swing.JCheckBox
-import javax.swing.JComboBox
-import javax.swing.JDialog
-import javax.swing.JLabel
-import javax.swing.JOptionPane
-import javax.swing.JPanel
-import javax.swing.JTextField
+import javax.swing.*
 
 class ScoreModifyDialog(owner: Window, existingScore: ScoreDTO? = null) : JDialog(owner) {
     var result: ScoreDTO? = null

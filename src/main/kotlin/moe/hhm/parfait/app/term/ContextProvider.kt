@@ -17,7 +17,7 @@ interface ContextProvider {
      * @return 上下文，如果没有相关上下文则返回null
      */
     fun getContext(field: String): String?
-    
+
     /**
      * 重置上下文数据
      */
@@ -30,7 +30,7 @@ interface ContextProvider {
  */
 class MapBasedContextProvider : ContextProvider {
     private val contextMap = mutableMapOf<String, String>()
-    
+
     /**
      * 设置字段的上下文
      * @param field 字段名
@@ -39,7 +39,7 @@ class MapBasedContextProvider : ContextProvider {
     fun setContext(field: String, context: String) {
         contextMap[field] = context
     }
-    
+
     /**
      * 批量设置多个字段的上下文
      * @param contexts 字段-上下文映射
@@ -47,11 +47,11 @@ class MapBasedContextProvider : ContextProvider {
     fun setContexts(contexts: Map<String, String>) {
         contextMap.putAll(contexts)
     }
-    
+
     override fun getContext(field: String): String? {
         return contextMap[field]
     }
-    
+
     override fun reset() {
         contextMap.clear()
     }

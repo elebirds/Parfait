@@ -11,7 +11,6 @@ import com.formdev.flatlaf.extras.FlatSVGIcon
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
 import moe.hhm.parfait.infra.i18n.I18nUtils.createButton
-import moe.hhm.parfait.infra.i18n.I18nUtils.createCheckBox
 import moe.hhm.parfait.infra.i18n.I18nUtils.createLabel
 import moe.hhm.parfait.ui.action.DatabaseAction
 import net.miginfocom.swing.MigLayout
@@ -160,7 +159,7 @@ class WelcomePanel : JPanel() {
             putClientProperty(FlatClientProperties.STYLE, "font:bold;")
         }
         add(lbPassword, "gapy 10 5")
-        val cmdForgotPassword = createNoBorderButton("button.forgot")
+        createNoBorderButton("button.forgot")
         //add(cmdForgotPassword, "grow 0,gapy 10 5")
 
         add(txtPassword)
@@ -170,12 +169,12 @@ class WelcomePanel : JPanel() {
         // marginTop = 10，不知道在java怎么实现
         add(cmdSignIn, "gapy n 10")
 
-        val lbNoAccount = createLabel("welcome.noaccount").apply {
+        createLabel("welcome.noaccount").apply {
             putClientProperty(FlatClientProperties.STYLE, "foreground:\$Label.disabledForeground;")
         }
         //add(lbNoAccount, "split 2,gapx push n")
 
-        val cmdCreateAccount = createNoBorderButton("button.create")
+        createNoBorderButton("button.create")
 
         //add(cmdCreateAccount, "gapx n push")
     }

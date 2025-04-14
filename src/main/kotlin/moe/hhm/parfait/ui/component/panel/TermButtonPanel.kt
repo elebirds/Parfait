@@ -72,25 +72,25 @@ class TermButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinCompon
      */
     private fun showAddTermDialog() {
         val owner = SwingUtilities.getWindowAncestor(this)
-        
+
         // 创建面板
         val panel = JPanel(MigLayout("wrap 2", "[][grow,fill]"))
-        
+
         // 添加字段输入
         panel.add(JLabel(I18nUtils.getText("term.dialog.add.field")))
         val fieldField = JTextField(20)
         panel.add(fieldField)
-        
+
         // 添加上下文输入
         panel.add(JLabel(I18nUtils.getText("term.dialog.add.context")))
         val contextField = JTextField(20)
         panel.add(contextField)
-        
+
         // 添加语言输入
         panel.add(JLabel(I18nUtils.getText("term.dialog.add.language")))
         val languageField = JTextField(5)
         panel.add(languageField)
-        
+
         // 添加术语值输入
         panel.add(JLabel(I18nUtils.getText("term.dialog.add.term")))
         val termField = JTextField(20)

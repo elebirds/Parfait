@@ -8,7 +8,7 @@ package moe.hhm.parfait.app.service
 
 import moe.hhm.parfait.dto.CertificateDataDTO
 import org.jetbrains.exposed.dao.id.EntityID
-import java.util.UUID
+import java.util.*
 
 interface CertificateDataService {
     suspend fun count(): Long

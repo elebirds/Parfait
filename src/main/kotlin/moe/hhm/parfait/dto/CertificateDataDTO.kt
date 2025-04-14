@@ -9,9 +9,9 @@ package moe.hhm.parfait.dto
 import moe.hhm.parfait.infra.db.certificate.CertificateDatas
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob
-import java.util.UUID
+import java.util.*
 
-data class CertificateDataDTO (
+data class CertificateDataDTO(
     val uuid: UUID?,
     val filename: String,
     val data: ByteArray,

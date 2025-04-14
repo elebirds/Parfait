@@ -96,7 +96,7 @@ class CertificateRecordsDialog(
     private fun loadData() {
         scope.launch {
             // 清空表格
-            tableModel.setRowCount(0)
+            tableModel.rowCount = 0
 
             // 加载记录
             val records = recordService.getByTemplateId(templateId)

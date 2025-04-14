@@ -3,11 +3,6 @@ package moe.hhm.parfait.utils
 import net.sourceforge.pinyin4j.PinyinHelper
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType
-import kotlin.apply
-import kotlin.text.forEachIndexed
-import kotlin.text.removeRange
-import kotlin.text.substring
-import kotlin.text.uppercase
 
 object HanziUtils {
     val of = HanyuPinyinOutputFormat().apply {

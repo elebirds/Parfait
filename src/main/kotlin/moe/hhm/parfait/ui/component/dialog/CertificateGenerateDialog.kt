@@ -6,7 +6,6 @@
 
 package moe.hhm.parfait.ui.component.dialog
 
-import com.formdev.flatlaf.FlatClientProperties
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.app.service.CertificateTemplateService
 import moe.hhm.parfait.app.service.GpaStandardService
@@ -28,12 +27,12 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.awt.Dimension
 import java.awt.Window
-import javax.swing.*
 import java.io.File
+import javax.swing.*
 
 /**
  * 证书生成对话框
- * 
+ *
  * 用于选择证书模板、GPA标准等参数，并生成学生证书
  */
 class CertificateGenerateDialog(
@@ -54,11 +53,11 @@ class CertificateGenerateDialog(
     private val checkboxUseGpa = JCheckBox(I18nUtils.getText("certificate.dialog.use.gpa"))
     private val textIssuer = JTextField()
     private val textPurpose = JTextField()
-    
+
     // 选择的模板和GPA标准
     private var selectedTemplate: CertificateTemplateDTO? = null
     private var selectedGpaStandard: GpaStandardDTO? = null
-    
+
     // 按钮
     private val buttonGenerate = object : JButton() {
         override fun isDefaultButton(): Boolean = true
@@ -66,7 +65,7 @@ class CertificateGenerateDialog(
         bindText(this, "button.ok")
         addActionListener { generateCertificate() }
     }
-    
+
     private val buttonCancel = createButton("button.cancel").apply {
         addActionListener { dispose() }
     }
@@ -105,7 +104,7 @@ class CertificateGenerateDialog(
             }
         }
         contentPane.add(comboCertificateTemplate, "grow, wrap")
-        
+
         // GPA标准选择
         contentPane.add(createLabel("certificate.dialog.generate.gpa.standard"), "grow")
         comboGpaStandard.apply {
@@ -116,7 +115,7 @@ class CertificateGenerateDialog(
             isEnabled = false // 默认禁用
         }
         contentPane.add(comboGpaStandard, "grow, wrap")
-        
+
         // 使用GPA复选框
         checkboxUseGpa.apply {
             addActionListener {
@@ -124,15 +123,15 @@ class CertificateGenerateDialog(
             }
         }
         contentPane.add(checkboxUseGpa, "span 2, grow, wrap")
-        
+
         // 签发人
         contentPane.add(createLabel("certificate.property.issuer"), "grow")
         contentPane.add(textIssuer, "grow, wrap")
-        
+
         // 用途
         contentPane.add(createLabel("certificate.property.purpose"), "grow")
         contentPane.add(textPurpose, "grow, wrap")
-        
+
         val buttonPanel = JPanel(MigLayout("insets 0, gap 10", "[fill, 50%][fill, 50%]"))
         buttonPanel.add(buttonCancel, "grow")
         buttonPanel.add(buttonGenerate, "grow")
@@ -140,14 +139,14 @@ class CertificateGenerateDialog(
         // 20px的间距
         contentPane.add(buttonPanel, "span 2, grow")
     }
-    
+
     private fun loadData() {
         scope.launch {
             // 加载证书模板列表，按照先isLike排序，再按优先级排序
             val templates = certificateService.getActiveCertificates()
                 .sortedWith(compareByDescending<CertificateTemplateDTO> { it.isLike }
                     .thenByDescending { it.priority })
-            
+
             SwingUtilities.invokeLater {
                 comboCertificateTemplate.removeAllItems()
                 templates.forEach { comboCertificateTemplate.addItem(it) }
@@ -156,13 +155,13 @@ class CertificateGenerateDialog(
                     selectedTemplate = templates[0]
                 }
             }
-            
+
             // 加载GPA标准列表，按照默认-重要-普通排序
             val gpaStandards = gpaService.getAllGpaStandards()
                 .sortedWith(compareByDescending<GpaStandardDTO> { it.isDefault }
                     .thenByDescending { it.isLike }
                     .thenBy { it.name })
-            
+
             SwingUtilities.invokeLater {
                 comboGpaStandard.removeAllItems()
                 gpaStandards.forEach { comboGpaStandard.addItem(it) }
@@ -173,24 +172,24 @@ class CertificateGenerateDialog(
             }
         }
     }
-    
+
     private fun generateCertificate() {
         // 验证必填项
         if (selectedTemplate == null) throw BusinessException("certificate.error.no.template")
-        
+
         if (checkboxUseGpa.isSelected && selectedGpaStandard == null) throw BusinessException("certificate.error.no.gpa.standard")
         if (textIssuer.text.isBlank()) throw BusinessException("certificate.error.no.issuer")
-        
+
         // 选择保存目录
         val fileChooser = JFileChooser().apply {
             fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
             dialogTitle = I18nUtils.getText("certificate.dialog.generate.save.directory")
         }
-        
+
         val result = fileChooser.showSaveDialog(this)
         if (result != JFileChooser.APPROVE_OPTION) return
         val selectedDir = fileChooser.selectedFile
-            
+
         // 收集生成证书所需的参数
         val params = CertificateGenerationParams(
             students = selectedStudents,
@@ -203,7 +202,7 @@ class CertificateGenerateDialog(
         viewModel.generateCertificates(params)
         dispose()
     }
-    
+
     // 显示对话框
     fun showDialog() {
         // 初始化界面
@@ -211,7 +210,7 @@ class CertificateGenerateDialog(
         setLocationRelativeTo(owner)
         isVisible = true
     }
-    
+
     /**
      * 证书生成参数数据类
      */

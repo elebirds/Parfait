@@ -17,17 +17,9 @@ import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.awt.BorderLayout
-import java.awt.Color
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.Font
-import java.awt.Insets
-import java.awt.Toolkit
-import java.awt.Window
+import java.awt.*
 import javax.swing.*
 import javax.swing.border.TitledBorder
-import javax.swing.plaf.basic.BasicComboBoxRenderer
 
 /**
  * 高级筛选对话框
@@ -130,7 +122,7 @@ class AdvancedFilterDialog(
         // 获取屏幕尺寸
         val screenSize = Toolkit.getDefaultToolkit().screenSize
         val screenHeight = screenSize.height
-        val screenWidth = screenSize.width
+        screenSize.width
 
         // 进一步优化宽度，确保所有内容都能显示
         val dialogWidth = 750
@@ -140,13 +132,13 @@ class AdvancedFilterDialog(
         // 设置对话框大小
         size = Dimension(dialogWidth, dialogHeight)
         preferredSize = Dimension(dialogWidth, dialogHeight)
-        
+
         // 创建带滚动条的内容面板，增加滚动单位
         val scrollPane = JScrollPane(contentPanel).apply {
             border = BorderFactory.createEmptyBorder()
             verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
             horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-            
+
             // 优化滚动体验
             getVerticalScrollBar().unitIncrement = 25
             getVerticalScrollBar().blockIncrement = 100
@@ -224,44 +216,44 @@ class AdvancedFilterDialog(
 
         // 学号和姓名放在同一行
         val idNamePanel = JPanel(MigLayout("insets 0, fillx", "[fill, 48%][grow 5][fill, 48%]"))
-        
+
         // 学号区域
         val studentIdPanel = JPanel(MigLayout("wrap 1, fillx, insets 0", "[fill]"))
         studentIdPanel.add(JLabel(I18nUtils.getText("student.property.id")))
-        
+
         val studentIdInputPanel = JPanel(MigLayout("wrap 3, fillx, insets 0", "[fill][fill][fill]"))
         studentIdInputPanel.add(textStudentId, "span 3, growx")
         studentIdInputPanel.add(rdoStudentIdExact)
         studentIdInputPanel.add(rdoStudentIdFuzzy)
         studentIdInputPanel.add(rdoStudentIdGreater)
-        
+
         studentIdPanel.add(studentIdInputPanel, "growx")
         idNamePanel.add(studentIdPanel, "growx")
-        
+
         // 中间间隔
         idNamePanel.add(Box.createHorizontalStrut(8), "")
-        
+
         // 姓名区域
         val namePanel = JPanel(MigLayout("wrap 1, fillx, insets 0", "[fill]"))
         namePanel.add(JLabel(I18nUtils.getText("student.property.name")))
-        
+
         val nameInputPanel = JPanel(MigLayout("wrap 2, fillx, insets 0", "[fill][fill]"))
         nameInputPanel.add(textName, "span 2, growx")
         nameInputPanel.add(rdoNameExact)
         nameInputPanel.add(rdoNameFuzzy)
-        
+
         namePanel.add(nameInputPanel, "growx")
         idNamePanel.add(namePanel, "growx")
-        
+
         panel.add(idNamePanel, "growx")
-        
+
         // 性别（标签和选项在同一行）
         val genderPanel = JPanel(MigLayout("fillx, insets 0", "[80!][fill][fill][fill]"))
         genderPanel.add(JLabel(I18nUtils.getText("student.property.gender")), "gapright 10")
         genderPanel.add(chkMale, "sg gender")
         genderPanel.add(chkFemale, "sg gender, gapx 5 5")
         genderPanel.add(chkUnknown, "sg gender")
-        
+
         panel.add(genderPanel, "growx, gapy 10 0")
 
         return panel
@@ -281,7 +273,7 @@ class AdvancedFilterDialog(
 
         // 第一行：状态和年级放在同一行
         val statusGradePanel = JPanel(MigLayout("insets 0, fillx", "[fill, 48%][grow 5][fill, 48%]"))
-        
+
         // 状态区域（多选按钮）
         val statusPanel = JPanel(MigLayout("fillx, insets 0", "[80!][fill][fill][fill]"))
         statusPanel.add(JLabel(I18nUtils.getText("student.property.status")), "gapright 10")
@@ -289,43 +281,43 @@ class AdvancedFilterDialog(
         statusPanel.add(chkGraduated, "sg status, gapx 5 5")
         statusPanel.add(chkAbnormal, "sg status")
         statusGradePanel.add(statusPanel, "growx")
-        
+
         // 中间间隔
         statusGradePanel.add(Box.createHorizontalStrut(8), "")
-        
+
         // 年级区域
         val gradePanel = JPanel(MigLayout("wrap 1, fillx, insets 0", "[fill]"))
         gradePanel.add(JLabel(I18nUtils.getText("student.property.grade")))
-        
+
         val gradeInputPanel = JPanel(MigLayout("wrap 3, fillx, insets 0", "[fill][fill][fill]"))
         gradeInputPanel.add(textGrade, "span 3, growx")
         gradeInputPanel.add(rdoGradeExact)
         gradeInputPanel.add(rdoGradeGreater)
         gradeInputPanel.add(rdoGradeLess)
-        
+
         gradePanel.add(gradeInputPanel, "growx")
         statusGradePanel.add(gradePanel, "growx")
-        
+
         panel.add(statusGradePanel, "growx")
 
         // 第二行：学院和专业放在同一行（改为下拉框）
         val deptMajorPanel = JPanel(MigLayout("insets 0, fillx", "[fill, 48%][grow 5][fill, 48%]"))
-        
+
         // 学院区域
         val deptPanel = JPanel(MigLayout("wrap 1, fillx, insets 0", "[fill]"))
         deptPanel.add(JLabel(I18nUtils.getText("student.property.department")))
         deptPanel.add(cboDepartment, "growx, h 30!")
         deptMajorPanel.add(deptPanel, "growx")
-        
+
         // 中间间隔
         deptMajorPanel.add(Box.createHorizontalStrut(8), "")
-        
+
         // 专业区域
         val majorPanel = JPanel(MigLayout("wrap 1, fillx, insets 0", "[fill]"))
         majorPanel.add(JLabel(I18nUtils.getText("student.property.major")))
         majorPanel.add(cboMajor, "growx, h 30!")
         deptMajorPanel.add(majorPanel, "growx")
-        
+
         panel.add(deptMajorPanel, "growx, gapy 10 0")
 
         // 第三行：班级（增大显示区域为1.5倍）
@@ -399,7 +391,7 @@ class AdvancedFilterDialog(
 
         // 获取组织信息筛选条件
         val departments = cboDepartment.getSelectedItems()
-        
+
         val majors = cboMajor.getSelectedItems()
 
         val grade = textGrade.text.trim().toIntOrNull()
@@ -453,10 +445,10 @@ class AdvancedFilterDialog(
         // 初始化界面
         pack()
         setLocationRelativeTo(owner)
-        
+
         // 确保对话框不会被缩得太小
         minimumSize = Dimension(750, 650)
-        
+
         isVisible = true
     }
 
@@ -498,7 +490,7 @@ data class AdvancedFilterCriteria(
 
 /**
  * 多选组合框
- * 
+ *
  * 支持多选的下拉组合框组件
  */
 class MultiSelectionComboBox : JPanel() {
@@ -512,24 +504,24 @@ class MultiSelectionComboBox : JPanel() {
 
     init {
         layout = BorderLayout(5, 0)
-        
+
         // 设置显示标签
         displayLabel.border = BorderFactory.createEmptyBorder(0, 5, 0, 0)
         add(displayLabel, BorderLayout.CENTER)
-        
+
         // 设置下拉按钮
         dropDownButton.preferredSize = Dimension(25, 25)
         dropDownButton.isFocusPainted = false
         dropDownButton.margin = Insets(0, 0, 0, 0)
         add(dropDownButton, BorderLayout.EAST)
-        
+
         // 设置下拉面板
         selectionPanel.layout = BoxLayout(selectionPanel, BoxLayout.Y_AXIS)
-        JScrollPane(selectionPanel).let { 
+        JScrollPane(selectionPanel).let {
             it.preferredSize = Dimension(250, 200)
             popupMenu.add(it)
         }
-        
+
         // 设置点击事件
         dropDownButton.addActionListener {
             if (popupMenu.isVisible) {
@@ -541,7 +533,7 @@ class MultiSelectionComboBox : JPanel() {
                 }
             }
         }
-        
+
         // 设置边框和最小尺寸
         border = BorderFactory.createLineBorder(Color.LIGHT_GRAY)
         preferredSize = Dimension(200, 30)
@@ -557,7 +549,7 @@ class MultiSelectionComboBox : JPanel() {
         selection.clear()
         selectionPanel.removeAll()
         items.addAll(newItems)
-        
+
         for (item in items) {
             val checkBox = JCheckBox(item)
             checkBox.addActionListener {
@@ -571,7 +563,7 @@ class MultiSelectionComboBox : JPanel() {
             checkBoxes[item] = checkBox
             selectionPanel.add(checkBox)
         }
-        
+
         // 添加全选/取消全选选项
         if (items.size > 1) {
             val selectAllCheckBox = JCheckBox("全选/取消全选")
@@ -589,7 +581,7 @@ class MultiSelectionComboBox : JPanel() {
             selectionPanel.add(JSeparator())
             selectionPanel.add(selectAllCheckBox)
         }
-        
+
         updateDisplayText()
     }
 

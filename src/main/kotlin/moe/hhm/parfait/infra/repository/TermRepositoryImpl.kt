@@ -43,14 +43,14 @@ class TermRepositoryImpl : TermRepository {
         val query = buildTermQuery(field, context, language)
         Term.find(query).firstOrNull()
     }
-    
+
     override suspend fun findByFields(fields: List<String>): Map<String, Term> = DatabaseUtils.dbQuery {
         if (fields.isEmpty()) return@dbQuery emptyMap<String, Term>()
-        
+
         val terms = Term.find { Terms.field inList fields }.toList()
         terms.associateBy { it.field }
     }
-    
+
     override suspend fun findByLanguage(language: String): List<Term> = DatabaseUtils.dbQuery {
         Term.find { Terms.language eq language }.toList()
     }
@@ -72,7 +72,7 @@ class TermRepositoryImpl : TermRepository {
             val query = buildTermQuery(data.field, data.context, data.language)
             Term.find(query).count() > 0
         }
-        
+
         if (exists) {
             val termKey = buildTermKey(data.field, data.context, data.language)
             throw BusinessException("term.error.exists", termKey)
@@ -99,7 +99,7 @@ class TermRepositoryImpl : TermRepository {
             val query = buildTermQuery(data.field, data.context, data.language, data.uuid)
             Term.find(query).count() > 0
         }
-        
+
         if (exists) {
             val termKey = buildTermKey(data.field, data.context, data.language)
             throw BusinessException("term.error.exists", termKey)
@@ -126,16 +126,21 @@ class TermRepositoryImpl : TermRepository {
     override suspend fun count(): Long = DatabaseUtils.dbQuery {
         Term.all().count()
     }
-    
-    private fun buildTermQuery(field: String, context: String?, language: String?, excludeUuid: UUID? = null): Op<Boolean> {
-        return Op.build { 
-            (Terms.field eq field) and 
-            (if(context != null) Terms.context eq context else Terms.context.isNull()) and 
-            (if(language != null) Terms.language eq language else Terms.language.isNull()) and
-            (if(excludeUuid != null) Terms.id neq excludeUuid else Op.TRUE)
+
+    private fun buildTermQuery(
+        field: String,
+        context: String?,
+        language: String?,
+        excludeUuid: UUID? = null
+    ): Op<Boolean> {
+        return Op.build {
+            (Terms.field eq field) and
+                    (if (context != null) Terms.context eq context else Terms.context.isNull()) and
+                    (if (language != null) Terms.language eq language else Terms.language.isNull()) and
+                    (if (excludeUuid != null) Terms.id neq excludeUuid else Op.TRUE)
         }
     }
-    
+
     private fun buildTermKey(field: String, context: String?, language: String?): String {
         return when {
             context != null && language != null -> "${field}_${context}/${language}"

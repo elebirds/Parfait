@@ -11,13 +11,11 @@ import kotlinx.coroutines.launch
 import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.exception.ErrorHandler
 import moe.hhm.parfait.exception.ErrorHandler.showError
-import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.ui.base.CoroutineComponent
 import moe.hhm.parfait.ui.base.DefaultCoroutineComponent
 import moe.hhm.parfait.ui.state.VMState
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import javax.swing.JOptionPane
 
 open class VMErrorHandler(
     val validStates: List<VMState>,
