@@ -8,6 +8,7 @@ package moe.hhm.parfait.ui.viewmodel
 
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import moe.hhm.parfait.app.service.GpaStandardService
 import moe.hhm.parfait.app.service.StudentSearchService
 import moe.hhm.parfait.app.service.StudentService
 import moe.hhm.parfait.dto.StudentDTO
@@ -35,6 +36,9 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
 
     // 通过Koin获取StudentSearchService实例
     private val studentSearchService: StudentSearchService by inject()
+
+    // 通过Koin获取StudentSearchService实例
+    private val gpaService: GpaStandardService by inject()
 
     // 当前选中的多个学生
     private val _selectedStudents = MutableStateFlow<List<StudentDTO>>(emptyList())
@@ -216,7 +220,26 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
             _currentFilterCriteria.value != null -> studentSearchService.searchStudents(_currentFilterCriteria.value!!)
             else -> studentService.getAllStudents()
         }
-        StudentAction.exportToExcel(students)
+        StudentAction.exportToExcel(students, gpaService.getDefault())
+        _vmState.value = VMState.DONE
+        true
+    }
+
+    /**
+     * 导出学生信息到文本
+     * @param format 文本格式
+     */
+    fun exportStudentToText(format: String) = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Process) {
+        _vmState.value = VMState.PROCESSING
+        val students = when {
+            _selectedStudents.value.isNotEmpty()-> _selectedStudents.value
+            _currentAdvancedFilterCriteria.value != null -> studentSearchService.searchAdvancedStudents(
+                _currentAdvancedFilterCriteria.value!!
+            )
+            _currentFilterCriteria.value != null -> studentSearchService.searchStudents(_currentFilterCriteria.value!!)
+            else -> studentService.getAllStudents()
+        }
+        StudentAction.exportToText(students, gpaService.getDefault(), format)
         _vmState.value = VMState.DONE
         true
     }

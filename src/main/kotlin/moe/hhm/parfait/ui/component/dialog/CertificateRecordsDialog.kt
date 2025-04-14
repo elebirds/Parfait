@@ -54,7 +54,7 @@ class CertificateRecordsDialog(
     }
 
     private fun initDialog() {
-        title = I18nUtils.getFormattedText("certificate.records.dialog.title", templateName)
+        title = I18nUtils.getFormattedText("certificate.record.dialog.title", templateName)
         // 设置对话框属性
         isModal = true
         defaultCloseOperation = DISPOSE_ON_CLOSE

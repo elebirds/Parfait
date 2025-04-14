@@ -123,7 +123,9 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
 
     private val buttonExportInformationStudent: JButton = createButton("student.action.export").apply {
         addActionListener {
-            viewModel.exportStudentToExcel()
+            // 打开导出对话框
+            val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
+            moe.hhm.parfait.ui.component.dialog.StudentExportDialog.show(owner)
         }
     }
 

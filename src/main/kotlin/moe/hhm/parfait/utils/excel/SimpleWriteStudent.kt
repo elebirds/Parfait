@@ -24,5 +24,11 @@ data class SimpleWriteStudent(
     @ExcelProperty("年级")
     val grade: Int,
     @ExcelProperty("班级")
-    val classGroup: String
+    val classGroup: String,
+    @ExcelProperty("加权平均分")
+    val scoreWeighted: String,
+    @ExcelProperty("简单平均分")
+    val scoreSimple: String,
+    @ExcelProperty("绩点")
+    val gpa: String
 )
