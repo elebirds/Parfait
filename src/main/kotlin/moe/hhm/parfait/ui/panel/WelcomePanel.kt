@@ -52,7 +52,7 @@ class WelcomePanel : JPanel() {
                 password = String(txtPassword.password),
                 databaseName = txtDatabaseName.text
             )
-            
+
             // 如果连接成功，保存登录信息
             if (success) {
                 LoginPrefsManager.saveLoginInfo(
@@ -119,7 +119,7 @@ class WelcomePanel : JPanel() {
             FlatSVGIcon("ui/nwicons/database.svg", 0.068f)
         )
     }
-    
+
     // 记住密码复选框
     private val rememberCheckBox = createCheckBox("welcome.remember").apply {
         addActionListener {
@@ -213,13 +213,13 @@ class WelcomePanel : JPanel() {
 
         add(cmdCreateAccount, "gapx n push")
     }
-    
+
     /**
      * 从保存的首选项中加载登录信息
      */
     private fun loadSavedLoginInfo() {
         val loginInfo = LoginPrefsManager.getLoginInfo()
-        
+
         // 如果有保存的登录信息，则填充表单
         if (loginInfo != null) {
             txtAddress.text = loginInfo.address

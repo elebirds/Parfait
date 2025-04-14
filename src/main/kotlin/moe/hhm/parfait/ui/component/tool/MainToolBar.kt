@@ -16,15 +16,15 @@ import moe.hhm.parfait.ui.component.dialog.AdvancedFilterDialog
 import moe.hhm.parfait.ui.component.dialog.SearchFilterDialog
 import moe.hhm.parfait.ui.component.dialog.TermSearchFilterDialog
 import moe.hhm.parfait.ui.state.FilterState
+import moe.hhm.parfait.ui.viewmodel.CertificateTemplateViewModel
+import moe.hhm.parfait.ui.viewmodel.GpaStandardViewModel
 import moe.hhm.parfait.ui.viewmodel.StudentDataViewModel
 import moe.hhm.parfait.ui.viewmodel.TermViewModel
 import org.koin.core.component.KoinComponent
 import javax.swing.JButton
+import javax.swing.JPanel
 import javax.swing.JToolBar
 import javax.swing.SwingUtilities
-import moe.hhm.parfait.ui.viewmodel.CertificateTemplateViewModel
-import moe.hhm.parfait.ui.viewmodel.GpaStandardViewModel
-import javax.swing.JPanel
 
 class MainToolBar(
     private val parent: JPanel,
@@ -90,16 +90,16 @@ class MainToolBar(
         add(refreshButton)
         add(redrawButton)
         addSeparator()
-        
+
         // 初始状态下禁用搜索和筛选按钮
         searchButton.isEnabled = false
         filterButton.isEnabled = false
         clearFilterButton.isEnabled = false
-        
+
         observer()
         setCurrentIndex(0) // 默认设置为学生视图
     }
-    
+
     override fun observer() {
         // 监听术语视图模型的筛选状态变化
         scope.launch {
@@ -110,7 +110,7 @@ class MainToolBar(
                 }
             }
         }
-        
+
         // 监听学生视图模型的筛选状态变化
         scope.launch {
             studentViewModel.filterState.collectLatest { filterState ->
@@ -134,17 +134,17 @@ class MainToolBar(
             3 -> termViewModel.forceReload()
         }
     }
-    
+
     /**
      * 设置当前视图索引，启用/禁用相应的搜索和筛选按钮
      */
     fun setCurrentIndex(index: Int) {
         currentIndex = index
-        
+
         // 学生视图和术语视图启用搜索和筛选按钮
         searchButton.isEnabled = index == 0 || index == 3
         filterButton.isEnabled = index == 0
-        
+
         // 根据当前筛选状态启用/禁用清除筛选按钮
         when (index) {
             0 -> clearFilterButton.isEnabled = studentViewModel.filterState.value == FilterState.FILTERED

@@ -6,9 +6,9 @@
 
 package moe.hhm.parfait.infra.persist
 
-import java.util.prefs.Preferences
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import java.util.prefs.Preferences
 
 /**
  * 登录首选项管理器
@@ -50,7 +50,7 @@ object LoginPrefsManager {
             prefs.put(KEY_USERNAME, username)
             prefs.put(KEY_PASSWORD, password)
             prefs.putBoolean(KEY_REMEMBER, true)
-            
+
             // 设置过期时间（当前时间 + 30天）
             val expiryDate = LocalDateTime.now().plus(EXPIRY_DAYS, ChronoUnit.DAYS)
             prefs.put(KEY_EXPIRY, expiryDate.toString())
@@ -58,7 +58,7 @@ object LoginPrefsManager {
             // 如果不记住密码，则清除所有存储的信息
             clearLoginInfo()
         }
-        
+
         // 确保首选项被立即写入磁盘
         try {
             prefs.flush()
@@ -78,7 +78,7 @@ object LoginPrefsManager {
         prefs.remove(KEY_PASSWORD)
         prefs.remove(KEY_REMEMBER)
         prefs.remove(KEY_EXPIRY)
-        
+
         try {
             prefs.flush()
         } catch (e: Exception) {
@@ -96,7 +96,7 @@ object LoginPrefsManager {
         if (!prefs.getBoolean(KEY_REMEMBER, false)) {
             return null
         }
-        
+
         // 检查过期时间
         val expiryString = prefs.get(KEY_EXPIRY, null) ?: return null
         try {
@@ -111,7 +111,7 @@ object LoginPrefsManager {
             clearLoginInfo()
             return null
         }
-        
+
         // 返回保存的信息
         return LoginInfo(
             address = prefs.get(KEY_ADDRESS, ""),

@@ -65,7 +65,8 @@ class ParfaitApp {
             FlatLafUtils.fontInit()
             FlatLafUtils.setLookAndFeel()
             FlatLafUtils.installInspector()
-
+            // ThemeUtils.init()
+            // FontUtils.init()
             // 创建并显示主窗口
             val mainFrame = ParfaitFrame()
             mainFrame.isVisible = true

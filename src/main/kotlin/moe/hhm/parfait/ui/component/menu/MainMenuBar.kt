@@ -16,6 +16,8 @@ class MainMenuBar : JMenuBar() {
     init {
         add(fileMenu)
         add(languageMenu)
+        // add(ThemeUtils.themeMenu)
+        // add(FontUtils.fontMenu)
         add(helpMenu)
     }
 }

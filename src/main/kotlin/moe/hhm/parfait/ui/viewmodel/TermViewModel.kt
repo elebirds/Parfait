@@ -6,11 +6,7 @@
 
 package moe.hhm.parfait.ui.viewmodel
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import moe.hhm.parfait.app.service.TermSearchService
 import moe.hhm.parfait.app.service.TermService
@@ -91,11 +87,11 @@ class TermViewModel : PaginationDataViewModel<List<TermDTO>>(emptyList()), KoinC
 
         // 获取总术语数量
         val totalCount =
-            if(_currentFilterCriteria.value != null) searchService.countSearchResults(_currentFilterCriteria.value!!)
+            if (_currentFilterCriteria.value != null) searchService.countSearchResults(_currentFilterCriteria.value!!)
             else service.count()
 
         val terms =
-            if(_currentFilterCriteria.value != null) searchService.searchTermsPage(
+            if (_currentFilterCriteria.value != null) searchService.searchTermsPage(
                 _currentFilterCriteria.value!!,
                 paginationState.value.currentPage,
                 paginationState.value.pageSize

@@ -35,6 +35,13 @@ object CertificateTemplates : UUIDTable("certificate_templates") {
                 description = "中英双语对照成绩证明，显示学生的基本信息与加权平均分"
                 isActive = true
             }
+            CertificateTemplate.new {
+                name = "学籍证明"
+                contentPath = "jar::registration_default.docx"
+                category = "学工"
+                description = "中英双语对照血迹证明，显示学生的基本信息与修读状态"
+                isActive = true
+            }
         }
     }
 }

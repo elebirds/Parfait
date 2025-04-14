@@ -34,7 +34,7 @@ class ParfaitFrame : JFrame() {
 
     init {
         setDefaultCloseOperation(EXIT_ON_CLOSE)
-        size = Dimension(1000, 680)
+        size = Dimension(1000, 750)
         setLocationRelativeTo(null)
         jMenuBar = menuBar
 
