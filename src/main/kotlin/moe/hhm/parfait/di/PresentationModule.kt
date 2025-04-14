@@ -13,7 +13,6 @@ val presentationModule = module {
     // ViewModel
     single<StudentDataViewModel> { StudentDataViewModel() }
     single<GpaStandardViewModel> { GpaStandardViewModel() }
-    single<StatisticsViewModel> { StatisticsViewModel() }
     single<CertificateTemplateViewModel> { CertificateTemplateViewModel() }
     single<TermViewModel> { TermViewModel() }
 }

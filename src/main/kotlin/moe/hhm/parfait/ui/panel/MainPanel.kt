@@ -19,7 +19,6 @@ class MainPanel : JPanel() {
     private val studentData = StudentDataView()
     private val gpaStandard = GpaStandardView()
     private val certificateTemplate = CertificateTemplateView()
-    private val statistics = StatisticsView()
     private val termView = TermView()
     private val contentPane = JTabbedPane().apply {
         addTab("", studentData)
@@ -30,8 +29,6 @@ class MainPanel : JPanel() {
         I18nUtils.bindProperty(this, "main.certificate") { c, v -> setTitleAt(2, v) }
         addTab("", termView)
         I18nUtils.bindProperty(this, "main.term") { c, v -> setTitleAt(3, v) }
-        addTab("", statistics)
-        I18nUtils.bindProperty(this, "main.statistics") { c, v -> setTitleAt(4, v) }
     }
     private val contentPanel = JPanel().apply {
         this.layout = MigLayout("insets dialog,hidemode 3", "[grow,fill]", "[][grow,fill]")

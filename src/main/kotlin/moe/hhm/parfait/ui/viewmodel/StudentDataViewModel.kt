@@ -14,6 +14,7 @@ import moe.hhm.parfait.app.service.StudentService
 import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.ui.action.StudentAction
 import moe.hhm.parfait.ui.component.dialog.AdvancedFilterCriteria
 import moe.hhm.parfait.ui.component.dialog.SearchFilterCriteria
@@ -26,6 +27,7 @@ import org.koin.core.component.inject
 import java.util.*
 import java.io.File
 import moe.hhm.parfait.ui.component.dialog.CertificateGenerateDialog
+import javax.swing.JOptionPane
 
 /**
  * 学生数据视图模型
@@ -224,6 +226,8 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
         val students = getPriorityStudents()
         StudentAction.exportToExcel(students, gpaService.getDefault(), selectedFilePath)
         _vmState.value = VMState.DONE
+
+        JOptionPane.showMessageDialog(null, I18nUtils.getText("student.export.success"), I18nUtils.getText("button.success"), JOptionPane.INFORMATION_MESSAGE)
         true
     }
 
@@ -236,6 +240,8 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
         val students = getPriorityStudents()
         StudentAction.exportToText(students, gpaService.getDefault(), format)
         _vmState.value = VMState.DONE
+
+        JOptionPane.showMessageDialog(null, I18nUtils.getText("student.export.success"), I18nUtils.getText("button.success"), JOptionPane.INFORMATION_MESSAGE)
         true
     }
 
