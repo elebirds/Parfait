@@ -55,6 +55,8 @@ interface StudentRepository {
      */
     suspend fun addStudent(student: StudentDTO): EntityID<UUID>
 
+    suspend fun addAllStudents(students: List<StudentDTO>): List<EntityID<UUID>>
+
     /**
      * 更新学生成绩
      */

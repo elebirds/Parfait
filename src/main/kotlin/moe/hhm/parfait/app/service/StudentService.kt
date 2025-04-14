@@ -18,6 +18,7 @@ interface StudentService {
     suspend fun getStudentByStudentId(name:String): Student?
     suspend fun getStudentByUUID(uuid: UUID): Student?
     suspend fun addStudent(student: StudentDTO): EntityID<UUID>
+    suspend fun addAllStudents(students: List<StudentDTO>): List<EntityID<UUID>>
     suspend fun deleteStudent(uuid: UUID): Boolean
     suspend fun updateInfo(student: StudentDTO): Boolean
     suspend fun updateScore(student: StudentDTO): Boolean

@@ -11,9 +11,9 @@ import moe.hhm.parfait.infra.i18n.I18nUtils
 class BusinessException : Throwable {
     constructor(msgKey: String) : super(I18nUtils.getText(msgKey))
     constructor(msgKey: String, cause: Throwable) : super(I18nUtils.getText(msgKey), cause)
-    constructor(msgKey: String, vararg args: Any?) : super(I18nUtils.getFormattedText(msgKey, args))
-    constructor(msgKey: String, vararg args: Any?, cause: Throwable) : super(
-        I18nUtils.getFormattedText(msgKey, args),
+    constructor(msgKey: String, vararg args: Any) : super(I18nUtils.getFormattedText(msgKey, *args))
+    constructor(msgKey: String, cause: Throwable, vararg args: Any) : super(
+        I18nUtils.getFormattedText(msgKey, *args),
         cause
     )
 

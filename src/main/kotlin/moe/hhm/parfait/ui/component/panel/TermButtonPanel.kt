@@ -18,7 +18,6 @@ import moe.hhm.parfait.ui.viewmodel.TermViewModel
 import net.miginfocom.swing.MigLayout
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.time.LocalDateTime
 import javax.swing.*
 
 /**
@@ -62,36 +61,10 @@ class TermButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinCompon
         }
     }
 
-    private val buttonExport: JButton = createButton("term.action.export").apply {
-        addActionListener {
-            // TODO: 实现导出功能
-            JOptionPane.showMessageDialog(
-                SwingUtilities.getWindowAncestor(this@TermButtonPanel),
-                I18nUtils.getText("term.dialog.export.notimplemented"),
-                I18nUtils.getText("term.dialog.message.title"),
-                JOptionPane.INFORMATION_MESSAGE
-            )
-        }
-    }
-
-    private val buttonImport: JButton = createButton("term.action.import").apply {
-        addActionListener {
-            // TODO: 实现导入功能
-            JOptionPane.showMessageDialog(
-                SwingUtilities.getWindowAncestor(this@TermButtonPanel),
-                I18nUtils.getText("term.dialog.import.notimplemented"),
-                I18nUtils.getText("term.dialog.message.title"),
-                JOptionPane.INFORMATION_MESSAGE
-            )
-        }
-    }
-
     init {
         this.layout = MigLayout("hidemode 3", "[fill]", "[][][][]")
         this.add(buttonAdd, "cell 0 0")
         this.add(buttonDelete, "cell 0 1")
-        this.add(buttonExport, "cell 0 2")
-        this.add(buttonImport, "cell 0 3")
     }
 
     /**
@@ -183,7 +156,5 @@ class TermButtonPanel(parent: CoroutineComponent? = null) : JPanel(), KoinCompon
         // 设置按钮启用状态
         buttonAdd.isEnabled = enabled
         buttonDelete.isEnabled = enabled && hasSelection
-        buttonExport.isEnabled = enabled
-        buttonImport.isEnabled = enabled
     }
 } 

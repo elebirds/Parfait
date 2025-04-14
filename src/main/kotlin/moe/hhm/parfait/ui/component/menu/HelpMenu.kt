@@ -31,7 +31,7 @@ class HelpMenu : JMenu() {
                 putClientProperty(FlatClientProperties.STYLE_CLASS, "h1")
             }
 
-            val link = "https://hhm.moe/"
+            /*val link = "https://hhm.moe/"
             val linkLabel = JLabel("<html><a href=\"#\">$link</a></html>").apply {
                 cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
                 addMouseListener(object : MouseAdapter() {
@@ -43,7 +43,7 @@ class HelpMenu : JMenu() {
                         }
                     }
                 })
-            }
+            }*/
 
             val currentYear = Year.now()
             val javaVersion = System.getProperty("java.version")
@@ -54,9 +54,9 @@ class HelpMenu : JMenu() {
                     titleLabel,
                     I18nUtils.getText("about.description"),
                     " ",
-                    "Copyright 2023-$currentYear Elebird(Grow Zheng).",
+                    //"Copyright 2023-$currentYear Elebird(Grow Zheng).",
                     "All rights reserved.",
-                    linkLabel,
+                    //linkLabel,
                     I18nUtils.getFormattedText("about.runtime", javaVersion, osName),
                 ),
                 I18nUtils.getText("about.title"),

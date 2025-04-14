@@ -8,10 +8,12 @@ package moe.hhm.parfait.ui.viewmodel
 
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.swing.SwingDispatcher
 import moe.hhm.parfait.app.service.GpaStandardService
 import moe.hhm.parfait.app.service.StudentSearchService
 import moe.hhm.parfait.app.service.StudentService
 import moe.hhm.parfait.dto.StudentDTO
+import moe.hhm.parfait.exception.BusinessException
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
 import moe.hhm.parfait.infra.i18n.I18nUtils
@@ -28,6 +30,7 @@ import java.util.*
 import java.io.File
 import moe.hhm.parfait.ui.component.dialog.CertificateGenerateDialog
 import javax.swing.JOptionPane
+import javax.swing.SwingUtilities
 
 /**
  * 学生数据视图模型
@@ -242,6 +245,50 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
         _vmState.value = VMState.DONE
 
         JOptionPane.showMessageDialog(null, I18nUtils.getText("student.export.success"), I18nUtils.getText("button.success"), JOptionPane.INFORMATION_MESSAGE)
+        true
+    }
+
+    fun importStudentFromText(texts: List<String>) = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Modify) {
+        texts.mapIndexed { index, line ->
+            try {
+                val fields = line.split(",").map { it.trim() }
+                StudentDTO(
+                    uuid = null,
+                    studentId = fields[0],
+                    name = fields[1],
+                    gender = when (fields[2]) {
+                        I18nUtils.getText("student.gender.male"),"男","M","1" -> StudentDTO.Gender.MALE
+                        I18nUtils.getText("student.gender.female"),"女","F","2" -> StudentDTO.Gender.FEMALE
+                        else -> StudentDTO.Gender.UNKNOWN
+                    },
+                    status = when (fields[3].toString()) {
+                        I18nUtils.getText("student.status.enrolled"),"在籍" -> StudentDTO.Status.ENROLLED
+                        I18nUtils.getText("student.status.suspended"),"休学" -> StudentDTO.Status.SUSPENDED
+                        I18nUtils.getText("student.status.graduated"),"毕业" -> StudentDTO.Status.GRADUATED
+                        I18nUtils.getText("student.status.abnormal"),"异常" -> StudentDTO.Status.ABNORMAL
+                        else -> StudentDTO.Status.ENROLLED
+                    },
+                    department = fields[4],
+                    major = fields[5],
+                    grade = fields[6].toIntOrNull() ?: 2025,
+                    classGroup = fields[7],
+                    scores = emptyList()
+                )
+            } catch (e: Exception) {
+                throw BusinessException("student.import.text.format.error.at.line", e, index + 1)
+            }
+        }.apply {
+            _vmState.value = VMState.LOADING
+            studentService.addAllStudents(this)
+            SwingUtilities.invokeLater {
+                JOptionPane.showMessageDialog(
+                    null,
+                    I18nUtils.getFormattedText("student.import.all.success", this.size),
+                    I18nUtils.getText("button.success"),
+                    JOptionPane.INFORMATION_MESSAGE
+                )
+            }
+        }
         true
     }
 

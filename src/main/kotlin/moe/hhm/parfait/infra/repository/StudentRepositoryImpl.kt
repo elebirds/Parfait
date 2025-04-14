@@ -65,6 +65,19 @@ class StudentRepositoryImpl : StudentRepository {
         }
     }
 
+    override suspend fun addAllStudents(students: List<StudentDTO>): List<EntityID<UUID>> {
+        val ids = mutableListOf<EntityID<UUID>>()
+        DatabaseUtils.dbQuery {
+            students.forEach { student ->
+                if (Student.find { studentId eq student.studentId }.count() > 0) throw BusinessException("student.error.id.exists", student.studentId)
+                ids.add(Students.insertAndGetId {
+                    student.into(it)
+                })
+            }
+        }
+        return ids
+    }
+
     override suspend fun updateInfo(student: StudentDTO): Boolean {
         if (student.uuid == null) throw BusinessException("student.error.uuid.notExists")
         if (!isExistByUUID(student.uuid)) throw BusinessException("student.error.uuid.notExists")

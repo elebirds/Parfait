@@ -159,24 +159,25 @@ class WelcomePanel : JPanel() {
         val lbPassword = createLabel("form.password").apply {
             putClientProperty(FlatClientProperties.STYLE, "font:bold;")
         }
-        add(lbPassword, "gapy 10 5,split 2")
+        add(lbPassword, "gapy 10 5")
         val cmdForgotPassword = createNoBorderButton("button.forgot")
-        add(cmdForgotPassword, "grow 0,gapy 10 5")
+        //add(cmdForgotPassword, "grow 0,gapy 10 5")
 
         add(txtPassword)
 
 
-        add(createCheckBox("welcome.remember"), "gapy 10 10")
+        //add(createCheckBox("welcome.remember"), "gapy 10 10")
+        // marginTop = 10，不知道在java怎么实现
         add(cmdSignIn, "gapy n 10")
 
         val lbNoAccount = createLabel("welcome.noaccount").apply {
             putClientProperty(FlatClientProperties.STYLE, "foreground:\$Label.disabledForeground;")
         }
-        add(lbNoAccount, "split 2,gapx push n")
+        //add(lbNoAccount, "split 2,gapx push n")
 
         val cmdCreateAccount = createNoBorderButton("button.create")
 
-        add(cmdCreateAccount, "gapx n push")
+        //add(cmdCreateAccount, "gapx n push")
     }
 
     private fun createSeparator(): JSeparator = JSeparator().apply {

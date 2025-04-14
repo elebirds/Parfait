@@ -23,7 +23,7 @@ open class VMErrorHandler(
     val validStates: List<VMState>,
     val autoReload: Boolean,
     val exceptionPause: Boolean,
-    val exceptionFatal: Boolean
+    val exceptionFatal: Boolean,
 )
 
 sealed class VMErrorHandlerChooser {
@@ -89,6 +89,7 @@ abstract class BaseViewModel : CoroutineComponent by DefaultCoroutineComponent()
             try {
                 res = block()
             } catch (e: BusinessException) {
+                _vmState.value = VMState.DONE
                 _error.emit(e)
             } catch (e: Exception) {
                 if (handler.exceptionFatal) {

@@ -18,10 +18,13 @@ import moe.hhm.parfait.infra.db.certificate.CertificateTemplates
 import moe.hhm.parfait.infra.db.term.Terms
 import moe.hhm.parfait.infra.db.gpa.GpaStandards
 import moe.hhm.parfait.infra.db.student.Students
+import moe.hhm.parfait.infra.i18n.I18nUtils
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
+import javax.swing.JOptionPane
+import javax.swing.SwingUtilities
 
 enum class DatabaseFactoryMode {
     ONLINE,
@@ -137,8 +140,15 @@ object DatabaseFactory {
                 logger.info("数据库连接成功")
             } catch (e: Throwable) {
                 logger.error("数据库连接失败", e)
-                _connectionState.value = DatabaseConnectionState.Disconnected()
-                throw e
+                disconnect()
+                SwingUtilities.invokeLater {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        I18nUtils.getFormattedText("error.database.connection.detail", e.message ?: ""),
+                        I18nUtils.getText("error.database.connection.title"),
+                        JOptionPane.ERROR_MESSAGE
+                    )
+                }
             }
         }
     }

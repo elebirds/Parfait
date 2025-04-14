@@ -11,6 +11,7 @@ import moe.hhm.parfait.domain.model.student.Student
 import moe.hhm.parfait.domain.repository.StudentRepository
 import moe.hhm.parfait.dto.ScoreDTO
 import moe.hhm.parfait.dto.StudentDTO
+import org.jetbrains.exposed.dao.id.EntityID
 import java.util.*
 
 class StudentServiceImpl(private val rep: StudentRepository) : StudentService {
@@ -31,6 +32,9 @@ class StudentServiceImpl(private val rep: StudentRepository) : StudentService {
     }
 
     override suspend fun addStudent(student: StudentDTO) = rep.addStudent(student)
+    override suspend fun addAllStudents(students: List<StudentDTO>): List<EntityID<UUID>> {
+        return rep.addAllStudents(students)
+    }
 
     override suspend fun deleteStudent(uuid: UUID): Boolean = rep.delete(uuid)
 

@@ -101,7 +101,8 @@ class StudentDataButtonPanel(parent: CoroutineComponent? = null) : JPanel(), Koi
     private val buttonImport: JButton = createButton("student.action.import").apply {
         addActionListener {
             // 打开导入对话框
-            // TODO: 实现导入功能
+            val owner = SwingUtilities.getWindowAncestor(this@StudentDataButtonPanel)
+            moe.hhm.parfait.ui.component.dialog.StudentImportDialog.show(owner)
         }
     }
 
