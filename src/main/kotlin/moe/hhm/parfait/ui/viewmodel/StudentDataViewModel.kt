@@ -10,7 +10,6 @@ import com.alibaba.excel.EasyExcel
 import com.alibaba.excel.read.listener.PageReadListener
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.swing.SwingDispatcher
 import moe.hhm.parfait.app.service.GpaStandardService
 import moe.hhm.parfait.app.service.StudentSearchService
 import moe.hhm.parfait.app.service.StudentService
@@ -21,20 +20,19 @@ import moe.hhm.parfait.infra.db.DatabaseFactory
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.ui.action.StudentAction
 import moe.hhm.parfait.ui.component.dialog.AdvancedFilterCriteria
+import moe.hhm.parfait.ui.component.dialog.CertificateGenerateDialog
 import moe.hhm.parfait.ui.component.dialog.SearchFilterCriteria
 import moe.hhm.parfait.ui.state.FilterState
 import moe.hhm.parfait.ui.state.VMState
 import moe.hhm.parfait.ui.viewmodel.common.PaginationDataViewModel
 import moe.hhm.parfait.ui.viewmodel.common.VMErrorHandlerChooser
+import moe.hhm.parfait.utils.excel.SimpleReadStudent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.util.*
 import java.io.File
-import moe.hhm.parfait.ui.component.dialog.CertificateGenerateDialog
-import moe.hhm.parfait.utils.excel.SimpleReadStudent
+import java.util.*
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
-import kotlin.collections.map
 
 /**
  * 学生数据视图模型
@@ -220,23 +218,30 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
         }
 
     suspend fun getPriorityStudents() = when {
-        _selectedStudents.value.isNotEmpty()-> _selectedStudents.value
+        _selectedStudents.value.isNotEmpty() -> _selectedStudents.value
         _currentAdvancedFilterCriteria.value != null -> studentSearchService.searchAdvancedStudents(
             _currentAdvancedFilterCriteria.value!!
         )
+
         _currentFilterCriteria.value != null -> studentSearchService.searchStudents(_currentFilterCriteria.value!!)
         else -> studentService.getAllStudents()
     }
 
-    fun exportStudentToExcel(selectedFilePath: String) = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Process) {
-        _vmState.value = VMState.PROCESSING
-        val students = getPriorityStudents()
-        StudentAction.exportToExcel(students, gpaService.getDefault(), selectedFilePath)
-        _vmState.value = VMState.DONE
+    fun exportStudentToExcel(selectedFilePath: String) =
+        suspendProcessWithErrorHandling(VMErrorHandlerChooser.Process) {
+            _vmState.value = VMState.PROCESSING
+            val students = getPriorityStudents()
+            StudentAction.exportToExcel(students, gpaService.getDefault(), selectedFilePath)
+            _vmState.value = VMState.DONE
 
-        JOptionPane.showMessageDialog(null, I18nUtils.getText("student.export.success"), I18nUtils.getText("button.success"), JOptionPane.INFORMATION_MESSAGE)
-        true
-    }
+            JOptionPane.showMessageDialog(
+                null,
+                I18nUtils.getText("student.export.success"),
+                I18nUtils.getText("button.success"),
+                JOptionPane.INFORMATION_MESSAGE
+            )
+            true
+        }
 
     /**
      * 导出学生信息到文本
@@ -248,7 +253,12 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
         StudentAction.exportToText(students, gpaService.getDefault(), format)
         _vmState.value = VMState.DONE
 
-        JOptionPane.showMessageDialog(null, I18nUtils.getText("student.export.success"), I18nUtils.getText("button.success"), JOptionPane.INFORMATION_MESSAGE)
+        JOptionPane.showMessageDialog(
+            null,
+            I18nUtils.getText("student.export.success"),
+            I18nUtils.getText("button.success"),
+            JOptionPane.INFORMATION_MESSAGE
+        )
         true
     }
 
@@ -261,15 +271,15 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
                     studentId = fields[0],
                     name = fields[1],
                     gender = when (fields[2]) {
-                        I18nUtils.getText("student.gender.male"),"男","M","1" -> StudentDTO.Gender.MALE
-                        I18nUtils.getText("student.gender.female"),"女","F","2" -> StudentDTO.Gender.FEMALE
+                        I18nUtils.getText("student.gender.male"), "男", "M", "1" -> StudentDTO.Gender.MALE
+                        I18nUtils.getText("student.gender.female"), "女", "F", "2" -> StudentDTO.Gender.FEMALE
                         else -> StudentDTO.Gender.UNKNOWN
                     },
                     status = when (fields[3].toString()) {
-                        I18nUtils.getText("student.status.enrolled"),"在籍" -> StudentDTO.Status.ENROLLED
-                        I18nUtils.getText("student.status.suspended"),"休学" -> StudentDTO.Status.SUSPENDED
-                        I18nUtils.getText("student.status.graduated"),"毕业" -> StudentDTO.Status.GRADUATED
-                        I18nUtils.getText("student.status.abnormal"),"异常" -> StudentDTO.Status.ABNORMAL
+                        I18nUtils.getText("student.status.enrolled"), "在籍" -> StudentDTO.Status.ENROLLED
+                        I18nUtils.getText("student.status.suspended"), "休学" -> StudentDTO.Status.SUSPENDED
+                        I18nUtils.getText("student.status.graduated"), "毕业" -> StudentDTO.Status.GRADUATED
+                        I18nUtils.getText("student.status.abnormal"), "异常" -> StudentDTO.Status.ABNORMAL
                         else -> StudentDTO.Status.ENROLLED
                     },
                     department = fields[4],
@@ -341,14 +351,15 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
      * @param params 证书生成参数
      * @return 生成的证书文件列表
      */
-    fun generateCertificates(params: CertificateGenerateDialog.CertificateGenerationParams)
-        = suspendProcessWithErrorHandling(
-        VMErrorHandlerChooser.Process){
-        _vmState.value = VMState.PROCESSING
-        StudentAction.generateCertificates(params)
-        _vmState.value = VMState.DONE
-        true
-    }
+    fun generateCertificates(params: CertificateGenerateDialog.CertificateGenerationParams) =
+        suspendProcessWithErrorHandling(
+            VMErrorHandlerChooser.Process
+        ) {
+            _vmState.value = VMState.PROCESSING
+            StudentAction.generateCertificates(params)
+            _vmState.value = VMState.DONE
+            true
+        }
 
     /**
      * 搜索学生
