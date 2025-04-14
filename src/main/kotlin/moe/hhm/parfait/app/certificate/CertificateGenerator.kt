@@ -26,6 +26,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 import javax.swing.JOptionPane
@@ -169,7 +170,7 @@ class CertificateGenerator : KoinComponent {
         try {
             val record = CertificateRecordDTO(
                 templateId = params.template.uuid!!,
-                issuedDate = LocalDate.now(),
+                issuedDate = LocalDateTime.now(),
                 issuedBy = params.issuer,
                 content = "${student.studentId}-${student.name}-${params.template.name}",
                 purpose = params.purpose

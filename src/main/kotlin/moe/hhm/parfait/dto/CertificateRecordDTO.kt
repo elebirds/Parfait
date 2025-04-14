@@ -16,7 +16,7 @@ import java.util.UUID
 data class CertificateRecordDTO(
     val uuid: UUID? = null,
     val templateId: UUID,
-    val issuedDate: LocalDate = LocalDate.now(),
+    val issuedDate: LocalDateTime = LocalDateTime.now(),
     val issuedBy: String,
     val content: String,
     val purpose: String? = null
