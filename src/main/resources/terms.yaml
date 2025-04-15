@@ -1,0 +1,425 @@
+# 术语配置文件 - 专业名称多语言翻译
+# 每个术语按照属性结构定义: field(字段), context(上下文), language(语言), term(术语值)
+
+# 通用
+- field: university
+  language: zh
+  term: 中国测试大学
+
+- field: university
+  language: en
+  term: China Test University
+
+- field: university
+  language: fr
+  term: Université de Test Chinois
+
+- field: university
+  language: jp
+  term: 中国テスト大学
+
+# 性别
+- field: gender
+  context: UNKNOWN
+  language: zh
+  term: 未知
+
+- field: gender
+  context: MALE
+  language: zh
+  term: 男
+
+- field: gender
+  context: FEMALE
+  language: zh
+  term: 女
+
+- field: gender
+  context: UNKNOWN
+  language: en
+  term: Unknown
+
+- field: gender
+  context: MALE
+  language: en
+  term: Male
+
+- field: gender
+  context: FEMALE
+  language: en
+  term: Female
+
+- field: gender
+  context: UNKNOWN
+  language: fr
+  term: Inconnu
+
+- field: gender
+  context: MALE
+  language: fr
+  term: Masculin
+
+- field: gender
+  context: FEMALE
+  language: fr
+  term: Féminin
+
+- field: gender
+  context: UNKNOWN
+  language: jp
+  term: 不明
+
+- field: gender
+  context: MALE
+  language: jp
+  term: 男
+
+- field: gender
+  context: FEMALE
+  language: jp
+  term: 女
+
+# 学生状态
+- field: status
+  context: ENROLLED
+  language: zh
+  term: 在籍
+
+- field: status
+  context: GRADUATED
+  language: zh
+  term: 毕业
+
+- field: status
+  context: SUSPENDED
+  language: zh
+  term: 休学
+
+- field: status
+  context: ABNORMAL
+  language: zh
+  term: 异常
+
+- field: status
+  context: ENROLLED
+  language: en
+  term: Enrolled
+
+- field: status
+  context: GRADUATED
+  language: en
+  term: Graduated
+
+- field: status
+  context: SUSPENDED
+  language: en
+  term: Suspended
+
+- field: status
+  context: ABNORMAL
+  language: en
+  term: Abnormal
+
+- field: status
+  context: ENROLLED
+  language: fr
+  term: Enregistré
+
+- field: status
+  context: GRADUATED
+  language: fr
+  term: Gradué
+
+- field: status
+  context: SUSPENDED
+  language: fr
+  term: Suspendu
+
+- field: status
+  context: ABNORMAL
+  language: fr
+  term: Anormal
+
+- field: status
+  context: ENROLLED
+  language: jp
+  term: 在籍
+
+- field: status
+  context: GRADUATED
+  language: jp
+  term: 卒業
+
+- field: status
+  context: SUSPENDED
+  language: jp
+  term: 休学
+
+- field: status
+  context: ABNORMAL
+  language: jp
+  term: 異常
+
+# 中文专业名称
+- field: major
+  context: 广告学
+  language: zh
+  term: 广告学
+
+- field: major
+  context: 财务管理
+  language: zh
+  term: 财务管理
+
+- field: major
+  context: 经济学
+  language: zh
+  term: 经济学
+
+- field: major
+  context: 金融工程
+  language: zh
+  term: 金融工程
+
+- field: major
+  context: 金融学
+  language: zh
+  term: 金融学
+
+- field: major
+  context: 计算机科学与技术
+  language: zh
+  term: 计算机科学与技术
+
+- field: major
+  context: 金融科技
+  language: zh
+  term: 金融科技
+
+- field: major
+  context: 资产评估
+  language: zh
+  term: 资产评估
+
+# 英文专业名称
+- field: major
+  context: 广告学
+  language: en
+  term: Advertising
+
+- field: major
+  context: 财务管理
+  language: en
+  term: Financial Management
+
+- field: major
+  context: 经济学
+  language: en
+  term: Economics
+
+- field: major
+  context: 金融工程
+  language: en
+  term: Financial Engineering
+
+- field: major
+  context: 金融学
+  language: en
+  term: Finance
+
+- field: major
+  context: 计算机科学与技术
+  language: en
+  term: Computer Science and Technology
+
+- field: major
+  context: 金融科技
+  language: en
+  term: Financial Technology
+
+- field: major
+  context: 资产评估
+  language: en
+  term: Asset Valuation
+
+# 法语专业名称
+- field: major
+  context: 广告学
+  language: fr
+  term: Publicité
+
+- field: major
+  context: 财务管理
+  language: fr
+  term: Gestion Financière
+
+- field: major
+  context: 经济学
+  language: fr
+  term: Sciences Économiques
+
+- field: major
+  context: 金融工程
+  language: fr
+  term: Ingénierie Financière
+
+- field: major
+  context: 金融学
+  language: fr
+  term: Finance
+
+- field: major
+  context: 计算机科学与技术
+  language: fr
+  term: Informatique et Technologie
+
+- field: major
+  context: 金融科技
+  language: fr
+  term: Technologie Financière
+
+- field: major
+  context: 资产评估
+  language: fr
+  term: Évaluation des Actifs
+
+# 日语专业名称
+- field: major
+  context: 广告学
+  language: jp
+  term: 広告学
+
+- field: major
+  context: 财务管理
+  language: jp
+  term: 財務管理
+
+- field: major
+  context: 经济学
+  language: jp
+  term: 経済学
+
+- field: major
+  context: 金融工程
+  language: jp
+  term: 金融工学
+
+- field: major
+  context: 金融学
+  language: jp
+  term: 金融学
+
+- field: major
+  context: 计算机科学与技术
+  language: jp
+  term: コンピュータサイエンスと技術
+
+- field: major
+  context: 金融科技
+  language: jp
+  term: フィンテック
+
+- field: major
+  context: 资产评估
+  language: jp
+  term: 資産評価
+
+- field: department
+  context: 商学院
+  language: zh
+  term: 商学院
+
+- field: department
+  context: 商学院
+  language: en
+  term: School of Business
+
+- field: department
+  context: 商学院
+  language: fr
+  term: École de Commerce
+
+- field: department
+  context: 商学院
+  language: jp
+  term: 商学部
+
+- field: department
+  context: 理学院
+  language: zh
+  term: 理学院
+
+- field: department
+  context: 理学院
+  language: en
+  term: School of Science
+
+- field: department
+  context: 理学院
+  language: fr
+  term: École de Sciences
+
+- field: department
+  context: 理学院
+  language: jp
+  term: 理学部
+
+- field: department
+  context: 人文学院
+  language: zh
+  term: 人文学院
+
+- field: department
+  context: 人文学院
+  language: en
+  term: School of Humanities
+
+- field: department
+  context: 人文学院
+  language: fr
+  term: École des Lettres
+
+- field: department
+  context: 人文学院
+  language: jp
+  term: 文学部
+
+- field: department
+  context: 法学院
+  language: zh
+  term: 法学院
+
+- field: department
+  context: 法学院
+  language: en
+  term: School of Law
+
+- field: department
+  context: 法学院
+  language: fr
+  term: École de Droit
+
+- field: department
+  context: 法学院
+  language: jp
+  term: 法学部
+
+- field: department
+  context: 医学部
+  language: zh
+  term: 医学部
+
+- field: department
+  context: 医学部
+  language: en
+  term: Medical School
+
+- field: department
+  context: 医学部
+  language: fr
+  term: École de Médecine
+
+- field: department
+  context: 医学部
+  language: jp
+  term: 医学部
