@@ -23,6 +23,8 @@ jobs:
         cache: gradle
     - name: 设置 Gradle
       uses: gradle/actions/setup-gradle@v4
+    - name: 设置 Gradle 可执行权限
+      run: chmod +x ./gradlew
     - name: 使用Gradle构建
       run: ./gradlew build -x test
     - name: 运行单元测试
