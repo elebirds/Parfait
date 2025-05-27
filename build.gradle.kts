@@ -115,3 +115,15 @@ runtime {
         installerOptions = listOf("--win-menu", "--win-shortcut", "--win-dir-chooser")
     }
 }
+
+// 添加任务依赖关系
+tasks.named("jpackageImage") {
+    dependsOn("runtime")
+}
+
+// 增加Gradle堆内存大小
+gradle.projectsEvaluated {
+    tasks.withType<JavaExec> {
+        jvmArgs("-Xmx2g")
+    }
+}
