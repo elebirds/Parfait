@@ -67,4 +67,18 @@ data class ScoreDTO(
             }
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ScoreDTO) return false
+
+        if (name != other.name) return false
+        if (type != other.type) return false
+        if (exam != other.exam) return false
+        if (credit != other.credit) return false
+        if (score != other.score) return false
+        if (gpa != other.gpa) return false
+
+        return true
+    }
 }

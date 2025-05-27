@@ -15,7 +15,7 @@ import java.util.*
 interface StudentService {
     suspend fun getAllStudents(): List<StudentDTO>
     suspend fun getStudentsPage(page: Int, size: Int): List<StudentDTO>
-    suspend fun getStudentByStudentId(name: String): Student?
+    suspend fun getStudentByStudentId(id: String): Student?
     suspend fun getStudentByUUID(uuid: UUID): Student?
     suspend fun addStudent(student: StudentDTO): EntityID<UUID>
     suspend fun addAllStudents(students: List<StudentDTO>): List<EntityID<UUID>>

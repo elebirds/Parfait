@@ -48,6 +48,9 @@ dependencies {
 
     // Koin 依赖注入框架
     implementation("io.insert-koin:koin-core:4.0.3")
+    // Koin 测试支持
+    testImplementation("io.insert-koin:koin-test:4.0.3")
+    testImplementation("io.insert-koin:koin-test-junit5:4.0.3")
 
     // 日志
     implementation("org.slf4j:slf4j-api:2.0.17")

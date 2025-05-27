@@ -55,4 +55,20 @@ data class StudentDTO(
         it[Students.status] = status.ordinal
         it[Students.scores] = scores.toScoreString()
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is StudentDTO) return false
+
+        if (studentId != other.studentId) return false
+        if (name != other.name) return false
+        if (gender != other.gender) return false
+        if (department != other.department) return false
+        if (major != other.major) return false
+        if (grade != other.grade) return false
+        if (classGroup != other.classGroup) return false
+        if (status != other.status) return false
+        if (scores != other.scores) return false
+        return true
+    }
 }
