@@ -74,6 +74,20 @@ data class DatabaseConnectionConfig(
             DatabaseFactoryMode.ONLINE -> host.isNotEmpty() && port > 0 && user.isNotEmpty() && databaseName.isNotEmpty()
         }
     }
+    
+    fun getConnectionUrl(): String {
+        return when (mode) {
+            DatabaseFactoryMode.STANDALONE -> "jdbc:sqlite:${host}"
+            DatabaseFactoryMode.ONLINE -> "jdbc:mysql://${host}:${port}/${databaseName}?useSSL=false&serverTimezone=UTC"
+        }
+    }
+    
+    fun getDriverClass(): String {
+        return when (mode) {
+            DatabaseFactoryMode.STANDALONE -> "org.sqlite.JDBC"
+            DatabaseFactoryMode.ONLINE -> "com.mysql.cj.jdbc.Driver"
+        }
+    }
 
     override fun toString(): String {
         return if (mode == DatabaseFactoryMode.STANDALONE) {
@@ -113,6 +127,9 @@ object DatabaseFactory {
     private var connection: Database? = null
     private val _connectionState = MutableStateFlow<DatabaseConnectionState>(DatabaseConnectionState.Disconnected())
     val connectionState: StateFlow<DatabaseConnectionState> = _connectionState.asStateFlow()
+    
+    // 保存当前连接配置，用于在导入导出时重新连接
+    private var currentConfig: DatabaseConnectionConfig? = null
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -126,7 +143,10 @@ object DatabaseFactory {
             initializeDefaultData()
         }
     }
-
+    
+    /**
+     * 连接到数据库
+     */
     fun connect(config: DatabaseConnectionConfig) {
         logger.info("尝试连接数据库：$config")
         if (!config.checkValid()) {
@@ -144,21 +164,8 @@ object DatabaseFactory {
         scope.launch {
             try {
                 _connectionState.value = DatabaseConnectionState.Connecting(config)
-                connection = when (config.mode) {
-                    DatabaseFactoryMode.ONLINE -> Database.connect(
-                        driver = "com.mysql.cj.jdbc.Driver",
-                        url = "jdbc:mysql://${config.host}:${config.port}/${config.databaseName}?useSSL=false&serverTimezone=UTC",
-                        user = config.user,
-                        password = config.password
-                    )
-
-                    DatabaseFactoryMode.STANDALONE -> Database.connect(
-                        driver = "org.sqlite.JDBC",
-                        url = "jdbc:sqlite:${config.host}",
-                        user = config.user,
-                        password = config.password
-                    )
-                }
+                connection = connectInternal(config)
+                currentConfig = config
                 init()
                 _connectionState.value = DatabaseConnectionState.Connected(config)
                 logger.info("数据库连接成功")
@@ -176,10 +183,68 @@ object DatabaseFactory {
             }
         }
     }
+    
+    /**
+     * 内部连接方法，用于创建数据库连接
+     */
+    private fun connectInternal(config: DatabaseConnectionConfig): Database {
+        return when (config.mode) {
+            DatabaseFactoryMode.ONLINE -> Database.connect(
+                driver = config.getDriverClass(),
+                url = config.getConnectionUrl(),
+                user = config.user,
+                password = config.password
+            )
+            DatabaseFactoryMode.STANDALONE -> Database.connect(
+                driver = config.getDriverClass(),
+                url = config.getConnectionUrl(),
+                user = config.user,
+                password = config.password
+            )
+        }
+    }
+    
+    /**
+     * 强制重新连接数据库
+     * 仅用于导入导出操作
+     */
+    internal fun forceReconnect(): Boolean {
+        val config = currentConfig ?: return false
+        
+        try {
+            // 先断开当前连接
+            connection = null
+            
+            // 重新连接
+            connection = connectInternal(config)
+            _connectionState.value = DatabaseConnectionState.Connected(config)
+            return true
+        } catch (e: Exception) {
+            logger.error("强制重新连接失败", e)
+            _connectionState.value = DatabaseConnectionState.Disconnected()
+            connection = null
+            currentConfig = null
+            return false
+        }
+    }
+    
+    /**
+     * 临时连接到指定数据库
+     * 仅用于导入导出操作
+     */
+    internal fun temporaryConnect(config: DatabaseConnectionConfig): Database? {
+        try {
+            return connectInternal(config)
+        } catch (e: Exception) {
+            logger.error("临时连接失败", e)
+            return null
+        }
+    }
 
     fun disconnect() {
         _connectionState.value = DatabaseConnectionState.Disconnected()
         connection = null
+        currentConfig = null
         logger.info("关闭数据库连接")
     }
 
@@ -204,5 +269,27 @@ object DatabaseFactory {
             CertificateTemplates.init()
             Terms.init()
         }
+    }
+    
+    /**
+     * 获取当前连接配置
+     */
+    internal fun getCurrentConfig(): DatabaseConnectionConfig? {
+        return currentConfig
+    }
+
+    /**
+     * 在当前事务中创建表结构
+     * 仅用于导入导出操作
+     */
+    internal fun createTablesInCurrentTransaction() {
+        SchemaUtils.create(
+            Students,
+            GpaStandards,
+            CertificateTemplates,
+            CertificateRecords,
+            CertificateDatas,
+            Terms
+        )
     }
 }

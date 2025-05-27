@@ -59,6 +59,40 @@ class FileMenu : JMenu() {
             )
         }
     }
+    
+    // 数据库导出菜单项
+    private val exportDb = JMenuItem().apply {
+        bindText(this, "menu.export")
+        accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().menuShortcutKeyMask)
+        setMnemonic('E')
+        addActionListener {
+            // 执行导出操作
+            DatabaseAction.exportDatabase()
+        }
+    }
+    
+    // 数据库导入菜单项
+    private val importDb = JMenuItem().apply {
+        bindText(this, "menu.import")
+        accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().menuShortcutKeyMask)
+        setMnemonic('I')
+        addActionListener {
+            // 检查数据库连接状态
+            if (DatabaseFactory.connectionState.value !is DatabaseConnectionState.Connected) {
+                JOptionPane.showMessageDialog(
+                    null,
+                    I18nUtils.getText("database.import.error.notConnected"),
+                    I18nUtils.getText("database.import.error.title"),
+                    JOptionPane.ERROR_MESSAGE
+                )
+                return@addActionListener
+            }
+            
+            // 执行导入操作
+            DatabaseAction.importDatabase()
+        }
+    }
+    
     private val setting = JMenuItem().apply {
         bindText(this, "menu.setting")
         accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().menuShortcutKeyMask)
@@ -81,6 +115,9 @@ class FileMenu : JMenu() {
         add(open)
         add(close)
         add(detail)
+        addSeparator()
+        add(exportDb)
+        add(importDb)
         //addSeparator()
         //add(setting)
         addSeparator()
