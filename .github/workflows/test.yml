@@ -24,7 +24,7 @@ jobs:
         cache: gradle
 
     - name: 验证Gradle包装器
-      uses: gradle/wrapper-validation-action@v2
+      uses: gradle/wrapper-validation-action@v3
 
     - name: 授予执行权限给gradlew
       run: chmod +x gradlew
