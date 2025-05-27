@@ -1,0 +1,75 @@
+name: Release Build
+
+on: [push]
+
+jobs:
+  build:
+    name: Build Release Packages
+    runs-on: windows-latest
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: 设置JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+      
+      - name: 安装 WiX Toolset
+        run: |
+          Invoke-WebRequest -Uri https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311.exe -OutFile wix311.exe
+          Start-Process -FilePath .\wix311.exe -ArgumentList "/install","/quiet" -Wait
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      
+      - name: 获取版本号
+        id: get_version
+        run: |
+          $VERSION=(Select-String -Path build.gradle.kts -Pattern 'version = "(.+)"').Matches.Groups[1].Value
+          echo "VERSION=$VERSION" >> $env:GITHUB_OUTPUT
+      
+      - name: 构建并打包
+        run: |
+          ./gradlew clean runtime jpackage --info
+      
+      - name: 创建Windows绿色版压缩包
+        run: |
+          Compress-Archive -Path build/jpackage/Parfait/* -DestinationPath build/Parfait-${{ steps.get_version.outputs.VERSION }}-windows.zip
+      
+      - name: 创建通用绿色版压缩包
+        run: |
+          Compress-Archive -Path build/install/Parfait/* -DestinationPath build/Parfait-${{ steps.get_version.outputs.VERSION }}-universal.zip
+      
+      - name: 创建源码压缩包
+        run: |
+          ./gradlew assemble
+          Compress-Archive -Path src/* -DestinationPath build/Parfait-${{ steps.get_version.outputs.VERSION }}-source.zip
+      
+      - name: 创建GitHub发布
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            build/jpackage/Parfait-${{ steps.get_version.outputs.VERSION }}.msi
+            build/Parfait-${{ steps.get_version.outputs.VERSION }}-windows.zip
+            build/Parfait-${{ steps.get_version.outputs.VERSION }}-universal.zip
+            build/Parfait-${{ steps.get_version.outputs.VERSION }}-source.zip
+          name: Parfait ${{ steps.get_version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+          body: |
+            ## Parfait ${{ steps.get_version.outputs.VERSION }}
+            
+            ### 提供以下安装包：
+            
+            - **Windows 安装包 (.msi)**: 使用安装向导安装Parfait到Windows系统
+            - **Windows 绿色版 (.zip)**: 免安装版Windows可执行程序
+            - **通用绿色版 (.zip)**: 适用于所有平台的可执行程序（需要预装JRE 21）
+            - **源码包 (.zip)**: 完整源代码
+            
+            详细更新说明请查看提交历史。
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
