@@ -31,7 +31,7 @@ class TermProcessor(
             val queryLanguage = expr.language ?: defaultLanguage
 
             // 确定上下文
-            val queryContext = expr.context ?: contextProvider.getContext(expr.field)
+            val queryContext = contextProvider.getContext(expr.context ?: expr.field)
 
             // 查询数据库
             val term = termService.getTerm(expr.field, queryContext, queryLanguage)

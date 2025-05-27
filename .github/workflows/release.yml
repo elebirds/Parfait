@@ -1,6 +1,9 @@
 name: Release Build
 
-on: [push]
+on:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -34,7 +37,8 @@ jobs:
       
       - name: 构建并打包
         run: |
-          ./gradlew clean runtime jpackage --info
+          ./gradlew clean runtime --info
+          ./gradlew jpackageImage jpackage --info -Dorg.gradle.jvmargs="-Xmx2g"
       
       - name: 创建Windows绿色版压缩包
         run: |
