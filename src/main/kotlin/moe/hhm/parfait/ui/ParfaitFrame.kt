@@ -16,12 +16,10 @@ import kotlinx.coroutines.swing.Swing
 import moe.hhm.parfait.infra.db.DatabaseConnectionState
 import moe.hhm.parfait.infra.db.DatabaseFactory
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindTitle
-import moe.hhm.parfait.infra.i18n.I18nUtils.getFormattedText
 import moe.hhm.parfait.ui.component.menu.MainMenuBar
 import moe.hhm.parfait.ui.panel.LoadingPanel
 import moe.hhm.parfait.ui.panel.MainPanel
 import moe.hhm.parfait.ui.panel.WelcomePanel
-import moe.hhm.parfait.utils.VersionUtils
 import net.miginfocom.swing.MigLayout
 import java.awt.Dimension
 import javax.swing.JFrame

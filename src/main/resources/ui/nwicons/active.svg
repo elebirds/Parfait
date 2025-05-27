@@ -1,1 +1,7 @@
-<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1744572373692" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2640" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><path d="M520.64 77.12C272 77.12 70.4 278.72 70.4 527.36s201.6 450.24 450.24 450.24 450.24-201.6 450.24-450.24-201.6-450.24-450.24-450.24z m-99.84 635.2V342.72l320.32 184.96-320.32 184.64z" fill="#22b65a" p-id="2641"></path></svg>
+<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg t="1744572373692" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2640"
+     width="16" height="16">
+    <path d="M520.64 77.12C272 77.12 70.4 278.72 70.4 527.36s201.6 450.24 450.24 450.24 450.24-201.6 450.24-450.24-201.6-450.24-450.24-450.24z m-99.84 635.2V342.72l320.32 184.96-320.32 184.64z"
+          fill="#22b65a" p-id="2641"></path>
+</svg>

@@ -31,7 +31,7 @@ const val PARFAIT_FULL_NAME = "Parfait"
 fun main(args: Array<String>) {
     try {
         logger.info("启动 ${VersionUtils.getFullInfo()}")
-        
+
         // 初始化依赖注入
         startKoin {
             modules(

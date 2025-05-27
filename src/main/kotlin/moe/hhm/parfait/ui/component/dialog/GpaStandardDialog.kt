@@ -243,6 +243,7 @@ class GpaStandardDialog(
             GpaMappingValidState.VALID -> {
                 // 映射表数据有效
             }
+
             GpaMappingValidState.OVERLAP -> throw BusinessException("gpa.dialog.validation.mapping.error")
             GpaMappingValidState.UNCOVERED -> throw BusinessException("gpa.dialog.validation.mapping.error")
         }

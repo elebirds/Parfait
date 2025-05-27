@@ -32,6 +32,8 @@ object StudentAction : KoinComponent {
         "student.property.grade", "student.property.classGroup", "score.weighted", "score.simple", "score.gpa"
     )
 
+    private val extractRegex = "\\{(.*?)\\}".toRegex()
+
     /**
      * 导出学生信息到Excel
      * @param students 学生列表
@@ -101,7 +103,7 @@ object StudentAction : KoinComponent {
             val content = StringBuilder()
 
             students.forEach { student ->
-                var line = format
+                val line = format
                     .replace("{name}", student.name)
                     .replace("{id}", student.studentId)
                     .replace("{gender}", student.gender.toString())
