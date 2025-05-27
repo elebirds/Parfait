@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write  # 给予工作流写入仓库内容的权限
+
 jobs:
   build:
     name: Build Release Packages
