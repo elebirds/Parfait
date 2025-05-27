@@ -15,6 +15,7 @@ import moe.hhm.parfait.dto.simpleMean
 import moe.hhm.parfait.dto.weightedMean
 import moe.hhm.parfait.infra.i18n.I18nManager
 import moe.hhm.parfait.utils.HanziUtils
+import moe.hhm.parfait.utils.VersionUtils
 import moe.hhm.parfait.utils.round2Decimal
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -59,7 +60,7 @@ class TemplateModelBuilder : KoinComponent {
         "day" to LocalDate.now().dayOfMonth,
         "month_en" to LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.ENGLISH),
         "source" to "Parfait",
-        "version" to "1.0.0"
+        "version" to VersionUtils.getFullVersion()
     )
 
     /**

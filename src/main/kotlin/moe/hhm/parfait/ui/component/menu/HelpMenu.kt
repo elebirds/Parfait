@@ -9,6 +9,14 @@ package moe.hhm.parfait.ui.component.menu
 import com.formdev.flatlaf.FlatClientProperties
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.infra.i18n.I18nUtils.bindText
+import moe.hhm.parfait.utils.VersionUtils
+import java.awt.Cursor
+import java.awt.Desktop
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import java.io.IOException
+import java.net.URI
+import java.net.URISyntaxException
 import java.time.Year
 import javax.swing.JLabel
 import javax.swing.JMenu
@@ -24,7 +32,7 @@ class HelpMenu : JMenu() {
                 putClientProperty(FlatClientProperties.STYLE_CLASS, "h1")
             }
 
-            /*val link = "https://hhm.moe/"
+            val link = "https://hhm.moe/"
             val linkLabel = JLabel("<html><a href=\"#\">$link</a></html>").apply {
                 cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
                 addMouseListener(object : MouseAdapter() {
@@ -36,7 +44,7 @@ class HelpMenu : JMenu() {
                         }
                     }
                 })
-            }*/
+            }
 
             val currentYear = Year.now()
             val javaVersion = System.getProperty("java.version")
@@ -46,10 +54,11 @@ class HelpMenu : JMenu() {
                 this, arrayOf(
                     titleLabel,
                     I18nUtils.getText("about.description"),
+                    VersionUtils.getFullInfo(),
                     " ",
-                    //"Copyright 2023-$currentYear Elebird(Grow Zheng).",
+                    "Copyright 2023-$currentYear @elebirds, @MidRatKing, @poloyang.",
                     "All rights reserved.",
-                    //linkLabel,
+                    linkLabel,
                     I18nUtils.getFormattedText("about.runtime", javaVersion, osName),
                 ),
                 I18nUtils.getText("about.title"),

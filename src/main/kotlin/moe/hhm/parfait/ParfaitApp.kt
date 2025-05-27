@@ -14,6 +14,7 @@ import moe.hhm.parfait.exception.ErrorHandler.showError
 import moe.hhm.parfait.infra.i18n.I18nUtils
 import moe.hhm.parfait.ui.ParfaitFrame
 import moe.hhm.parfait.ui.lib.FlatLafUtils
+import moe.hhm.parfait.utils.VersionUtils
 import org.koin.core.context.startKoin
 import org.slf4j.LoggerFactory
 import java.awt.EventQueue
@@ -29,6 +30,8 @@ const val PARFAIT_FULL_NAME = "Parfait"
  */
 fun main(args: Array<String>) {
     try {
+        logger.info("启动 ${VersionUtils.getFullInfo()}")
+        
         // 初始化依赖注入
         startKoin {
             modules(

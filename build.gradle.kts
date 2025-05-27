@@ -5,17 +5,26 @@ plugins {
     kotlin("jvm") version "2.1.20"
     id("org.openjfx.javafxplugin") version "0.0.13"
     id("org.beryx.runtime") version "1.13.1"
+    id("com.gorylenko.gradle-git-properties") version "2.4.1"
     application
     "flatlaf-toolchain"
 }
 
 group = "moe.hhm.parfait"
-version = "1.0.0"
+version = "2.0.0"
 
 val exposedVersion = "0.60.0"
 
 repositories {
     mavenCentral()
+}
+
+// 配置git-properties插件
+gitProperties {
+    gitPropertiesName = "git.properties"
+    dateFormat = "yyyy-MM-dd HH:mm:ss"
+    keys = listOf("git.branch", "git.commit.id.abbrev", "git.commit.time")
+    customProperty("application.version", "${project.version}")
 }
 
 dependencies {
