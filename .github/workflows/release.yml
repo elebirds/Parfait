@@ -37,8 +37,7 @@ jobs:
       
       - name: 构建并打包
         run: |
-          ./gradlew clean runtime --info
-          ./gradlew jpackageImage jpackage --info -Dorg.gradle.jvmargs="-Xmx2g"
+          ./gradlew clean runtime jpackage --info
       
       - name: 创建Windows绿色版压缩包
         run: |
