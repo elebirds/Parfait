@@ -11,6 +11,7 @@ import com.deepoove.poi.config.Configure
 import com.deepoove.poi.util.RegexUtils
 import moe.hhm.parfait.app.service.CertificateDataService
 import moe.hhm.parfait.app.service.CertificateRecordService
+import moe.hhm.parfait.app.term.TemplateModelBuilder
 import moe.hhm.parfait.app.term.TermParser
 import moe.hhm.parfait.dto.CertificateRecordDTO
 import moe.hhm.parfait.dto.CertificateTemplateDTO
@@ -70,17 +71,8 @@ class CertificateGenerator : KoinComponent {
 
         // 3. 收集模板中的变量标签 并分离{{和}}生成术语标签
         val variableNames =
-            analysisTemplate.elementTemplates.map { it.variable().replace("{{", "").replace("}}", "") }.toSet()
-        val termPairs = variableNames.mapNotNull {
-            val res = termParser.parse(it)
-            if (res != null) {
-                it to res
-            } else {
-                null
-            }
-        }
-        val remainingTags = variableNames - termPairs.map { it.first }
-        val termExpressions = termPairs.map { it.second }
+            analysisTemplate.elementTemplates.map { it.variable().replace("{{", "").replace("}}", "") }
+        val (remainingTags, termExpressions) = modelBuilder.separateTerms(variableNames)
 
         // 关闭分析模板
         analysisTemplate.close()

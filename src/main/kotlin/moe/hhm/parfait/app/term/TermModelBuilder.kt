@@ -1,27 +1,22 @@
-/*
- * Project Parfait
- * Copyright (c) elebird 2025.
- * All rights reserved.
- */
+package moe.hhm.parfait.app.term
 
-package moe.hhm.parfait.app.certificate
-
-import moe.hhm.parfait.app.term.StudentContextProvider
-import moe.hhm.parfait.app.term.TermExpression
-import moe.hhm.parfait.app.term.TermProcessor
 import moe.hhm.parfait.dto.GpaStandardDTO
 import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.dto.simpleMean
 import moe.hhm.parfait.dto.weightedMean
 import moe.hhm.parfait.infra.i18n.I18nManager
+import moe.hhm.parfait.ui.action.StudentAction
 import moe.hhm.parfait.utils.HanziUtils
 import moe.hhm.parfait.utils.VersionUtils
 import moe.hhm.parfait.utils.round2Decimal
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
-import java.util.*
+import java.util.HashMap
+import java.util.Locale
 
 /**
  * 模板数据模型构建器
@@ -30,6 +25,24 @@ import java.util.*
  */
 class TemplateModelBuilder : KoinComponent {
     private val termProcessor: TermProcessor by inject()
+    private val termParser: TermParser by inject()
+
+    fun separateTerms(
+        tags: List<String>
+    ): Pair<List<String>, List<TermExpression>> {
+        val tags = tags.distinct()
+        val termPairs = tags.mapNotNull {
+            val res = termParser.parse(it)
+            if (res != null) {
+                it to res
+            } else {
+                null
+            }
+        }
+        val remainingTags = tags - termPairs.map { it.first }
+        val termExpressions = termPairs.map { it.second }
+        return Pair(remainingTags, termExpressions)
+    }
 
     /**
      * 构建完整的数据模型
@@ -37,7 +50,7 @@ class TemplateModelBuilder : KoinComponent {
     suspend fun buildModel(
         student: StudentDTO,
         gpaStandard: GpaStandardDTO?,
-        remainingTags: Set<String>,
+        remainingTags: List<String>,
         termExpressions: List<TermExpression>
     ): HashMap<String, Any> {
         val res = HashMap<String, Any>()
@@ -59,6 +72,7 @@ class TemplateModelBuilder : KoinComponent {
         "month" to LocalDate.now().monthValue,
         "day" to LocalDate.now().dayOfMonth,
         "month_en" to LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.ENGLISH),
+        "datetime" to LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
         "source" to "Parfait",
         "version" to VersionUtils.getFullVersion()
     )
@@ -73,6 +87,7 @@ class TemplateModelBuilder : KoinComponent {
         "department" to student.department,
         "major" to student.major,
         "classGroup" to student.classGroup,
+        "class" to student.classGroup,
         "grade" to student.grade.toString(),
         "gender" to student.gender.toString(),
         "status" to student.status.toString(),
@@ -90,4 +105,4 @@ class TemplateModelBuilder : KoinComponent {
         "gpa" to gpaStandard.mapping.getGpa(student.scores).round2Decimal(),
         "gpa_standard" to gpaStandard.name
     )
-} 
+}

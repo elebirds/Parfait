@@ -243,14 +243,29 @@ class StudentDataViewModel : PaginationDataViewModel<List<StudentDTO>>(emptyList
             true
         }
 
+    fun exportStudentToCustomExcel(format: String, selectedFilePath: String) = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Process) {
+        _vmState.value = VMState.PROCESSING
+        val students = getPriorityStudents()
+        StudentAction.exportToCustomExcel(students, gpaService.getDefault(), format, selectedFilePath)
+        _vmState.value = VMState.DONE
+
+        JOptionPane.showMessageDialog(
+            null,
+            I18nUtils.getText("student.export.success"),
+            I18nUtils.getText("button.success"),
+            JOptionPane.INFORMATION_MESSAGE
+        )
+        true
+    }
+
     /**
      * 导出学生信息到文本
      * @param format 文本格式
      */
-    fun exportStudentToText(format: String) = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Process) {
+    fun exportStudentToText(format: String, isCSV: Boolean) = suspendProcessWithErrorHandling(VMErrorHandlerChooser.Process) {
         _vmState.value = VMState.PROCESSING
         val students = getPriorityStudents()
-        StudentAction.exportToText(students, gpaService.getDefault(), format)
+        StudentAction.exportToText(students, gpaService.getDefault(), format, isCSV)
         _vmState.value = VMState.DONE
 
         JOptionPane.showMessageDialog(

@@ -23,9 +23,9 @@ data class TermExpression(
  */
 class TermParser {
     companion object {
-        private const val TERM_PREFIX = "term::"
-        private const val DEFAULT_SEPARATOR = "::"
-        private const val LANGUAGE_PREFIX = "/"
+        const val TERM_PREFIX = "term::"
+        const val DEFAULT_SEPARATOR = "::"
+        const val LANGUAGE_PREFIX = "/"
     }
 
     /**
