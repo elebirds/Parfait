@@ -57,10 +57,10 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.18")
 
     // FlatLaf UI库
-    implementation("com.formdev:flatlaf:3.5.4")
-    implementation("com.formdev:flatlaf-extras:3.5.4")
+    implementation("com.formdev:flatlaf:3.6")
+    implementation("com.formdev:flatlaf-extras:3.6")
     implementation("com.formdev:flatlaf-fonts-inter:4.1")
-    implementation("com.formdev:flatlaf-intellij-themes:3.5.4")
+    implementation("com.formdev:flatlaf-intellij-themes:3.6")
     implementation("com.formdev:flatlaf-fonts-jetbrains-mono:2.304")
     implementation("com.formdev:flatlaf-fonts-roboto:2.137")
     implementation("com.formdev:flatlaf-fonts-roboto-mono:3.000")
