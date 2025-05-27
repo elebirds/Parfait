@@ -15,7 +15,7 @@ class I18nConfigTest {
      */
     private val formatSpecifierPattern = Pattern.compile("%([1-9]\\$)?[sdfox]")
 
-    @Disabled
+    @Test
     fun `测试所有语言文件中键的一致性`() {
         // 加载所有语言文件
         val englishProps = loadPropertiesFile("i18n/messages_en.properties")
