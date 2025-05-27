@@ -74,14 +74,14 @@ data class DatabaseConnectionConfig(
             DatabaseFactoryMode.ONLINE -> host.isNotEmpty() && port > 0 && user.isNotEmpty() && databaseName.isNotEmpty()
         }
     }
-    
+
     fun getConnectionUrl(): String {
         return when (mode) {
             DatabaseFactoryMode.STANDALONE -> "jdbc:sqlite:${host}"
             DatabaseFactoryMode.ONLINE -> "jdbc:mysql://${host}:${port}/${databaseName}?useSSL=false&serverTimezone=UTC"
         }
     }
-    
+
     fun getDriverClass(): String {
         return when (mode) {
             DatabaseFactoryMode.STANDALONE -> "org.sqlite.JDBC"
@@ -127,7 +127,7 @@ object DatabaseFactory {
     private var connection: Database? = null
     private val _connectionState = MutableStateFlow<DatabaseConnectionState>(DatabaseConnectionState.Disconnected())
     val connectionState: StateFlow<DatabaseConnectionState> = _connectionState.asStateFlow()
-    
+
     // 保存当前连接配置，用于在导入导出时重新连接
     private var currentConfig: DatabaseConnectionConfig? = null
 
@@ -143,7 +143,7 @@ object DatabaseFactory {
             initializeDefaultData()
         }
     }
-    
+
     /**
      * 连接到数据库
      */
@@ -183,7 +183,7 @@ object DatabaseFactory {
             }
         }
     }
-    
+
     /**
      * 内部连接方法，用于创建数据库连接
      */
@@ -195,6 +195,7 @@ object DatabaseFactory {
                 user = config.user,
                 password = config.password
             )
+
             DatabaseFactoryMode.STANDALONE -> Database.connect(
                 driver = config.getDriverClass(),
                 url = config.getConnectionUrl(),
@@ -203,18 +204,18 @@ object DatabaseFactory {
             )
         }
     }
-    
+
     /**
      * 强制重新连接数据库
      * 仅用于导入导出操作
      */
     internal fun forceReconnect(): Boolean {
         val config = currentConfig ?: return false
-        
+
         try {
             // 先断开当前连接
             connection = null
-            
+
             // 重新连接
             connection = connectInternal(config)
             _connectionState.value = DatabaseConnectionState.Connected(config)
@@ -227,7 +228,7 @@ object DatabaseFactory {
             return false
         }
     }
-    
+
     /**
      * 临时连接到指定数据库
      * 仅用于导入导出操作
@@ -270,7 +271,7 @@ object DatabaseFactory {
             Terms.init()
         }
     }
-    
+
     /**
      * 获取当前连接配置
      */

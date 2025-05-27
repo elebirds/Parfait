@@ -7,19 +7,15 @@
 package moe.hhm.parfait.ui.action
 
 import moe.hhm.parfait.exception.BusinessException
-import moe.hhm.parfait.infra.db.DatabaseConnectionConfig
-import moe.hhm.parfait.infra.db.DatabaseExportImport
-import moe.hhm.parfait.infra.db.DatabaseFactory
-import moe.hhm.parfait.infra.db.ImportExportOption
-import moe.hhm.parfait.infra.db.STANDALONE_DB_SUFFIX
+import moe.hhm.parfait.infra.db.*
 import moe.hhm.parfait.infra.i18n.I18nUtils
+import net.miginfocom.swing.MigLayout
 import java.io.File
 import javax.swing.JCheckBox
 import javax.swing.JFileChooser
 import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.filechooser.FileFilter
-import net.miginfocom.swing.MigLayout
 
 object DatabaseAction {
     fun openStandaloneChooser() {
@@ -121,7 +117,7 @@ object DatabaseAction {
             return false  // 连接失败
         }
     }
-    
+
     /**
      * 导出数据库到文件
      */
@@ -137,7 +133,7 @@ object DatabaseAction {
             )
             return
         }
-        
+
         val fc = JFileChooser().apply {
             fileFilter = object : FileFilter() {
                 override fun accept(f: File): Boolean {
@@ -150,14 +146,14 @@ object DatabaseAction {
             fileSelectionMode = JFileChooser.FILES_ONLY
             dialogTitle = I18nUtils.getText("database.export.title")
         }
-        
+
         if (fc.showSaveDialog(null) != JFileChooser.APPROVE_OPTION) return
-        
+
         // 确保文件名以 .pardb 结尾
         var path = fc.selectedFile.absolutePath
         if (!path.endsWith(STANDALONE_DB_SUFFIX)) path += STANDALONE_DB_SUFFIX
         val file = File(path)
-        
+
         // 如果文件已存在，确认是否覆盖
         if (file.exists()) {
             val result = JOptionPane.showConfirmDialog(
@@ -169,10 +165,10 @@ object DatabaseAction {
             )
             if (result != JOptionPane.YES_OPTION) return
         }
-        
+
         // 执行导出
         val success = DatabaseExportImport.exportDatabase(file)
-        
+
         // 显示结果
         if (success) {
             JOptionPane.showMessageDialog(
@@ -183,7 +179,7 @@ object DatabaseAction {
             )
         }
     }
-    
+
     /**
      * 从文件导入数据库
      */
@@ -199,7 +195,7 @@ object DatabaseAction {
             )
             return
         }
-        
+
         val fc = JFileChooser().apply {
             fileFilter = object : FileFilter() {
                 override fun accept(f: File): Boolean {
@@ -212,11 +208,11 @@ object DatabaseAction {
             fileSelectionMode = JFileChooser.FILES_ONLY
             dialogTitle = I18nUtils.getText("database.import.title")
         }
-        
+
         if (fc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) return
-        
+
         val file = File(fc.selectedFile.absolutePath)
-        
+
         // 确认文件格式
         if (!file.name.endsWith(STANDALONE_DB_SUFFIX)) {
             JOptionPane.showMessageDialog(
@@ -227,10 +223,10 @@ object DatabaseAction {
             )
             return
         }
-        
+
         // 选择导入选项
         val optionsPanel = createImportOptionsPanel()
-        
+
         val result = JOptionPane.showConfirmDialog(
             null,
             optionsPanel,
@@ -238,12 +234,12 @@ object DatabaseAction {
             JOptionPane.OK_CANCEL_OPTION,
             JOptionPane.QUESTION_MESSAGE
         )
-        
+
         if (result != JOptionPane.OK_OPTION) return
-        
+
         // 获取选中的选项
         val selectedOptions = getSelectedOptions(optionsPanel)
-        
+
         if (selectedOptions.isEmpty()) {
             JOptionPane.showMessageDialog(
                 null,
@@ -253,7 +249,7 @@ object DatabaseAction {
             )
             return
         }
-        
+
         // 确认是否继续
         val confirmResult = JOptionPane.showConfirmDialog(
             null,
@@ -262,12 +258,12 @@ object DatabaseAction {
             JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE
         )
-        
+
         if (confirmResult != JOptionPane.YES_OPTION) return
-        
+
         // 执行导入
         val success = DatabaseExportImport.importDatabase(file, selectedOptions)
-        
+
         // 显示结果
         if (success) {
             JOptionPane.showMessageDialog(
@@ -278,20 +274,20 @@ object DatabaseAction {
             )
         }
     }
-    
+
     /**
      * 创建导入选项面板
      */
     private fun createImportOptionsPanel(): JPanel {
         val panel = JPanel(MigLayout("wrap 1", "[fill]"))
-        
+
         // 添加说明文本
         panel.add(javax.swing.JLabel(I18nUtils.getText("database.import.options.description")))
-        
+
         // 添加"全部导入"选项
         val allCheckBox = JCheckBox(I18nUtils.getText(ImportExportOption.ALL.i18nKey))
         panel.add(allCheckBox)
-        
+
         // 添加单独选项
         val optionCheckBoxes = ImportExportOption.values()
             .filter { it != ImportExportOption.ALL }
@@ -301,28 +297,28 @@ object DatabaseAction {
                     panel.add(this)
                 }
             }
-        
+
         // 设置"全部导入"的动作
         allCheckBox.addActionListener {
             val selected = allCheckBox.isSelected
             optionCheckBoxes.forEach { it.isSelected = selected }
             optionCheckBoxes.forEach { it.isEnabled = !selected }
         }
-        
+
         return panel
     }
-    
+
     /**
      * 获取选中的选项
      */
     private fun getSelectedOptions(panel: JPanel): List<ImportExportOption> {
         val checkBoxes = panel.components.filterIsInstance<JCheckBox>()
-        
+
         // 如果选择了"全部导入"，则返回ALL
         if (checkBoxes.first().isSelected) {
             return listOf(ImportExportOption.ALL)
         }
-        
+
         // 否则返回选中的选项
         return checkBoxes.drop(1).mapIndexedNotNull { index, checkBox ->
             if (checkBox.isSelected) {

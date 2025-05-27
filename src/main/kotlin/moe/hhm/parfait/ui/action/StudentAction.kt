@@ -6,8 +6,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import moe.hhm.parfait.app.certificate.CertificateGenerator
 import moe.hhm.parfait.app.term.TemplateModelBuilder
-import moe.hhm.parfait.app.term.TermParser
-import moe.hhm.parfait.app.term.TermParser.Companion.TERM_PREFIX
 import moe.hhm.parfait.dto.GpaStandardDTO
 import moe.hhm.parfait.dto.StudentDTO
 import moe.hhm.parfait.dto.simpleMean
@@ -20,8 +18,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.awt.Window
 import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
 
@@ -35,6 +31,7 @@ object StudentAction : KoinComponent {
         "student.property.status", "student.property.department", "student.property.major",
         "student.property.grade", "student.property.classGroup", "score.weighted", "score.simple", "score.gpa"
     )
+
     /*
      * 软件已内置部分常用标签供选择，包括：
      * - 基础信息：{year}（年份）、{month}（月份）、{day}（天）、{month_en}（英文月份）、{datetime}（当前时间）
@@ -158,19 +155,19 @@ object StudentAction : KoinComponent {
         owner: Window? = null
     ) {
         val fileChooser = JFileChooser()
-        if(!isCSV) {
+        if (!isCSV) {
             fileChooser.fileFilter = FileNameExtensionFilter("Text Files", "txt")
-        }else {
+        } else {
             fileChooser.fileFilter = FileNameExtensionFilter("CSV表格", "csv")
         }
 
         if (fileChooser.showSaveDialog(owner) != JFileChooser.APPROVE_OPTION) return
         var filePath = fileChooser.selectedFile.absolutePath
-        if(!isCSV) {
+        if (!isCSV) {
             if (!filePath.endsWith(".txt")) {
                 filePath += ".txt"
             }
-        }else {
+        } else {
             if (!filePath.endsWith(".csv")) {
                 filePath += ".csv"
             }
@@ -182,7 +179,7 @@ object StudentAction : KoinComponent {
         withContext(Dispatchers.IO) {
             val content = StringBuilder()
 
-            if(isCSV) {
+            if (isCSV) {
                 content.append('\ufeff')
             }
 

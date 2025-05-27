@@ -59,7 +59,7 @@ class FileMenu : JMenu() {
             )
         }
     }
-    
+
     // 数据库导出菜单项
     private val exportDb = JMenuItem().apply {
         bindText(this, "menu.export")
@@ -70,7 +70,7 @@ class FileMenu : JMenu() {
             DatabaseAction.exportDatabase()
         }
     }
-    
+
     // 数据库导入菜单项
     private val importDb = JMenuItem().apply {
         bindText(this, "menu.import")
@@ -87,12 +87,12 @@ class FileMenu : JMenu() {
                 )
                 return@addActionListener
             }
-            
+
             // 执行导入操作
             DatabaseAction.importDatabase()
         }
     }
-    
+
     private val setting = JMenuItem().apply {
         bindText(this, "menu.setting")
         accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().menuShortcutKeyMask)

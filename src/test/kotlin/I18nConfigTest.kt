@@ -1,5 +1,5 @@
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.io.InputStreamReader
@@ -41,8 +41,10 @@ class I18nConfigTest {
         }
 
         // 断言所有语言文件中的键应该一致
-        assertTrue(inconsistentKeys.isEmpty(),
-            "有 ${inconsistentKeys.size} 个键在不同语言文件中不一致: ${inconsistentKeys.joinToString()}")
+        assertTrue(
+            inconsistentKeys.isEmpty(),
+            "有 ${inconsistentKeys.size} 个键在不同语言文件中不一致: ${inconsistentKeys.joinToString()}"
+        )
     }
 
     @Test
@@ -62,19 +64,19 @@ class I18nConfigTest {
 
         for (key in keysWithFormatSpecifiers) {
             val formatSpecifiersMap = mutableMapOf<String, List<String>>()
-            
+
             if (englishProps.containsKey(key)) {
                 formatSpecifiersMap["英文"] = extractFormatSpecifiers(englishProps.getProperty(key))
             }
-            
+
             if (chineseProps.containsKey(key)) {
                 formatSpecifiersMap["中文"] = extractFormatSpecifiers(chineseProps.getProperty(key))
             }
-            
+
             if (frenchProps.containsKey(key)) {
                 formatSpecifiersMap["法文"] = extractFormatSpecifiers(frenchProps.getProperty(key))
             }
-            
+
             // 检查所有语言文件中的格式说明符是否一致
             if (!areFormatSpecifiersConsistent(formatSpecifiersMap)) {
                 inconsistentKeys.add(key)
@@ -86,8 +88,10 @@ class I18nConfigTest {
         }
 
         // 断言所有格式说明符应该一致
-        assertTrue(inconsistentKeys.isEmpty(), 
-            "有 ${inconsistentKeys.size} 个键在不同语言中的格式说明符不一致: ${inconsistentKeys.joinToString()}")
+        assertTrue(
+            inconsistentKeys.isEmpty(),
+            "有 ${inconsistentKeys.size} 个键在不同语言中的格式说明符不一致: ${inconsistentKeys.joinToString()}"
+        )
     }
 
     @Test
@@ -108,19 +112,19 @@ class I18nConfigTest {
 
         for (key in keysWithPlaceholders) {
             val placeholdersMap = mutableMapOf<String, Set<String>>()
-            
+
             if (englishProps.containsKey(key)) {
                 placeholdersMap["英文"] = extractPlaceholders(englishProps.getProperty(key), placeholderPattern)
             }
-            
+
             if (chineseProps.containsKey(key)) {
                 placeholdersMap["中文"] = extractPlaceholders(chineseProps.getProperty(key), placeholderPattern)
             }
-            
+
             if (frenchProps.containsKey(key)) {
                 placeholdersMap["法文"] = extractPlaceholders(frenchProps.getProperty(key), placeholderPattern)
             }
-            
+
             // 检查所有语言文件中的变量占位符是否一致
             if (!arePlaceholdersConsistent(placeholdersMap)) {
                 inconsistentKeys.add(key)
@@ -132,8 +136,10 @@ class I18nConfigTest {
         }
 
         // 断言所有变量占位符应该一致
-        assertTrue(inconsistentKeys.isEmpty(), 
-            "有 ${inconsistentKeys.size} 个键在不同语言中的变量占位符不一致: ${inconsistentKeys.joinToString()}")
+        assertTrue(
+            inconsistentKeys.isEmpty(),
+            "有 ${inconsistentKeys.size} 个键在不同语言中的变量占位符不一致: ${inconsistentKeys.joinToString()}"
+        )
     }
 
     /**
@@ -194,10 +200,10 @@ class I18nConfigTest {
      */
     private fun areFormatSpecifiersConsistent(formatSpecifiersMap: Map<String, List<String>>): Boolean {
         if (formatSpecifiersMap.size <= 1) return true
-        
+
         // 获取第一个语言的格式说明符作为参考
         val referenceSpecifiers = formatSpecifiersMap.values.first()
-        
+
         // 检查所有其他语言的格式说明符是否与参考相同
         return formatSpecifiersMap.values.all { specifiers ->
             specifiers.size == referenceSpecifiers.size &&
@@ -210,10 +216,10 @@ class I18nConfigTest {
      */
     private fun arePlaceholdersConsistent(placeholdersMap: Map<String, Set<String>>): Boolean {
         if (placeholdersMap.size <= 1) return true
-        
+
         // 获取第一个语言的占位符作为参考
         val referencePlaceholders = placeholdersMap.values.first()
-        
+
         // 检查所有其他语言的占位符是否与参考相同
         return placeholdersMap.values.all { placeholders ->
             placeholders == referencePlaceholders

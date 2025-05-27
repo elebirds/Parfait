@@ -164,13 +164,13 @@ class StudentExportDialog private constructor(owner: Window?) : JDialog(owner, "
 
         // 准备自定义Excel面板
         val excelCustomPanel = JPanel(MigLayout("insets 0, fillx", "[grow]", "[]10[]10[]10[]"))
-        
+
         // 添加文件选择器
         val filePanel = JPanel(MigLayout("insets 0, fillx", "[grow][]", "[]"))
         filePanel.add(excelCustomPathField, "grow")
         filePanel.add(excelCustomBrowseButton)
         excelCustomPanel.add(filePanel, "grow, wrap")
-        
+
         excelCustomPanel.add(JLabel(I18nUtils.getText("student.export.excel.custom.format")), "wrap")
         excelCustomPanel.add(excelCustomFormatScrollPane, "grow, h 80!, wrap")
         excelCustomPanel.add(JScrollPane(excelCustomFormatHelpLabel), "grow, h 140!, wrap")

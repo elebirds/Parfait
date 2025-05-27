@@ -7,13 +7,9 @@
 package moe.hhm.parfait.di
 
 import moe.hhm.parfait.app.certificate.CertificateGenerator
-import moe.hhm.parfait.app.term.TemplateModelBuilder
 import moe.hhm.parfait.app.service.*
 import moe.hhm.parfait.app.service.impl.*
-import moe.hhm.parfait.app.term.MapBasedContextProvider
-import moe.hhm.parfait.app.term.StudentContextProvider
-import moe.hhm.parfait.app.term.TermParser
-import moe.hhm.parfait.app.term.TermProcessor
+import moe.hhm.parfait.app.term.*
 import org.koin.dsl.module
 
 /**
