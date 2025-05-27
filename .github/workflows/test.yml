@@ -2,6 +2,11 @@ name: 单元测试
 
 on: [push, pull_request, workflow_dispatch]
 
+# 添加权限配置
+permissions:
+  contents: read
+  checks: write  # 授予创建检查运行的权限
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,9 +34,6 @@ jobs:
 
     - name: 运行单元测试
       run: ./gradlew test
-
-    - name: 运行国际化测试
-      run: ./gradlew test --tests "I18n*Test"
 
     - name: 测试报告
       uses: dorny/test-reporter@v1
