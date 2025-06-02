@@ -38,7 +38,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     // 数据库驱动
-    implementation("org.xerial:sqlite-jdbc:3.42.0.0")
+    implementation("org.xerial:sqlite-jdbc:3.49.1.0")
     implementation("com.mysql:mysql-connector-j:8.2.0")
 
     // 协程
