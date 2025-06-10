@@ -13,7 +13,7 @@ plugins {
 group = "moe.hhm.parfait"
 version = "2.0.0"
 
-val exposedVersion = "0.60.0"
+val exposedVersion = "0.61.0"
 
 repositories {
     mavenCentral()
