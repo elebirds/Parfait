@@ -74,7 +74,7 @@ dependencies {
     // 拼音英文转换
     implementation("com.belerweb:pinyin4j:2.5.1")
     // YAML配置支持
-    implementation("org.yaml:snakeyaml:2.0")
+    implementation("org.yaml:snakeyaml:2.4")
     // 测试
     testImplementation(kotlin("test"))
 }
