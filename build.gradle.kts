@@ -47,10 +47,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.1")
 
     // Koin 依赖注入框架
-    implementation("io.insert-koin:koin-core:4.0.4")
+    implementation("io.insert-koin:koin-core:4.1.0")
     // Koin 测试支持
     testImplementation("io.insert-koin:koin-test:4.1.0")
-    testImplementation("io.insert-koin:koin-test-junit5:4.0.4")
+    testImplementation("io.insert-koin:koin-test-junit5:4.1.0")
 
     // 日志
     implementation("org.slf4j:slf4j-api:2.0.17")
