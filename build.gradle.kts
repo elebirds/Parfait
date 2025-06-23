@@ -42,9 +42,9 @@ dependencies {
     implementation("com.mysql:mysql-connector-j:8.2.0")
 
     // 协程
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
 
     // Koin 依赖注入框架
     implementation("io.insert-koin:koin-core:4.0.4")
