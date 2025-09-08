@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm") version "2.2.10"
     id("org.openjfx.javafxplugin") version "0.1.0"
     id("org.beryx.runtime") version "1.13.1"
-    id("com.gorylenko.gradle-git-properties") version "2.5.2"
+    id("com.gorylenko.gradle-git-properties") version "2.5.3"
     application
     "flatlaf-toolchain"
 }
