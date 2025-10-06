@@ -22,7 +22,7 @@ jobs:
         distribution: 'temurin'
         cache: gradle
     - name: 设置 Gradle
-      uses: gradle/actions/setup-gradle@v4
+      uses: gradle/actions/setup-gradle@v5
     - name: 设置 Gradle 可执行权限
       run: chmod +x ./gradlew
     - name: 使用Gradle构建
